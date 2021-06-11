@@ -1,0 +1,29 @@
+
+Things to think about:
+- syntax for concurrently running things, define individual threads?, run procedures?
+- working with modules, or a class-based system like java?
+- call-by-value or call-by-reference? (value for the Win)
+
+
+module main {
+
+	Int val = 2;
+
+	Bool val2 = True;
+
+
+	if (val2) {
+		val2 = False;
+	}
+
+	val2 = True;
+
+	while (val < 4) {
+		val++;
+	}
+
+// 	Threads ts = new Threads(5)?
+
+}
+
+
