@@ -5,12 +5,12 @@ Things to think about:
 - call-by-value or call-by-reference? (value for the Win)
 
 
-module main {
+class Main {
 
 	Int val = 2;
+	Lock lock = new Lock;
 
 	Bool val2 = True;
-
 
 	if (val2) {
 		val2 = False;
@@ -22,8 +22,62 @@ module main {
 		val++;
 	}
 
-// 	Threads ts = new Threads(5)?
+	val = 0;
+	Bool works = False;
+
+	@Threaded (5) { // Would work like a fork-join. (end of block joins)
+		lock.lock();
+		val++;
+		lock.unlock();
+
+		@Threaded (3) {
+			lock.lock();
+			val++;
+			lock.unlock();
+		}
+	}
+
+	if (val == 20) {
+		works = True;
+	} else {
+		val = -99999;
+	}
+
+	// Peterson algorithm
+
+	Bool[] flag = [False,False];
+	Int turn = 0;
+
+	@Threaded (2) {
+		flag[Thread.id] = True;
+		Int other = 0;
+
+		if (Thread.id == 0) {
+			other = 1;
+		}
+
+		while (flag[other] == True && turn == other) {
+			// busy wait
+		}
+
+		// critical section
+
+		flag[Thread.id] = False;
+	}
+
+
+
+	// Banking system
+
+	Lock bankLock = new Lock;
+
+	Int mybank = 100;
+
+	@Threaded (5) { 
+		bankLock.lock();
+		// make deposits n that
+
+		bankLock.unlock();
+	}
 
 }
-
-
