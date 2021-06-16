@@ -19,5 +19,5 @@ public interface SymbolTable {
      * @return <code>true</code> if there is any enclosing scope in which
      * the identifier is declared; <code>false</code> otherwise.
      */
-    public abstract int getValue(String id);
+    public abstract boolean contains(String id);
 }

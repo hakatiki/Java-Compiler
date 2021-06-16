@@ -1156,17 +1156,73 @@ public class GrammarParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_type; }
+	 
+		public TypeContext() { }
+		public void copyFrom(TypeContext ctx) {
+			super.copyFrom(ctx);
+		}
+	}
+	public static class BoolArrayContext extends TypeContext {
+		public BoolArrayContext(TypeContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof GrammarListener ) ((GrammarListener)listener).enterType(this);
+			if ( listener instanceof GrammarListener ) ((GrammarListener)listener).enterBoolArray(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof GrammarListener ) ((GrammarListener)listener).exitType(this);
+			if ( listener instanceof GrammarListener ) ((GrammarListener)listener).exitBoolArray(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof GrammarVisitor ) return ((GrammarVisitor<? extends T>)visitor).visitType(this);
+			if ( visitor instanceof GrammarVisitor ) return ((GrammarVisitor<? extends T>)visitor).visitBoolArray(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class BoolContext extends TypeContext {
+		public BoolContext(TypeContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof GrammarListener ) ((GrammarListener)listener).enterBool(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof GrammarListener ) ((GrammarListener)listener).exitBool(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof GrammarVisitor ) return ((GrammarVisitor<? extends T>)visitor).visitBool(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class IntContext extends TypeContext {
+		public IntContext(TypeContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof GrammarListener ) ((GrammarListener)listener).enterInt(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof GrammarListener ) ((GrammarListener)listener).exitInt(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof GrammarVisitor ) return ((GrammarVisitor<? extends T>)visitor).visitInt(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class IntArrayContext extends TypeContext {
+		public IntArrayContext(TypeContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof GrammarListener ) ((GrammarListener)listener).enterIntArray(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof GrammarListener ) ((GrammarListener)listener).exitIntArray(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof GrammarVisitor ) return ((GrammarVisitor<? extends T>)visitor).visitIntArray(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -1174,20 +1230,44 @@ public class GrammarParser extends Parser {
 	public final TypeContext type() throws RecognitionException {
 		TypeContext _localctx = new TypeContext(_ctx, getState());
 		enterRule(_localctx, 12, RULE_type);
-		int _la;
 		try {
-			enterOuterAlt(_localctx, 1);
-			{
-			setState(121);
-			_la = _input.LA(1);
-			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__4) | (1L << T__5) | (1L << T__6) | (1L << T__7))) != 0)) ) {
-			_errHandler.recoverInline(this);
-			}
-			else {
-				if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
-				_errHandler.reportMatch(this);
-				consume();
-			}
+			setState(125);
+			_errHandler.sync(this);
+			switch (_input.LA(1)) {
+			case T__4:
+				_localctx = new IntContext(_localctx);
+				enterOuterAlt(_localctx, 1);
+				{
+				setState(121);
+				match(T__4);
+				}
+				break;
+			case T__5:
+				_localctx = new BoolContext(_localctx);
+				enterOuterAlt(_localctx, 2);
+				{
+				setState(122);
+				match(T__5);
+				}
+				break;
+			case T__6:
+				_localctx = new IntArrayContext(_localctx);
+				enterOuterAlt(_localctx, 3);
+				{
+				setState(123);
+				match(T__6);
+				}
+				break;
+			case T__7:
+				_localctx = new BoolArrayContext(_localctx);
+				enterOuterAlt(_localctx, 4);
+				{
+				setState(124);
+				match(T__7);
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
 			}
 		}
 		catch (RecognitionException re) {
@@ -1223,37 +1303,39 @@ public class GrammarParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3-~\4\2\t\2\4\3\t\3"+
-		"\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\3\2\3\2\3\2\3\3\3\3\3\3\3\3\3"+
-		"\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4"+
-		"\3\4\3\4\3\4\3\4\3\4\3\4\5\4\60\n\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3"+
-		"\4\3\4\3\4\3\4\3\4\7\4?\n\4\f\4\16\4B\13\4\3\4\5\4E\n\4\3\5\3\5\3\5\3"+
-		"\5\3\5\3\5\3\5\3\5\5\5O\n\5\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3"+
-		"\6\3\6\3\6\5\6^\n\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\7"+
-		"\6l\n\6\f\6\16\6o\13\6\3\7\3\7\3\7\7\7t\n\7\f\7\16\7w\13\7\3\7\5\7z\n"+
-		"\7\3\b\3\b\3\b\2\3\n\t\2\4\6\b\n\f\16\2\6\4\2()--\3\2\30\31\3\2\34\37"+
-		"\3\2\7\n\2\u0089\2\20\3\2\2\2\4\23\3\2\2\2\6D\3\2\2\2\bN\3\2\2\2\n]\3"+
-		"\2\2\2\fy\3\2\2\2\16{\3\2\2\2\20\21\5\4\3\2\21\22\7\2\2\3\22\3\3\2\2\2"+
-		"\23\24\7*\2\2\24\25\7\3\2\2\25\26\5\6\4\2\26\5\3\2\2\2\27\30\5\16\b\2"+
-		"\30\31\7,\2\2\31\32\7\22\2\2\32\33\5\n\6\2\33\34\7\16\2\2\34E\3\2\2\2"+
-		"\35\36\7\f\2\2\36\37\7,\2\2\37 \7\22\2\2 !\7\4\2\2!\"\7\f\2\2\"E\7\16"+
-		"\2\2#$\7,\2\2$%\7\r\2\2%&\5\b\5\2&\'\7\16\2\2\'E\3\2\2\2()\7&\2\2)*\7"+
-		"\"\2\2*+\5\n\6\2+,\7#\2\2,/\5\6\4\2-.\7\'\2\2.\60\5\6\4\2/-\3\2\2\2/\60"+
-		"\3\2\2\2\60E\3\2\2\2\61\62\7%\2\2\62\63\7\"\2\2\63\64\5\n\6\2\64\65\7"+
-		"#\2\2\65\66\5\6\4\2\66E\3\2\2\2\678\7\13\2\289\7\"\2\29:\7-\2\2:;\7#\2"+
-		"\2;E\5\6\4\2<@\7 \2\2=?\5\6\4\2>=\3\2\2\2?B\3\2\2\2@>\3\2\2\2@A\3\2\2"+
-		"\2AC\3\2\2\2B@\3\2\2\2CE\7!\2\2D\27\3\2\2\2D\35\3\2\2\2D#\3\2\2\2D(\3"+
-		"\2\2\2D\61\3\2\2\2D\67\3\2\2\2D<\3\2\2\2E\7\3\2\2\2FG\7\5\2\2GH\7\"\2"+
-		"\2HI\7#\2\2IO\7\16\2\2JK\7\6\2\2KL\7\"\2\2LM\7#\2\2MO\7\16\2\2NF\3\2\2"+
-		"\2NJ\3\2\2\2O\t\3\2\2\2PQ\b\6\1\2QR\7\23\2\2R^\5\n\6\13ST\7\"\2\2TU\5"+
-		"\n\6\2UV\7#\2\2V^\3\2\2\2W^\t\2\2\2XY\7\20\2\2YZ\5\f\7\2Z[\7\21\2\2[^"+
-		"\3\2\2\2\\^\7,\2\2]P\3\2\2\2]S\3\2\2\2]W\3\2\2\2]X\3\2\2\2]\\\3\2\2\2"+
-		"^m\3\2\2\2_`\f\n\2\2`a\t\3\2\2al\5\n\6\13bc\f\t\2\2cd\7\25\2\2dl\5\n\6"+
-		"\nef\f\b\2\2fg\7\24\2\2gl\5\n\6\thi\f\7\2\2ij\t\4\2\2jl\5\n\6\bk_\3\2"+
-		"\2\2kb\3\2\2\2ke\3\2\2\2kh\3\2\2\2lo\3\2\2\2mk\3\2\2\2mn\3\2\2\2n\13\3"+
-		"\2\2\2om\3\2\2\2pu\5\n\6\2qr\7\17\2\2rt\5\n\6\2sq\3\2\2\2tw\3\2\2\2us"+
-		"\3\2\2\2uv\3\2\2\2vz\3\2\2\2wu\3\2\2\2xz\3\2\2\2yp\3\2\2\2yx\3\2\2\2z"+
-		"\r\3\2\2\2{|\t\5\2\2|\17\3\2\2\2\13/@DN]kmuy";
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3-\u0082\4\2\t\2\4"+
+		"\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\3\2\3\2\3\2\3\3\3\3\3\3"+
+		"\3\3\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3"+
+		"\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\5\4\60\n\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4"+
+		"\3\4\3\4\3\4\3\4\3\4\3\4\7\4?\n\4\f\4\16\4B\13\4\3\4\5\4E\n\4\3\5\3\5"+
+		"\3\5\3\5\3\5\3\5\3\5\3\5\5\5O\n\5\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6"+
+		"\3\6\3\6\3\6\3\6\5\6^\n\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6"+
+		"\3\6\7\6l\n\6\f\6\16\6o\13\6\3\7\3\7\3\7\7\7t\n\7\f\7\16\7w\13\7\3\7\5"+
+		"\7z\n\7\3\b\3\b\3\b\3\b\5\b\u0080\n\b\3\b\2\3\n\t\2\4\6\b\n\f\16\2\5\4"+
+		"\2()--\3\2\30\31\3\2\34\37\2\u0090\2\20\3\2\2\2\4\23\3\2\2\2\6D\3\2\2"+
+		"\2\bN\3\2\2\2\n]\3\2\2\2\fy\3\2\2\2\16\177\3\2\2\2\20\21\5\4\3\2\21\22"+
+		"\7\2\2\3\22\3\3\2\2\2\23\24\7*\2\2\24\25\7\3\2\2\25\26\5\6\4\2\26\5\3"+
+		"\2\2\2\27\30\5\16\b\2\30\31\7,\2\2\31\32\7\22\2\2\32\33\5\n\6\2\33\34"+
+		"\7\16\2\2\34E\3\2\2\2\35\36\7\f\2\2\36\37\7,\2\2\37 \7\22\2\2 !\7\4\2"+
+		"\2!\"\7\f\2\2\"E\7\16\2\2#$\7,\2\2$%\7\r\2\2%&\5\b\5\2&\'\7\16\2\2\'E"+
+		"\3\2\2\2()\7&\2\2)*\7\"\2\2*+\5\n\6\2+,\7#\2\2,/\5\6\4\2-.\7\'\2\2.\60"+
+		"\5\6\4\2/-\3\2\2\2/\60\3\2\2\2\60E\3\2\2\2\61\62\7%\2\2\62\63\7\"\2\2"+
+		"\63\64\5\n\6\2\64\65\7#\2\2\65\66\5\6\4\2\66E\3\2\2\2\678\7\13\2\289\7"+
+		"\"\2\29:\7-\2\2:;\7#\2\2;E\5\6\4\2<@\7 \2\2=?\5\6\4\2>=\3\2\2\2?B\3\2"+
+		"\2\2@>\3\2\2\2@A\3\2\2\2AC\3\2\2\2B@\3\2\2\2CE\7!\2\2D\27\3\2\2\2D\35"+
+		"\3\2\2\2D#\3\2\2\2D(\3\2\2\2D\61\3\2\2\2D\67\3\2\2\2D<\3\2\2\2E\7\3\2"+
+		"\2\2FG\7\5\2\2GH\7\"\2\2HI\7#\2\2IO\7\16\2\2JK\7\6\2\2KL\7\"\2\2LM\7#"+
+		"\2\2MO\7\16\2\2NF\3\2\2\2NJ\3\2\2\2O\t\3\2\2\2PQ\b\6\1\2QR\7\23\2\2R^"+
+		"\5\n\6\13ST\7\"\2\2TU\5\n\6\2UV\7#\2\2V^\3\2\2\2W^\t\2\2\2XY\7\20\2\2"+
+		"YZ\5\f\7\2Z[\7\21\2\2[^\3\2\2\2\\^\7,\2\2]P\3\2\2\2]S\3\2\2\2]W\3\2\2"+
+		"\2]X\3\2\2\2]\\\3\2\2\2^m\3\2\2\2_`\f\n\2\2`a\t\3\2\2al\5\n\6\13bc\f\t"+
+		"\2\2cd\7\25\2\2dl\5\n\6\nef\f\b\2\2fg\7\24\2\2gl\5\n\6\thi\f\7\2\2ij\t"+
+		"\4\2\2jl\5\n\6\bk_\3\2\2\2kb\3\2\2\2ke\3\2\2\2kh\3\2\2\2lo\3\2\2\2mk\3"+
+		"\2\2\2mn\3\2\2\2n\13\3\2\2\2om\3\2\2\2pu\5\n\6\2qr\7\17\2\2rt\5\n\6\2"+
+		"sq\3\2\2\2tw\3\2\2\2us\3\2\2\2uv\3\2\2\2vz\3\2\2\2wu\3\2\2\2xz\3\2\2\2"+
+		"yp\3\2\2\2yx\3\2\2\2z\r\3\2\2\2{\u0080\7\7\2\2|\u0080\7\b\2\2}\u0080\7"+
+		"\t\2\2~\u0080\7\n\2\2\177{\3\2\2\2\177|\3\2\2\2\177}\3\2\2\2\177~\3\2"+
+		"\2\2\u0080\17\3\2\2\2\f/@DN]kmuy\177";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

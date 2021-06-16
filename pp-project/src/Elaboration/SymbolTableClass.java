@@ -1,4 +1,4 @@
-package src.Elaboration;
+package Elaboration;
 
 
 import Elaboration.SymbolTable;

@@ -34,10 +34,10 @@ arr     : expr (',' expr)*                      #arrContents
         ;
 
 
-type : 'Int'
-      | 'Bool'
-      | 'Int[]'
-      | 'Bool[]'
+type : 'Int'        #int
+      | 'Bool'      #bool
+      | 'Int[]'     #intArray
+      | 'Bool[]'    #boolArray
       ;
 
 THREADED: '@Threaded';

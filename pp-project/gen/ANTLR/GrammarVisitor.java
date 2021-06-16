@@ -164,9 +164,31 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitEmptyArr(GrammarParser.EmptyArrContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link GrammarParser#type}.
+	 * Visit a parse tree produced by the {@code int}
+	 * labeled alternative in {@link GrammarParser#type}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitType(GrammarParser.TypeContext ctx);
+	T visitInt(GrammarParser.IntContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code bool}
+	 * labeled alternative in {@link GrammarParser#type}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBool(GrammarParser.BoolContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code intArray}
+	 * labeled alternative in {@link GrammarParser#type}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIntArray(GrammarParser.IntArrayContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code boolArray}
+	 * labeled alternative in {@link GrammarParser#type}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBoolArray(GrammarParser.BoolArrayContext ctx);
 }

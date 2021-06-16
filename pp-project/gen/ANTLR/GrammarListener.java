@@ -270,13 +270,51 @@ public interface GrammarListener extends ParseTreeListener {
 	 */
 	void exitEmptyArr(GrammarParser.EmptyArrContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link GrammarParser#type}.
+	 * Enter a parse tree produced by the {@code int}
+	 * labeled alternative in {@link GrammarParser#type}.
 	 * @param ctx the parse tree
 	 */
-	void enterType(GrammarParser.TypeContext ctx);
+	void enterInt(GrammarParser.IntContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link GrammarParser#type}.
+	 * Exit a parse tree produced by the {@code int}
+	 * labeled alternative in {@link GrammarParser#type}.
 	 * @param ctx the parse tree
 	 */
-	void exitType(GrammarParser.TypeContext ctx);
+	void exitInt(GrammarParser.IntContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code bool}
+	 * labeled alternative in {@link GrammarParser#type}.
+	 * @param ctx the parse tree
+	 */
+	void enterBool(GrammarParser.BoolContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code bool}
+	 * labeled alternative in {@link GrammarParser#type}.
+	 * @param ctx the parse tree
+	 */
+	void exitBool(GrammarParser.BoolContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code intArray}
+	 * labeled alternative in {@link GrammarParser#type}.
+	 * @param ctx the parse tree
+	 */
+	void enterIntArray(GrammarParser.IntArrayContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code intArray}
+	 * labeled alternative in {@link GrammarParser#type}.
+	 * @param ctx the parse tree
+	 */
+	void exitIntArray(GrammarParser.IntArrayContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code boolArray}
+	 * labeled alternative in {@link GrammarParser#type}.
+	 * @param ctx the parse tree
+	 */
+	void enterBoolArray(GrammarParser.BoolArrayContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code boolArray}
+	 * labeled alternative in {@link GrammarParser#type}.
+	 * @param ctx the parse tree
+	 */
+	void exitBoolArray(GrammarParser.BoolArrayContext ctx);
 }
