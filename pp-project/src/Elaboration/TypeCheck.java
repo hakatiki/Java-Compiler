@@ -10,66 +10,74 @@ import java.util.List;
 // TODO: exitOrExpr
 // TODO: exitAndExpr
 // TODO: exitAddExpr
+// TODO: SymbolTableType
 
 public class TypeCheck extends GrammarBaseListener {
     private SymbolTable table = new SymbolTableClass();
     private ParseTreeProperty<Type> tree = new ParseTreeProperty<>();
     public List<String> errorList = new LinkedList<String>();
 
-    // @Override public void enterProgram(GrammarParser.ProgramContext ctx) { }
-
-    // @Override public void exitProgram(GrammarParser.ProgramContext ctx) { }
-
     @Override public void enterClassDec(GrammarParser.ClassDecContext ctx) { }
 
     @Override public void exitClassDec(GrammarParser.ClassDecContext ctx) { }
 
-    @Override public void enterVarDec(GrammarParser.VarDecContext ctx) { }
 
-    @Override public void exitVarDec(GrammarParser.VarDecContext ctx) { }
+    @Override public void exitVarDec(GrammarParser.VarDecContext ctx) {
+        Type expected = tree.get(ctx.type());
+        Type exprType = tree.get(ctx.expr());
+        if (expected !=  exprType){
+            int line = ctx.start.getLine();
+            int pos = ctx.start.getCharPositionInLine();
+            String error = " Error on line: " + line + " and the position: "+ pos+". Type missmatch!";
+            errorList.add( error );
+        }
+        // TODO FIX THIS
+        table.add( ctx.ID().getText());
+        tree.put(ctx, expected );
+    }
 
-    @Override public void enterDecLock(GrammarParser.DecLockContext ctx) { }
 
-    @Override public void exitDecLock(GrammarParser.DecLockContext ctx) { }
 
-    @Override public void enterCallLock(GrammarParser.CallLockContext ctx) { }
-
-    @Override public void exitCallLock(GrammarParser.CallLockContext ctx) { }
-
-    @Override public void enterIfStatement(GrammarParser.IfStatementContext ctx) { }
-
-    @Override public void exitIfStatement(GrammarParser.IfStatementContext ctx) { }
-
-    @Override public void enterWhileLoop(GrammarParser.WhileLoopContext ctx) { }
-
-    @Override public void exitWhileLoop(GrammarParser.WhileLoopContext ctx) { }
-
-    @Override public void enterThreadedBlock(GrammarParser.ThreadedBlockContext ctx) { }
-
-    @Override public void exitThreadedBlock(GrammarParser.ThreadedBlockContext ctx) { }
-
-    @Override public void enterBlockStat(GrammarParser.BlockStatContext ctx) { }
-
-    @Override public void exitBlockStat(GrammarParser.BlockStatContext ctx) { }
-
-    @Override public void enterPutLock(GrammarParser.PutLockContext ctx) { }
-
-    @Override public void exitPutLock(GrammarParser.PutLockContext ctx) { }
-
-    @Override public void enterPutUnlock(GrammarParser.PutUnlockContext ctx) { }
-
-    @Override public void exitPutUnlock(GrammarParser.PutUnlockContext ctx) { }
+    @Override public void exitIfStatement(GrammarParser.IfStatementContext ctx) {
+        Type t = tree.get(ctx.expr());
+        if (t != Type.Bool){
+            int line = ctx.start.getLine();
+            int pos = ctx.start.getCharPositionInLine();
+            String error = " Error on line: " + line + " and the position: "+ pos+". Type error in while, expected boolean!";
+            errorList.add( error );
+        }
+    }
 
 
 
 
+    @Override public void enterWhileLoop(GrammarParser.WhileLoopContext ctx) {
+        //table.openScope();
+        // ADDING IT THERE MIGHT BE A GOOD IDEA IDK YET
+        Type t = tree.get(ctx.expr());
+        if (t != Type.Bool){
+            int line = ctx.start.getLine();
+            int pos = ctx.start.getCharPositionInLine();
+            String error = " Error on line: " + line + " and the position: "+ pos+". Type error in while, expected boolean!";
+            errorList.add( error );
+        }
+    }
+    @Override public void exitWhileLoop(GrammarParser.WhileLoopContext ctx) {
+        //table.closeScope();
+        // MATCH IT UP WITH enterWhileLoop
+    }
+    @Override public void exitNotExpr(GrammarParser.NotExprContext ctx) {
+        Type first = tree.get(ctx.expr());
+        int line = ctx.start.getLine();
+        int pos = ctx.start.getCharPositionInLine();
+        if (! (first == Type.Bool)){
+            String error = " Error on line: " + line + " and the position: "+ pos+". Type error while applying NOT!";
+            errorList.add( error );
+        }
+        // TODO: Add more stuff here
 
-
-    @Override public void exitNotExpr(GrammarParser.NotExprContext ctx) { }
-
-
-
-
+        tree.put(ctx, Type.Bool);
+    }
     @Override public void exitAddExpr(GrammarParser.AddExprContext ctx) {
         Type first = tree.get(ctx.expr(0));
         Type second = tree.get(ctx.expr(1));
@@ -83,10 +91,6 @@ public class TypeCheck extends GrammarBaseListener {
 
         tree.put(ctx, Type.Int);
     }
-
-
-
-
     @Override public void exitOrExpr(GrammarParser.OrExprContext ctx) {
         Type first = tree.get(ctx.expr(0));
         Type second = tree.get(ctx.expr(1));
@@ -99,6 +103,12 @@ public class TypeCheck extends GrammarBaseListener {
         // TODO: Add more stuff here
 
         tree.put(ctx, Type.Bool);
+    }
+    @Override public void enterBlockStat(GrammarParser.BlockStatContext ctx) {
+        table.openScope();
+    }
+    @Override public void exitBlockStat(GrammarParser.BlockStatContext ctx) {
+        table.closeScope();
     }
     @Override public void exitAndExpr(GrammarParser.AndExprContext ctx) {
         Type first = tree.get(ctx.expr(0));
@@ -117,11 +127,11 @@ public class TypeCheck extends GrammarBaseListener {
         tree.put(ctx, tree.get(ctx.expr()));
     }
     @Override public void exitConstExpr(GrammarParser.ConstExprContext ctx) {
-        String num = ctx.NUM().getText();
-        if (num != null)
-            tree.put(ctx, Type.Int);
-        else
+        String str = ctx.getText();
+        if (str.equals("True") || str.equals("False"))
             tree.put(ctx, Type.Bool);
+        else
+            tree.put(ctx, Type.Int);
     }
     @Override public void exitArrayExpr(GrammarParser.ArrayExprContext ctx) {
         tree.put(ctx, tree.get(ctx.arr()));
@@ -195,6 +205,33 @@ public class TypeCheck extends GrammarBaseListener {
     //@Override public void enterCompExpr(GrammarParser.CompExprContext ctx) { }
     //@Override public void enterOrExpr(GrammarParser.OrExprContext ctx) { }
     //@Override public void enterAddExpr(GrammarParser.AddExprContext ctx) { }
-    // @Override public void enterAndExpr(GrammarParser.AndExprContext ctx) { }
+    //@Override public void enterAndExpr(GrammarParser.AndExprContext ctx) { }
     //@Override public void enterNotExpr(GrammarParser.NotExprContext ctx) { }
+    //@Override public void enterVarDec(GrammarParser.VarDecContext ctx) { }
+    //@Override public void enterIfStatement(GrammarParser.IfStatementContext ctx) { }
+    //@Override public void enterProgram(GrammarParser.ProgramContext ctx) { }
+    //@Override public void exitProgram(GrammarParser.ProgramContext ctx) { }
+
+    //// THREAD ////
+    //@Override public void enterThreadedBlock(GrammarParser.ThreadedBlockContext ctx) { }
+
+    //@Override public void exitThreadedBlock(GrammarParser.ThreadedBlockContext ctx) { }
+
+
+    //// LOCKS ////
+    //@Override public void enterPutLock(GrammarParser.PutLockContext ctx) { }
+
+    //@Override public void exitPutLock(GrammarParser.PutLockContext ctx) { }
+
+    //@Override public void enterPutUnlock(GrammarParser.PutUnlockContext ctx) { }
+
+    //@Override public void exitPutUnlock(GrammarParser.PutUnlockContext ctx) { }
+
+    //@Override public void enterDecLock(GrammarParser.DecLockContext ctx) { }
+
+    //@Override public void exitDecLock(GrammarParser.DecLockContext ctx) { }
+
+    //@Override public void enterCallLock(GrammarParser.CallLockContext ctx) { }
+
+    //@Override public void exitCallLock(GrammarParser.CallLockContext ctx) { }
 }
