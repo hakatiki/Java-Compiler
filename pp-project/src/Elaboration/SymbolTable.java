@@ -1,4 +1,4 @@
-package pp.block5.cc.homework;
+package Elaboration;
 
 public interface SymbolTable {
     /** Adds a next deeper scope level. */
@@ -13,7 +13,7 @@ public interface SymbolTable {
      * @return <code>true</code> if the identifier was added,
      * <code>false</code> if it was already declared in this scope.
      */
-    public abstract boolean add(String id, int val);
+    public abstract boolean add(String id);
 
     /** Tests if a given identifier is in the scope of any declaration.
      * @return <code>true</code> if there is any enclosing scope in which

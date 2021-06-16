@@ -1,4 +1,5 @@
-// Generated from D:/Mine/University/Modules/Module 8 - Programming Paradigms/mod8-final-project/pp-project/src\Grammar.g4 by ANTLR 4.9.1
+// Generated from /Users/takatsbalint/Dokumentumok/Hazi/UofT/BigProject/mod8-final-project/pp-project/src/ANTLR/Grammar.g4 by ANTLR 4.9.1
+package ANTLR;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
