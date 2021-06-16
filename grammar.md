@@ -14,12 +14,12 @@ Expr        -> VarDec
             | Copy
 
 VarDec      -> Type VarName "=" Value //??? Do we check alr whether its the right type
-            | ClassName VarName "=" "new" ClassName
 
 Type        -> "Bool"
             | "Bool[]"
             | "Int"
             | "Int[]"
+            | Lock
 
 If          -> "if" "(" Cond ")" "{" Exprs "}" ("else" "{" Exprs "}")?
 
