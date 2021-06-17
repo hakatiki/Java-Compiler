@@ -7,15 +7,15 @@ def   : CLASS 'main' stat                       #classDec
 
 stat    : type ID '=' expr ';'                  #varDec
         | LOCK ID '=' 'new' LOCK ';'            #decLock
-        | ID DOT lock ';'                       #callLock
-        | IF '(' expr ')' stat ('else' stat)?    #ifStatement   //expr must be oof type Bool
+        | IF '(' expr ')' stat ('else' stat)?   #ifStatement   //expr must be oof type Bool
         | WHILE '(' expr ')' stat               #whileLoop     //expr must be oof type Bool
         | THREADED '(' NUM ')' stat             #threadedBlock //Threaded
         | '{' stat* '}'                         #blockStat
+        | ID DOT lock ';'                       #callLock
         ;
 
-lock    : 'lock' '(' ')' ';'                    #putLock
-        | 'unlock' '(' ')' ';'                  #putUnlock
+lock    : 'lock' '(' ')'                        #putLock
+        | 'unlock' '(' ')'                      #putUnlock
         ;
 
 expr:   NOT expr                                #notExpr
@@ -34,11 +34,11 @@ arr     : expr (',' expr)*                      #arrContents
         ;
 
 
-type : 'Int'        #int
-      | 'Bool'      #bool
-      | 'Int[]'     #intArray
-      | 'Bool[]'    #boolArray
-      ;
+type    : 'Int[]'                               #intArray
+        | 'Bool[]'                              #boolArray
+        | 'Int'                                 #int
+        | 'Bool'                                   #bool
+        ;
 
 THREADED: '@Threaded';
 LOCK: 'Lock';
