@@ -1,19 +1,16 @@
 package Elaboration;
-
-
-import Elaboration.SymbolTable;
+import javafx.util.Pair;
 
 import java.util.*;
 
-public class SymbolTableClass implements SymbolTable {
-    private Stack<Set<String>> setStack = new Stack<>();
-    private List<String> list = new LinkedList<>();
-    @Override
+
+public class SymbolTableClass{
+    private java.util.Stack<Map<String,Type>> setStack = new java.util.Stack<>();
+    private List<Pair<String,Type>> list = new LinkedList<Pair<String, Type>>();
     public void openScope() {
-        setStack.push( new HashSet<>() );
+        setStack.push( new HashMap<String, Type>() );
     }
 
-    @Override
     public void closeScope() {
         int remove = setStack.peek().size();
         int begin = list.size()-1;
@@ -23,19 +20,24 @@ public class SymbolTableClass implements SymbolTable {
         setStack.pop();
     }
 
-    @Override
-    public boolean add(String id) {
+    public boolean add(String id, Type val) {
         if (setStack.size() == 0)
-            setStack.push(new HashSet<>());
-        if (setStack.peek().contains(id))
+            setStack.push(new HashMap<String, Type>() );
+        if (setStack.peek().containsKey(id))
             return false;
-        setStack.peek().add(id);
-        list.add(id);
+        setStack.peek().put(id, val);
+        list.add(new Pair<>(id, val));
         return true;
     }
 
-    @Override
-    public boolean contains(String id) {
-        return list.contains(id);
+    public Type getValue(String id) {
+        for (int i = list.size()-1; i >=0 ; i--){
+            Pair <String, Type> entry = list.get(i);
+            String fst = entry.getKey();
+            if (fst.equals(id))
+                return entry.getValue();
+        }
+        return Type.Empty;
     }
+
 }

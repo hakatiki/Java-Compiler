@@ -13,7 +13,7 @@ import java.util.List;
 // TODO: SymbolTableType
 
 public class TypeCheck extends GrammarBaseListener {
-    private SymbolTable table = new SymbolTableClass();
+    private SymbolTableClass table = new SymbolTableClass();
     private ParseTreeProperty<Type> tree = new ParseTreeProperty<>();
     public List<String> errorList = new LinkedList<String>();
 
@@ -32,7 +32,7 @@ public class TypeCheck extends GrammarBaseListener {
             errorList.add( error );
         }
         // TODO FIX THIS
-        table.add( ctx.ID().getText());
+        table.add( ctx.ID().getText(),expected);
         tree.put(ctx, expected );
     }
 
@@ -137,14 +137,16 @@ public class TypeCheck extends GrammarBaseListener {
         tree.put(ctx, tree.get(ctx.arr()));
     }
     @Override public void exitIdExpr(GrammarParser.IdExprContext ctx) {
-        if (!table.contains(ctx.ID().getText())){
+        if (table.getValue(ctx.ID().getText()) == Type.Empty) {
             int line = ctx.start.getLine();
             int pos = ctx.start.getCharPositionInLine();
-            String error = " Error on line: " + line + " and the position: "+ pos+". Variable [" +
-                    ctx.ID().getText()  +"] out of scope!";
-            errorList.add( error );
+            String error = " Error on line: " + line + " and the position: " + pos + ". Variable [" +
+                    ctx.ID().getText() + "] out of scope!";
+            errorList.add(error);
+            tree.put(ctx, Type.Empty);
         }
-
+        else
+            tree.put(ctx, table.getValue(ctx.ID().getText()));
     }
     @Override public void exitArrContents(GrammarParser.ArrContentsContext ctx) {
         boolean good = true;
