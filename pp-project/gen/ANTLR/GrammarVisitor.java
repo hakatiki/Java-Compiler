@@ -24,12 +24,12 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitClassDec(GrammarParser.ClassDecContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code varDec}
+	 * Visit a parse tree produced by the {@code blockStat}
 	 * labeled alternative in {@link GrammarParser#stat}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitVarDec(GrammarParser.VarDecContext ctx);
+	T visitBlockStat(GrammarParser.BlockStatContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code decLock}
 	 * labeled alternative in {@link GrammarParser#stat}.
@@ -37,6 +37,13 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitDecLock(GrammarParser.DecLockContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code varDec}
+	 * labeled alternative in {@link GrammarParser#stat}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitVarDec(GrammarParser.VarDecContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code ifStatement}
 	 * labeled alternative in {@link GrammarParser#stat}.
@@ -59,19 +66,19 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitThreadedBlock(GrammarParser.ThreadedBlockContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code blockStat}
-	 * labeled alternative in {@link GrammarParser#stat}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitBlockStat(GrammarParser.BlockStatContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code callLock}
 	 * labeled alternative in {@link GrammarParser#stat}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitCallLock(GrammarParser.CallLockContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code copyOver}
+	 * labeled alternative in {@link GrammarParser#stat}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCopyOver(GrammarParser.CopyOverContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code putLock}
 	 * labeled alternative in {@link GrammarParser#lock}.

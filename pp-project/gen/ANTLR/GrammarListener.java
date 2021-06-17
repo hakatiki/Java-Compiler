@@ -30,17 +30,17 @@ public interface GrammarListener extends ParseTreeListener {
 	 */
 	void exitClassDec(GrammarParser.ClassDecContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code varDec}
+	 * Enter a parse tree produced by the {@code blockStat}
 	 * labeled alternative in {@link GrammarParser#stat}.
 	 * @param ctx the parse tree
 	 */
-	void enterVarDec(GrammarParser.VarDecContext ctx);
+	void enterBlockStat(GrammarParser.BlockStatContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code varDec}
+	 * Exit a parse tree produced by the {@code blockStat}
 	 * labeled alternative in {@link GrammarParser#stat}.
 	 * @param ctx the parse tree
 	 */
-	void exitVarDec(GrammarParser.VarDecContext ctx);
+	void exitBlockStat(GrammarParser.BlockStatContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code decLock}
 	 * labeled alternative in {@link GrammarParser#stat}.
@@ -53,6 +53,18 @@ public interface GrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitDecLock(GrammarParser.DecLockContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code varDec}
+	 * labeled alternative in {@link GrammarParser#stat}.
+	 * @param ctx the parse tree
+	 */
+	void enterVarDec(GrammarParser.VarDecContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code varDec}
+	 * labeled alternative in {@link GrammarParser#stat}.
+	 * @param ctx the parse tree
+	 */
+	void exitVarDec(GrammarParser.VarDecContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code ifStatement}
 	 * labeled alternative in {@link GrammarParser#stat}.
@@ -90,18 +102,6 @@ public interface GrammarListener extends ParseTreeListener {
 	 */
 	void exitThreadedBlock(GrammarParser.ThreadedBlockContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code blockStat}
-	 * labeled alternative in {@link GrammarParser#stat}.
-	 * @param ctx the parse tree
-	 */
-	void enterBlockStat(GrammarParser.BlockStatContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code blockStat}
-	 * labeled alternative in {@link GrammarParser#stat}.
-	 * @param ctx the parse tree
-	 */
-	void exitBlockStat(GrammarParser.BlockStatContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code callLock}
 	 * labeled alternative in {@link GrammarParser#stat}.
 	 * @param ctx the parse tree
@@ -113,6 +113,18 @@ public interface GrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitCallLock(GrammarParser.CallLockContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code copyOver}
+	 * labeled alternative in {@link GrammarParser#stat}.
+	 * @param ctx the parse tree
+	 */
+	void enterCopyOver(GrammarParser.CopyOverContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code copyOver}
+	 * labeled alternative in {@link GrammarParser#stat}.
+	 * @param ctx the parse tree
+	 */
+	void exitCopyOver(GrammarParser.CopyOverContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code putLock}
 	 * labeled alternative in {@link GrammarParser#lock}.

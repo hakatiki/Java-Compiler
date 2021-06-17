@@ -2,30 +2,31 @@ grammar Grammar;
 
 program : def EOF; // start symbol
 
-def     : CLASS 'main' stat                       #classDec
+def     : CLASS 'main' stat                     #classDec
         ;
 
-stat    : type ID '=' expr ';'                  #varDec
-        | LOCK ID '=' 'new' LOCK ';'            #decLock
-        | IF '(' expr ')' stat ('else' stat)?   #ifStatement   //expr must be oof type Bool
+stat    : '{' stat* '}'                         #blockStat
+        | LOCK 'lock' '=' 'new' LOCK ';'        #decLock
+        | type ID '=' expr ';'                  #varDec
+        | IF '(' expr ')' stat (ELSE stat)?     #ifStatement   //expr must be oof type Bool
         | WHILE '(' expr ')' stat               #whileLoop     //expr must be oof type Bool
         | THREADED '(' NUM ')' stat             #threadedBlock //Threaded
-        | '{' stat* '}'                         #blockStat
-        | ID DOT lock ';'                       #callLock
+        | lock                                  #callLock
+        | ID '=' expr ';'                       #copyOver
         ;
 
-lock    : 'lock' '(' ')'                        #putLock
-        | 'unlock' '(' ')'                      #putUnlock
+lock    : ID '.' 'lock' '(' ')'                 #putLock
+        | ID '.' 'unlock' '(' ')'               #putUnlock
         ;
 
-expr:   NOT expr                                #notExpr
-        | expr (PLUS | MINUS) expr              #addExpr
-        | expr AND expr                         #andExpr
-        | expr OR  expr                         #orExpr
-        | expr (LT | GT | EQ | NE) expr         #compExpr
-        | LPAR expr RPAR                        #parExpr
+expr:   '!' expr                                #notExpr
+        | expr ('+' | '-') expr              #addExpr
+        | expr '&&' expr                         #andExpr
+        | expr '||'  expr                         #orExpr
+        | expr ('<' | '>' | '==' | '!=') expr   #compExpr
+        | '(' expr ')'                          #parExpr
         | (NUM | TRUE | FALSE)                  #constExpr
-        | LSQ arr RSQ                           #arrayExpr
+        | '[' arr ']'                           #arrayExpr
         | ID                                    #idExpr
         ;
 
@@ -39,43 +40,23 @@ type    : 'Int[]'                               #intArray
         | 'Bool'                                #bool
         ;
 
-WS: [ \t\r\n]+ -> skip;
-ID: LETTER (LETTER | DIGIT)*;
-NUM: DIGIT+;
-THREADED: '@Threaded';
-LOCK: 'Lock';
-DOT: '.';
-SEMI: ';';
-COMMA: ',';
-LSQ: '[';
-RSQ: ']';
-ASSIGN: '=';
-NOT: '!';
-OR: '||';
-AND: '&&';
-BIT_OR: '|';
-BIT_AND: '&';
-PLUS: '+';
-MINUS: '-';
-LTEQ: '<=';
-GTEQ: '>=';
-LT: '<';
-GT: '>';
-EQ: '==';
-NE: '!=';
-LCURLY: '{';
-RCURLY: '}';
-LPAR: '(';
-RPAR: ')';
-PRINT: 'printf';
-WHILE: 'while';
+CLASS: 'class';
 IF: 'if';
 ELSE: 'else';
+WHILE: 'while';
 TRUE: 'True';
 FALSE: 'False';
-CLASS: 'class';
+THREADED: '@Threaded';
+LOCK: 'Lock';
 
 fragment LETTER: [a-zA-Z];
 fragment DIGIT: [0-9];
+NUM: DIGIT+;
+WS: [ \t\r\n]+ -> skip;
+ID: LETTER (LETTER | DIGIT)*;
+
+
+
+
 
 

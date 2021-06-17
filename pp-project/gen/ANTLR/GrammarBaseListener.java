@@ -40,13 +40,13 @@ public class GrammarBaseListener implements GrammarListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterVarDec(GrammarParser.VarDecContext ctx) { }
+	@Override public void enterBlockStat(GrammarParser.BlockStatContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitVarDec(GrammarParser.VarDecContext ctx) { }
+	@Override public void exitBlockStat(GrammarParser.BlockStatContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -59,6 +59,18 @@ public class GrammarBaseListener implements GrammarListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitDecLock(GrammarParser.DecLockContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterVarDec(GrammarParser.VarDecContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitVarDec(GrammarParser.VarDecContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -100,18 +112,6 @@ public class GrammarBaseListener implements GrammarListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterBlockStat(GrammarParser.BlockStatContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitBlockStat(GrammarParser.BlockStatContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterCallLock(GrammarParser.CallLockContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -119,6 +119,18 @@ public class GrammarBaseListener implements GrammarListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitCallLock(GrammarParser.CallLockContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterCopyOver(GrammarParser.CopyOverContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitCopyOver(GrammarParser.CopyOverContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
