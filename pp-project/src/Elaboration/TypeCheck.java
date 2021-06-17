@@ -11,17 +11,14 @@ import java.util.List;
 // TODO: exitAndExpr
 // TODO: exitAddExpr
 // TODO: SymbolTableType
-
+// Type, Outscope, Syntax error,
 public class TypeCheck extends GrammarBaseListener {
     private SymbolTableClass table = new SymbolTableClass();
     private ParseTreeProperty<Type> tree = new ParseTreeProperty<>();
     public List<String> errorList = new LinkedList<String>();
 
     @Override public void enterClassDec(GrammarParser.ClassDecContext ctx) { }
-
     @Override public void exitClassDec(GrammarParser.ClassDecContext ctx) { }
-
-
     @Override public void exitVarDec(GrammarParser.VarDecContext ctx) {
         Type expected = tree.get(ctx.type());
         Type exprType = tree.get(ctx.expr());
@@ -35,9 +32,6 @@ public class TypeCheck extends GrammarBaseListener {
         table.add( ctx.ID().getText(),expected);
         tree.put(ctx, expected );
     }
-
-
-
     @Override public void exitIfStatement(GrammarParser.IfStatementContext ctx) {
         Type t = tree.get(ctx.expr());
         if (t != Type.Bool){
@@ -47,10 +41,6 @@ public class TypeCheck extends GrammarBaseListener {
             errorList.add( error );
         }
     }
-
-
-
-
     @Override public void enterWhileLoop(GrammarParser.WhileLoopContext ctx) {
         //table.openScope();
         // ADDING IT THERE MIGHT BE A GOOD IDEA IDK YET
@@ -196,7 +186,6 @@ public class TypeCheck extends GrammarBaseListener {
 
         tree.put(ctx, Type.Bool);
     }
-
     @Override public void exitCopyOver(GrammarParser.CopyOverContext ctx) {
         Type type = tree.get(ctx.expr());
         if (table.getValue(ctx.ID().getText()) == Type.NotInScope) {
