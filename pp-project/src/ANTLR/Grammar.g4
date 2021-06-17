@@ -2,7 +2,7 @@ grammar Grammar;
 
 program : def EOF; // start symbol
 
-def   : CLASS 'main' stat                       #classDec
+def     : CLASS 'main' stat                       #classDec
         ;
 
 stat    : type ID '=' expr ';'                  #varDec
@@ -33,13 +33,15 @@ arr     : expr (',' expr)*                      #arrContents
         |                                       #emptyArr
         ;
 
-
 type    : 'Int[]'                               #intArray
         | 'Bool[]'                              #boolArray
         | 'Int'                                 #int
-        | 'Bool'                                   #bool
+        | 'Bool'                                #bool
         ;
 
+WS: [ \t\r\n]+ -> skip;
+ID: LETTER (LETTER | DIGIT)*;
+NUM: DIGIT+;
 THREADED: '@Threaded';
 LOCK: 'Lock';
 DOT: '.';
@@ -75,7 +77,5 @@ CLASS: 'class';
 
 fragment LETTER: [a-zA-Z];
 fragment DIGIT: [0-9];
-WS: [ \t\r\n]+ -> skip;
 
-ID: LETTER (LETTER | DIGIT);
-NUM: DIGIT+;
+

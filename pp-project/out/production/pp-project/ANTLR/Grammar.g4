@@ -2,20 +2,20 @@ grammar Grammar;
 
 program : def EOF; // start symbol
 
-def   : CLASS 'main' stat                       #classDec
+def     : CLASS 'main' stat                       #classDec
         ;
 
 stat    : type ID '=' expr ';'                  #varDec
         | LOCK ID '=' 'new' LOCK ';'            #decLock
-        | ID DOT lock ';'                       #callLock
-        | IF '(' expr ')' stat ('else' stat)?    #ifStatement   //expr must be oof type Bool
+        | IF '(' expr ')' stat ('else' stat)?   #ifStatement   //expr must be oof type Bool
         | WHILE '(' expr ')' stat               #whileLoop     //expr must be oof type Bool
         | THREADED '(' NUM ')' stat             #threadedBlock //Threaded
         | '{' stat* '}'                         #blockStat
+        | ID DOT lock ';'                       #callLock
         ;
 
-lock    : 'lock' '(' ')' ';'                    #putLock
-        | 'unlock' '(' ')' ';'                  #putUnlock
+lock    : 'lock' '(' ')'                        #putLock
+        | 'unlock' '(' ')'                      #putUnlock
         ;
 
 expr:   NOT expr                                #notExpr
@@ -33,13 +33,15 @@ arr     : expr (',' expr)*                      #arrContents
         |                                       #emptyArr
         ;
 
+type    : 'Int[]'                               #intArray
+        | 'Bool[]'                              #boolArray
+        | 'Int'                                 #int
+        | 'Bool'                                #bool
+        ;
 
-type : 'Int'        #int
-      | 'Bool'      #bool
-      | 'Int[]'     #intArray
-      | 'Bool[]'    #boolArray
-      ;
-
+WS: [ \t\r\n]+ -> skip;
+ID: LETTER (LETTER | DIGIT)*;
+NUM: DIGIT+;
 THREADED: '@Threaded';
 LOCK: 'Lock';
 DOT: '.';
@@ -75,7 +77,5 @@ CLASS: 'class';
 
 fragment LETTER: [a-zA-Z];
 fragment DIGIT: [0-9];
-WS: [ \t\r\n]+ -> skip;
 
-ID: LETTER (LETTER | DIGIT);
-NUM: DIGIT+;
+

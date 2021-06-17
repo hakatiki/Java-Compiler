@@ -1,30 +1,5 @@
 class main {
-	Int val = 2;
+    Int xy = 2;
 
-	Bool val2 = True;
-
-	if (val2) {
-		val2 = False;
-	}
-
-	val2 = True;
-
-	while (val < 4) {
-		val++;
-	}
-
-	val = 0;
-	Bool works = False;
-
-
-	if (val == 20) {
-		works = True;
-	} else {
-		val = -99999;
-	}
-
-
-	Bool[] flag = [False,False];
-	Int turn = 0;
-	Int mybank = 100;
+    Bool val2 = True;
 }

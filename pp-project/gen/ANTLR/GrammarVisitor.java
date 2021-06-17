@@ -1,4 +1,4 @@
-// Generated from /Users/takatsbalint/Dokumentumok/Hazi/UofT/BigProject/mod8-final-project/pp-project/src/ANTLR/Grammar.g4 by ANTLR 4.9.1
+// Generated from D:/Mine/University/Modules/Module 8 - Programming Paradigms/mod8-final-project/pp-project/src/ANTLR\Grammar.g4 by ANTLR 4.9.1
 package ANTLR;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
@@ -38,13 +38,6 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitDecLock(GrammarParser.DecLockContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code callLock}
-	 * labeled alternative in {@link GrammarParser#stat}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitCallLock(GrammarParser.CallLockContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code ifStatement}
 	 * labeled alternative in {@link GrammarParser#stat}.
 	 * @param ctx the parse tree
@@ -72,6 +65,13 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitBlockStat(GrammarParser.BlockStatContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code callLock}
+	 * labeled alternative in {@link GrammarParser#stat}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCallLock(GrammarParser.CallLockContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code putLock}
 	 * labeled alternative in {@link GrammarParser#lock}.
@@ -164,20 +164,6 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitEmptyArr(GrammarParser.EmptyArrContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code int}
-	 * labeled alternative in {@link GrammarParser#type}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitInt(GrammarParser.IntContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code bool}
-	 * labeled alternative in {@link GrammarParser#type}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitBool(GrammarParser.BoolContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code intArray}
 	 * labeled alternative in {@link GrammarParser#type}.
 	 * @param ctx the parse tree
@@ -191,4 +177,18 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitBoolArray(GrammarParser.BoolArrayContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code int}
+	 * labeled alternative in {@link GrammarParser#type}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitInt(GrammarParser.IntContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code bool}
+	 * labeled alternative in {@link GrammarParser#type}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBool(GrammarParser.BoolContext ctx);
 }

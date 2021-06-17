@@ -1,4 +1,4 @@
-// Generated from /Users/takatsbalint/Dokumentumok/Hazi/UofT/BigProject/mod8-final-project/pp-project/src/ANTLR/Grammar.g4 by ANTLR 4.9.1
+// Generated from D:/Mine/University/Modules/Module 8 - Programming Paradigms/mod8-final-project/pp-project/src/ANTLR\Grammar.g4 by ANTLR 4.9.1
 package ANTLR;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
@@ -54,18 +54,6 @@ public interface GrammarListener extends ParseTreeListener {
 	 */
 	void exitDecLock(GrammarParser.DecLockContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code callLock}
-	 * labeled alternative in {@link GrammarParser#stat}.
-	 * @param ctx the parse tree
-	 */
-	void enterCallLock(GrammarParser.CallLockContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code callLock}
-	 * labeled alternative in {@link GrammarParser#stat}.
-	 * @param ctx the parse tree
-	 */
-	void exitCallLock(GrammarParser.CallLockContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code ifStatement}
 	 * labeled alternative in {@link GrammarParser#stat}.
 	 * @param ctx the parse tree
@@ -113,6 +101,18 @@ public interface GrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitBlockStat(GrammarParser.BlockStatContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code callLock}
+	 * labeled alternative in {@link GrammarParser#stat}.
+	 * @param ctx the parse tree
+	 */
+	void enterCallLock(GrammarParser.CallLockContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code callLock}
+	 * labeled alternative in {@link GrammarParser#stat}.
+	 * @param ctx the parse tree
+	 */
+	void exitCallLock(GrammarParser.CallLockContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code putLock}
 	 * labeled alternative in {@link GrammarParser#lock}.
@@ -270,30 +270,6 @@ public interface GrammarListener extends ParseTreeListener {
 	 */
 	void exitEmptyArr(GrammarParser.EmptyArrContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code int}
-	 * labeled alternative in {@link GrammarParser#type}.
-	 * @param ctx the parse tree
-	 */
-	void enterInt(GrammarParser.IntContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code int}
-	 * labeled alternative in {@link GrammarParser#type}.
-	 * @param ctx the parse tree
-	 */
-	void exitInt(GrammarParser.IntContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code bool}
-	 * labeled alternative in {@link GrammarParser#type}.
-	 * @param ctx the parse tree
-	 */
-	void enterBool(GrammarParser.BoolContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code bool}
-	 * labeled alternative in {@link GrammarParser#type}.
-	 * @param ctx the parse tree
-	 */
-	void exitBool(GrammarParser.BoolContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code intArray}
 	 * labeled alternative in {@link GrammarParser#type}.
 	 * @param ctx the parse tree
@@ -317,4 +293,28 @@ public interface GrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitBoolArray(GrammarParser.BoolArrayContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code int}
+	 * labeled alternative in {@link GrammarParser#type}.
+	 * @param ctx the parse tree
+	 */
+	void enterInt(GrammarParser.IntContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code int}
+	 * labeled alternative in {@link GrammarParser#type}.
+	 * @param ctx the parse tree
+	 */
+	void exitInt(GrammarParser.IntContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code bool}
+	 * labeled alternative in {@link GrammarParser#type}.
+	 * @param ctx the parse tree
+	 */
+	void enterBool(GrammarParser.BoolContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code bool}
+	 * labeled alternative in {@link GrammarParser#type}.
+	 * @param ctx the parse tree
+	 */
+	void exitBool(GrammarParser.BoolContext ctx);
 }
