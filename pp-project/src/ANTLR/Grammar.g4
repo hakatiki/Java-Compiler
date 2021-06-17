@@ -14,6 +14,8 @@ stat    : '{' stat* '}'                         #blockStat
         | ID '.' 'lock' '(' ')' ';'             #putLock
         | ID '.' 'unlock' '(' ')' ';'           #putUnlock
         | ID '=' expr ';'                       #copyOver
+        | ID '++' ';'                           #increment
+        | ID '--' ';'                           #decrement
         ;
 
 expr:   '!' expr                                #notExpr
@@ -24,6 +26,8 @@ expr:   '!' expr                                #notExpr
         | '(' expr ')'                          #parExpr
         | (NUM | TRUE | FALSE)                  #constExpr
         | '[' arr ']'                           #arrayExpr
+        | 'Thread.id'                           #getThreadId
+        | ID '[' (expr) ']'                     #getIndex    //expr must be of type int
         | ID                                    #idExpr
         ;
 

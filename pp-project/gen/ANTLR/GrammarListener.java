@@ -138,6 +138,30 @@ public interface GrammarListener extends ParseTreeListener {
 	 */
 	void exitCopyOver(GrammarParser.CopyOverContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code increment}
+	 * labeled alternative in {@link GrammarParser#stat}.
+	 * @param ctx the parse tree
+	 */
+	void enterIncrement(GrammarParser.IncrementContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code increment}
+	 * labeled alternative in {@link GrammarParser#stat}.
+	 * @param ctx the parse tree
+	 */
+	void exitIncrement(GrammarParser.IncrementContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code decrement}
+	 * labeled alternative in {@link GrammarParser#stat}.
+	 * @param ctx the parse tree
+	 */
+	void enterDecrement(GrammarParser.DecrementContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code decrement}
+	 * labeled alternative in {@link GrammarParser#stat}.
+	 * @param ctx the parse tree
+	 */
+	void exitDecrement(GrammarParser.DecrementContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code parExpr}
 	 * labeled alternative in {@link GrammarParser#expr}.
 	 * @param ctx the parse tree
@@ -173,6 +197,30 @@ public interface GrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitArrayExpr(GrammarParser.ArrayExprContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code getThreadId}
+	 * labeled alternative in {@link GrammarParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterGetThreadId(GrammarParser.GetThreadIdContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code getThreadId}
+	 * labeled alternative in {@link GrammarParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitGetThreadId(GrammarParser.GetThreadIdContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code getIndex}
+	 * labeled alternative in {@link GrammarParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterGetIndex(GrammarParser.GetIndexContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code getIndex}
+	 * labeled alternative in {@link GrammarParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitGetIndex(GrammarParser.GetIndexContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code addExpr}
 	 * labeled alternative in {@link GrammarParser#expr}.

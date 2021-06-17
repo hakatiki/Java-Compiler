@@ -87,6 +87,20 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitCopyOver(GrammarParser.CopyOverContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code increment}
+	 * labeled alternative in {@link GrammarParser#stat}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIncrement(GrammarParser.IncrementContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code decrement}
+	 * labeled alternative in {@link GrammarParser#stat}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDecrement(GrammarParser.DecrementContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code parExpr}
 	 * labeled alternative in {@link GrammarParser#expr}.
 	 * @param ctx the parse tree
@@ -107,6 +121,20 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitArrayExpr(GrammarParser.ArrayExprContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code getThreadId}
+	 * labeled alternative in {@link GrammarParser#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitGetThreadId(GrammarParser.GetThreadIdContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code getIndex}
+	 * labeled alternative in {@link GrammarParser#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitGetIndex(GrammarParser.GetIndexContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code addExpr}
 	 * labeled alternative in {@link GrammarParser#expr}.
