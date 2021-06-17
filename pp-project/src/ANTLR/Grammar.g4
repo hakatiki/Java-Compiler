@@ -6,16 +6,13 @@ def     : CLASS 'main' stat                     #classDec
         ;
 
 stat    : '{' stat* '}'                         #blockStat
-        | LOCK ID '=' 'new' LOCK ';'            #decLock
-        | type ID '=' expr ';'                  #varDec
+        | mem type ID '=' expr ';'              #varDec
         | IF '(' expr ')' stat (ELSE stat)?     #ifStatement   //expr must be oof type Bool
         | WHILE '(' expr ')' stat               #whileLoop     //expr must be oof type Bool
         | THREADED '(' NUM ')' stat             #threadedBlock //Threaded
-        | ID '.' 'lock' '(' ')' ';'             #putLock
-        | ID '.' 'unlock' '(' ')' ';'           #putUnlock
+        | 'lock' '(' ')' ';'                    #putLock
+        | 'unlock' '(' ')' ';'                  #putUnlock
         | ID '=' expr ';'                       #copyOver
-        | ID '++' ';'                           #increment
-        | ID '--' ';'                           #decrement
         ;
 
 expr:   '!' expr                                #notExpr
@@ -27,7 +24,7 @@ expr:   '!' expr                                #notExpr
         | (NUM | TRUE | FALSE)                  #constExpr
         | '[' arr ']'                           #arrayExpr
         | 'Thread.id'                           #getThreadId
-        | ID '[' (expr) ']'                     #getIndex    //expr must be of type int
+        | ID '[' expr ']'                       #getIndex    //expr must be of type int
         | ID                                    #idExpr
         ;
 
@@ -39,6 +36,10 @@ type    : 'Int[]'                               #intArray
         | 'Bool[]'                              #boolArray
         | 'Int'                                 #int
         | 'Bool'                                #bool
+        ;
+
+mem     : 'Local'                               #isLocal
+        | 'Shared'                              #isShared
         ;
 
 CLASS: 'class';

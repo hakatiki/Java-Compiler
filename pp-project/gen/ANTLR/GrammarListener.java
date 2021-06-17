@@ -42,18 +42,6 @@ public interface GrammarListener extends ParseTreeListener {
 	 */
 	void exitBlockStat(GrammarParser.BlockStatContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code decLock}
-	 * labeled alternative in {@link GrammarParser#stat}.
-	 * @param ctx the parse tree
-	 */
-	void enterDecLock(GrammarParser.DecLockContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code decLock}
-	 * labeled alternative in {@link GrammarParser#stat}.
-	 * @param ctx the parse tree
-	 */
-	void exitDecLock(GrammarParser.DecLockContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code varDec}
 	 * labeled alternative in {@link GrammarParser#stat}.
 	 * @param ctx the parse tree
@@ -137,30 +125,6 @@ public interface GrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitCopyOver(GrammarParser.CopyOverContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code increment}
-	 * labeled alternative in {@link GrammarParser#stat}.
-	 * @param ctx the parse tree
-	 */
-	void enterIncrement(GrammarParser.IncrementContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code increment}
-	 * labeled alternative in {@link GrammarParser#stat}.
-	 * @param ctx the parse tree
-	 */
-	void exitIncrement(GrammarParser.IncrementContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code decrement}
-	 * labeled alternative in {@link GrammarParser#stat}.
-	 * @param ctx the parse tree
-	 */
-	void enterDecrement(GrammarParser.DecrementContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code decrement}
-	 * labeled alternative in {@link GrammarParser#stat}.
-	 * @param ctx the parse tree
-	 */
-	void exitDecrement(GrammarParser.DecrementContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code parExpr}
 	 * labeled alternative in {@link GrammarParser#expr}.
@@ -365,4 +329,28 @@ public interface GrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitBool(GrammarParser.BoolContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code isLocal}
+	 * labeled alternative in {@link GrammarParser#mem}.
+	 * @param ctx the parse tree
+	 */
+	void enterIsLocal(GrammarParser.IsLocalContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code isLocal}
+	 * labeled alternative in {@link GrammarParser#mem}.
+	 * @param ctx the parse tree
+	 */
+	void exitIsLocal(GrammarParser.IsLocalContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code isShared}
+	 * labeled alternative in {@link GrammarParser#mem}.
+	 * @param ctx the parse tree
+	 */
+	void enterIsShared(GrammarParser.IsSharedContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code isShared}
+	 * labeled alternative in {@link GrammarParser#mem}.
+	 * @param ctx the parse tree
+	 */
+	void exitIsShared(GrammarParser.IsSharedContext ctx);
 }

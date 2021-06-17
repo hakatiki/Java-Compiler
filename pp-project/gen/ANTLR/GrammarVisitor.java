@@ -31,13 +31,6 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitBlockStat(GrammarParser.BlockStatContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code decLock}
-	 * labeled alternative in {@link GrammarParser#stat}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitDecLock(GrammarParser.DecLockContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code varDec}
 	 * labeled alternative in {@link GrammarParser#stat}.
 	 * @param ctx the parse tree
@@ -86,20 +79,6 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitCopyOver(GrammarParser.CopyOverContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code increment}
-	 * labeled alternative in {@link GrammarParser#stat}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitIncrement(GrammarParser.IncrementContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code decrement}
-	 * labeled alternative in {@link GrammarParser#stat}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitDecrement(GrammarParser.DecrementContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code parExpr}
 	 * labeled alternative in {@link GrammarParser#expr}.
@@ -219,4 +198,18 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitBool(GrammarParser.BoolContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code isLocal}
+	 * labeled alternative in {@link GrammarParser#mem}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIsLocal(GrammarParser.IsLocalContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code isShared}
+	 * labeled alternative in {@link GrammarParser#mem}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIsShared(GrammarParser.IsSharedContext ctx);
 }
