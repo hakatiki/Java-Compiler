@@ -66,12 +66,19 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitThreadedBlock(GrammarParser.ThreadedBlockContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code callLock}
+	 * Visit a parse tree produced by the {@code putLock}
 	 * labeled alternative in {@link GrammarParser#stat}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitCallLock(GrammarParser.CallLockContext ctx);
+	T visitPutLock(GrammarParser.PutLockContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code putUnlock}
+	 * labeled alternative in {@link GrammarParser#stat}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPutUnlock(GrammarParser.PutUnlockContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code copyOver}
 	 * labeled alternative in {@link GrammarParser#stat}.
@@ -79,20 +86,6 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitCopyOver(GrammarParser.CopyOverContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code putLock}
-	 * labeled alternative in {@link GrammarParser#lock}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitPutLock(GrammarParser.PutLockContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code putUnlock}
-	 * labeled alternative in {@link GrammarParser#lock}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitPutUnlock(GrammarParser.PutUnlockContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code parExpr}
 	 * labeled alternative in {@link GrammarParser#expr}.

@@ -6,24 +6,20 @@ def     : CLASS 'main' stat                     #classDec
         ;
 
 stat    : '{' stat* '}'                         #blockStat
-        | LOCK ID '=' 'new' LOCK ';'        #decLock
+        | LOCK ID '=' 'new' LOCK ';'            #decLock
         | type ID '=' expr ';'                  #varDec
         | IF '(' expr ')' stat (ELSE stat)?     #ifStatement   //expr must be oof type Bool
         | WHILE '(' expr ')' stat               #whileLoop     //expr must be oof type Bool
         | THREADED '(' NUM ')' stat             #threadedBlock //Threaded
-
-        | lock                                  #callLock
+        | ID '.' 'lock' '(' ')' ';'             #putLock
+        | ID '.' 'unlock' '(' ')' ';'           #putUnlock
         | ID '=' expr ';'                       #copyOver
         ;
 
-lock    : ID '.' 'lock' '(' ')'                 #putLock
-        | ID '.' 'unlock' '(' ')'               #putUnlock
-        ;
-
 expr:   '!' expr                                #notExpr
-        | expr ('+' | '-') expr              #addExpr
-        | expr '&&' expr                         #andExpr
-        | expr '||'  expr                         #orExpr
+        | expr ('+' | '-') expr                 #addExpr
+        | expr '&&' expr                        #andExpr
+        | expr '||'  expr                       #orExpr
         | expr ('<' | '>' | '==' | '!=') expr   #compExpr
         | '(' expr ')'                          #parExpr
         | (NUM | TRUE | FALSE)                  #constExpr
@@ -52,9 +48,11 @@ LOCK: 'Lock';
 
 fragment LETTER: [a-zA-Z];
 fragment DIGIT: [0-9];
+
 NUM: DIGIT+;
-WS: [ \t\r\n]+ -> skip;
 ID: LETTER (LETTER | DIGIT)*;
+WS: [ \t\r\n]+ -> skip;
+
 
 
 

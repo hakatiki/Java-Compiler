@@ -102,17 +102,29 @@ public interface GrammarListener extends ParseTreeListener {
 	 */
 	void exitThreadedBlock(GrammarParser.ThreadedBlockContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code callLock}
+	 * Enter a parse tree produced by the {@code putLock}
 	 * labeled alternative in {@link GrammarParser#stat}.
 	 * @param ctx the parse tree
 	 */
-	void enterCallLock(GrammarParser.CallLockContext ctx);
+	void enterPutLock(GrammarParser.PutLockContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code callLock}
+	 * Exit a parse tree produced by the {@code putLock}
 	 * labeled alternative in {@link GrammarParser#stat}.
 	 * @param ctx the parse tree
 	 */
-	void exitCallLock(GrammarParser.CallLockContext ctx);
+	void exitPutLock(GrammarParser.PutLockContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code putUnlock}
+	 * labeled alternative in {@link GrammarParser#stat}.
+	 * @param ctx the parse tree
+	 */
+	void enterPutUnlock(GrammarParser.PutUnlockContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code putUnlock}
+	 * labeled alternative in {@link GrammarParser#stat}.
+	 * @param ctx the parse tree
+	 */
+	void exitPutUnlock(GrammarParser.PutUnlockContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code copyOver}
 	 * labeled alternative in {@link GrammarParser#stat}.
@@ -125,30 +137,6 @@ public interface GrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitCopyOver(GrammarParser.CopyOverContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code putLock}
-	 * labeled alternative in {@link GrammarParser#lock}.
-	 * @param ctx the parse tree
-	 */
-	void enterPutLock(GrammarParser.PutLockContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code putLock}
-	 * labeled alternative in {@link GrammarParser#lock}.
-	 * @param ctx the parse tree
-	 */
-	void exitPutLock(GrammarParser.PutLockContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code putUnlock}
-	 * labeled alternative in {@link GrammarParser#lock}.
-	 * @param ctx the parse tree
-	 */
-	void enterPutUnlock(GrammarParser.PutUnlockContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code putUnlock}
-	 * labeled alternative in {@link GrammarParser#lock}.
-	 * @param ctx the parse tree
-	 */
-	void exitPutUnlock(GrammarParser.PutUnlockContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code parExpr}
 	 * labeled alternative in {@link GrammarParser#expr}.
