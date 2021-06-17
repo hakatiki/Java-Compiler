@@ -1,3 +1,4 @@
 class main {
-
+    Int xy = 2;
+    Bool val2 = True;
 }

@@ -1,5 +1,5 @@
 package Elaboration;
-import javafx.util.Pair;
+
 
 import java.util.*;
 
@@ -33,9 +33,9 @@ public class SymbolTableClass{
     public Type getValue(String id) {
         for (int i = list.size()-1; i >=0 ; i--){
             Pair <String, Type> entry = list.get(i);
-            String fst = entry.getKey();
+            String fst = entry.getFirst();
             if (fst.equals(id))
-                return entry.getValue();
+                return entry.getSecond();
         }
         return Type.Empty;
     }

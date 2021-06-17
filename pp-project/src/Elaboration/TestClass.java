@@ -1,5 +1,5 @@
-package Elaboration;
 
+package Elaboration;
 
 import ANTLR.GrammarLexer;
 import ANTLR.GrammarParser;
