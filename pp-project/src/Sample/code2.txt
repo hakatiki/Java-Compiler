@@ -2,16 +2,10 @@ class main {
     Int xy = 2;
     Bool val2 = True;
 
-    if (val2) {
-        val2 = False;
+    {
+        Bool s = False;
     }
-
-    while (val < 4) {
-        val = val + 1;
-    }
-
-    val = 0;
-    Bool works = False;
-
-    Lock lock = new Lock;
+    if (s){}
+    s =  420;
+    val2 = 69;
 }

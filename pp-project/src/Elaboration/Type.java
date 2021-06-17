@@ -5,5 +5,7 @@ public enum Type {
 	Bool,
 	IntArray,
 	BoolArray,
+	NotInScope,
+	Lock,
 	Empty;
 }

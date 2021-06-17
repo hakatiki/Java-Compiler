@@ -19,7 +19,10 @@ public class TestClass {
     private  final TypeCheck tool = new TypeCheck();
     @Test
     public void test2(){
-        assertEquals(check("src/Sample/code2.txt"),0);
+        check("src/Sample/code2.txt");
+        //assertEquals(0,);
+        for (int i = 0; i <tool.errorList.size();i++)
+            System.out.println(tool.errorList.get(i));
     }
 
     private int  check(String file){

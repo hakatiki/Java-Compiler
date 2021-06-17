@@ -37,7 +37,7 @@ public class SymbolTableClass{
             if (fst.equals(id))
                 return entry.getSecond();
         }
-        return Type.Empty;
+        return Type.NotInScope;
     }
 
 }

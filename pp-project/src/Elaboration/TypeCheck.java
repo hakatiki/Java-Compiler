@@ -43,7 +43,7 @@ public class TypeCheck extends GrammarBaseListener {
         if (t != Type.Bool){
             int line = ctx.start.getLine();
             int pos = ctx.start.getCharPositionInLine();
-            String error = " Error on line: " + line + " and the position: "+ pos+". Type error in while, expected boolean!";
+            String error = " Error on line: " + line + " and the position: "+ pos+". Type error in if statement, expected boolean!";
             errorList.add( error );
         }
     }
@@ -137,7 +137,7 @@ public class TypeCheck extends GrammarBaseListener {
         tree.put(ctx, tree.get(ctx.arr()));
     }
     @Override public void exitIdExpr(GrammarParser.IdExprContext ctx) {
-        if (table.getValue(ctx.ID().getText()) == Type.Empty) {
+        if (table.getValue(ctx.ID().getText()) == Type.NotInScope) {
             int line = ctx.start.getLine();
             int pos = ctx.start.getCharPositionInLine();
             String error = " Error on line: " + line + " and the position: " + pos + ". Variable [" +
@@ -197,6 +197,28 @@ public class TypeCheck extends GrammarBaseListener {
         tree.put(ctx, Type.Bool);
     }
 
+    @Override public void exitCopyOver(GrammarParser.CopyOverContext ctx) {
+        Type type = tree.get(ctx.expr());
+        if (table.getValue(ctx.ID().getText()) == Type.NotInScope) {
+            int line = ctx.start.getLine();
+            int pos = ctx.start.getCharPositionInLine();
+            String error = " Error on line: " + line + " and the position: " + pos + ". Variable [" +
+                    ctx.ID().getText() + "] out of scope!";
+            errorList.add(error);
+            tree.put(ctx, Type.Empty);
+        }
+        else if (table.getValue(ctx.ID().getText()) != type) {
+            int line = ctx.start.getLine();
+            int pos = ctx.start.getCharPositionInLine();
+            String error = " Error on line: " + line + " and the position: " + pos + ". Variable [" +
+                    ctx.ID().getText() + "] has a different type!";
+            errorList.add(error);
+            tree.put(ctx, Type.Empty);
+        }
+        else
+            tree.put(ctx, table.getValue(ctx.ID().getText()));
+    }
+    //@Override public void enterCopyOver(GrammarParser.CopyOverContext ctx) { }
     //@Override public void exitType(GrammarParser.TypeContext ctx) { }
     //@Override public void exitEmptyArr(GrammarParser.EmptyArrContext ctx) { }
     //@Override public void enterArrContents(GrammarParser.ArrContentsContext ctx) { }
