@@ -28,6 +28,10 @@ public class TestClass {
         testLocks(false);
         testArrays(true); //Doesn't correctly define array's + doesn't get index correctly
         //testEqArrays(false); //same as above
+        testIfScope(false);
+        testWrongIfScope(false);
+        testWhileScope(false);
+        testWrongWhileScope(true);
     }
 
 
@@ -89,6 +93,38 @@ public class TestClass {
     // Test checking equality of arrays
     public void testEqArrays(boolean print){
         assertEquals(17,check("src/Sample/eqArrays.txt"));
+        if (print)
+            for (int i = 0; i <tool.errorList.size();i++)
+                System.out.println(tool.errorList.get(i));
+        reset();
+    }
+
+    public void testIfScope(boolean print){
+        assertEquals(0,check("src/Sample/ifScope.txt"));
+        if (print)
+            for (int i = 0; i <tool.errorList.size();i++)
+                System.out.println(tool.errorList.get(i));
+        reset();
+    }
+
+    public void testWrongIfScope(boolean print){
+        assertEquals(1,check("src/Sample/wrongIfScope.txt"));
+        if (print)
+            for (int i = 0; i <tool.errorList.size();i++)
+                System.out.println(tool.errorList.get(i));
+        reset();
+    }
+
+    public void testWhileScope(boolean print){
+        assertEquals(0,check("src/Sample/whileScope.txt"));
+        if (print)
+            for (int i = 0; i <tool.errorList.size();i++)
+                System.out.println(tool.errorList.get(i));
+        reset();
+    }
+
+    public void testWrongWhileScope(boolean print){
+        assertEquals(1,check("src/Sample/wrongWhileScope.txt"));
         if (print)
             for (int i = 0; i <tool.errorList.size();i++)
                 System.out.println(tool.errorList.get(i));

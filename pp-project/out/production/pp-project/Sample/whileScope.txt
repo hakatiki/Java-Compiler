@@ -1,0 +1,12 @@
+class main {
+    Local Int x = 5;
+    Local Int i = 0;
+    Local Bool pass = True;
+
+    while (i < 5) {
+        Local Int x = 1;
+        i = i + x;
+    }
+
+    x = 6;
+}

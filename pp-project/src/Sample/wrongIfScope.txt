@@ -1,0 +1,10 @@
+class main {
+    Local Int x = 5;
+    Local Bool pass = True;
+
+    if (pass) {
+        Local Int y = 3;
+    }
+
+    y = 6;
+}
