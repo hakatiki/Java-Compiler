@@ -1,0 +1,14 @@
+class main {
+    @Threaded (5) {
+
+    }
+
+
+    @Threaded (2) {
+        Local Int tid = Thread.id;
+
+        @Threaded(4) {
+
+        }
+    }
+}

@@ -1,0 +1,12 @@
+class main {
+    Local Int val = 0;
+    Local Bool test = True;
+
+    while (val < 4) {
+        val = val + 1;
+    }
+
+    while (test) {
+
+    }
+}
