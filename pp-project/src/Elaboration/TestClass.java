@@ -15,16 +15,24 @@ import java.io.IOException;
 import static org.junit.Assert.assertEquals;
 
 public class TestClass {
-    private  final ParseTreeWalker walker = new ParseTreeWalker();
-    private  final TypeCheck tool = new TypeCheck();
+    private ParseTreeWalker walker = new ParseTreeWalker();
+    private TypeCheck tool = new TypeCheck();
     @Test
-    public void test2(){
-        check("src/Sample/code2.txt");
-        //assertEquals(0,);
-        for (int i = 0; i <tool.errorList.size();i++)
-            System.out.println(tool.errorList.get(i));
-    }
+    public void tests(){
+        test1(false);
 
+    }
+    public void test1(Boolean print){
+        assertEquals(0,check("src/Sample/code2.txt"));
+        if (print)
+            for (int i = 0; i <tool.errorList.size();i++)
+                System.out.println(tool.errorList.get(i));
+        reset();
+    }
+    private void reset(){
+        walker = new ParseTreeWalker();
+        tool = new TypeCheck();
+    }
     private int  check(String file){
         String str = "";
         try{

@@ -13,9 +13,7 @@ class main {
 
     Shared Bool works = False;
 
-
     lock();
-
     unlock();
 
     @Threaded(2) {

@@ -11,6 +11,7 @@ import java.util.List;
 // TODO: exitAndExpr
 // TODO: exitAddExpr
 // TODO: SymbolTableType
+// TODO: Decide on  scoping while and if
 // Type, Outscope, Syntax error,
 public class TypeCheck extends GrammarBaseListener {
     private SymbolTableClass table = new SymbolTableClass();
