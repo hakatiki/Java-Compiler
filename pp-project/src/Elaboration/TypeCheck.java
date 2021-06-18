@@ -43,8 +43,14 @@ public class TypeCheck extends GrammarBaseListener {
         }
     }
     @Override public void enterWhileLoop(GrammarParser.WhileLoopContext ctx) {
-        //table.openScope();
+        table.openScope();
         // ADDING IT THERE MIGHT BE A GOOD IDEA IDK YET
+
+    }
+    @Override public void exitWhileLoop(GrammarParser.WhileLoopContext ctx) {
+
+        table.closeScope();
+        
         Type t = tree.get(ctx.expr());
         if (t != Type.Bool){
             int line = ctx.start.getLine();
@@ -52,9 +58,6 @@ public class TypeCheck extends GrammarBaseListener {
             String error = " Error on line: " + line + " and the position: "+ pos+". Type error in while, expected boolean!";
             errorList.add( error );
         }
-    }
-    @Override public void exitWhileLoop(GrammarParser.WhileLoopContext ctx) {
-        //table.closeScope();
         // MATCH IT UP WITH enterWhileLoop
     }
     @Override public void exitNotExpr(GrammarParser.NotExprContext ctx) {

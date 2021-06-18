@@ -23,7 +23,7 @@ public class TestClass {
 
     }
     public void test1(Boolean print){
-        assertEquals(0,check("src/Sample/code2.txt"));
+        assertEquals(5,check("src/Sample/code2.txt"));
         if (print)
             for (int i = 0; i <tool.errorList.size();i++)
                 System.out.println(tool.errorList.get(i));
