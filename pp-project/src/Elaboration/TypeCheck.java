@@ -20,6 +20,24 @@ public class TypeCheck extends GrammarBaseListener {
 
     @Override public void enterClassDec(GrammarParser.ClassDecContext ctx) { }
     @Override public void exitClassDec(GrammarParser.ClassDecContext ctx) { }
+    @Override public void exitGetIndex(GrammarParser.GetIndexContext ctx) {
+        Type index = tree.get(ctx.expr());
+        if (index != Type.Int){
+            int line = ctx.start.getLine();
+            int pos = ctx.start.getCharPositionInLine();
+            String error = " Error on line: " + line + " : "+ pos+". Expected an integer!";
+            errorList.add( error );
+        }
+        Type array = table.getValue(ctx.ID().getText());
+        if (array !=Type.BoolArray && array != Type.IntArray){
+            int line = ctx.start.getLine();
+            int pos = ctx.start.getCharPositionInLine();
+            String error = " Error on line: " + line + " : "+ pos+". You can only index an array!";
+            errorList.add( error );
+        }
+        Type val = array==Type.BoolArray? Type.Bool:Type.Int;
+        tree.put(ctx, val);
+    }
     @Override public void exitVarDec(GrammarParser.VarDecContext ctx) {
         Type expected = tree.get(ctx.type());
         Type exprType = tree.get(ctx.expr());
@@ -50,7 +68,7 @@ public class TypeCheck extends GrammarBaseListener {
     @Override public void exitWhileLoop(GrammarParser.WhileLoopContext ctx) {
 
         table.closeScope();
-        
+
         Type t = tree.get(ctx.expr());
         if (t != Type.Bool){
             int line = ctx.start.getLine();
@@ -146,7 +164,7 @@ public class TypeCheck extends GrammarBaseListener {
         boolean good = true;
         Type prev = tree.get(ctx.expr(0));
         Type curr;
-        for (int i = 1; i < ctx.children.size(); i++){
+        for (int i = 1; i < ctx.children.size()/2; i++){
             curr = tree.get(ctx.expr(i));
             if (curr != prev){
                 int line = ctx.start.getLine();
@@ -159,9 +177,11 @@ public class TypeCheck extends GrammarBaseListener {
                 prev = curr;
         }
         if (good){
-            tree.put(ctx,prev );
+            Type type = prev==Type.Bool?Type.BoolArray:Type.IntArray;
+            tree.put(ctx, type );
         }
     }
+
     @Override public void enterEmptyArr(GrammarParser.EmptyArrContext ctx) {
         tree.put(ctx, Type.Empty);
     }
