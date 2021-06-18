@@ -25,14 +25,14 @@ public class TypeCheck extends GrammarBaseListener {
         if (index != Type.Int){
             int line = ctx.start.getLine();
             int pos = ctx.start.getCharPositionInLine();
-            String error = " Error on line: " + line + " : "+ pos+". Expected an integer!";
+            String error = "Error on line: " + line + " : "+ pos+". Expected an integer!";
             errorList.add( error );
         }
         Type array = table.getValue(ctx.ID().getText());
         if (array !=Type.BoolArray && array != Type.IntArray){
             int line = ctx.start.getLine();
             int pos = ctx.start.getCharPositionInLine();
-            String error = " Error on line: " + line + " : "+ pos+". You can only index an array!";
+            String error = "Error on line: " + line + " : "+ pos+". You can only index an array!";
             errorList.add( error );
         }
         Type val = array==Type.BoolArray? Type.Bool:Type.Int;
@@ -44,7 +44,7 @@ public class TypeCheck extends GrammarBaseListener {
         if (expected !=  exprType){
             int line = ctx.start.getLine();
             int pos = ctx.start.getCharPositionInLine();
-            String error = " Error on line: " + line + " and the position: "+ pos+". Type missmatch!";
+            String error =  "Error on line: " + line + " : "+ pos+". Type missmatch!";
             errorList.add( error );
         }
         // TODO FIX THIS
@@ -56,7 +56,7 @@ public class TypeCheck extends GrammarBaseListener {
         if (t != Type.Bool){
             int line = ctx.start.getLine();
             int pos = ctx.start.getCharPositionInLine();
-            String error = " Error on line: " + line + " and the position: "+ pos+". Type error in if statement, expected boolean!";
+            String error =  "Error on line: " + line + " : "+ pos+". Type error in if statement, expected boolean!";
             errorList.add( error );
         }
     }
@@ -83,7 +83,7 @@ public class TypeCheck extends GrammarBaseListener {
         int line = ctx.start.getLine();
         int pos = ctx.start.getCharPositionInLine();
         if (! (first == Type.Bool)){
-            String error = " Error on line: " + line + " and the position: "+ pos+". Type error while applying NOT!";
+            String error =  "Error on line: " + line + " : "+ pos+". Type error while applying NOT!";
             errorList.add( error );
         }
         // TODO: Add more stuff here
@@ -96,7 +96,7 @@ public class TypeCheck extends GrammarBaseListener {
         int line = ctx.start.getLine();
         int pos = ctx.start.getCharPositionInLine();
         if (! (first == Type.Int && second == Type.Int)){
-            String error = " Error on line: " + line + " and the position: "+ pos+". Type error while adding two expressions!";
+            String error =  "Error on line: " + line + " : "+ pos+". Type error while adding two expressions!";
             errorList.add( error );
         }
         // TODO: Add more stuff here
@@ -109,7 +109,7 @@ public class TypeCheck extends GrammarBaseListener {
         int line = ctx.start.getLine();
         int pos = ctx.start.getCharPositionInLine();
         if (! (first == Type.Bool && second == Type.Bool)){
-            String error = " Error on line: " + line + " and the position: "+ pos+". Type error while applying OR!";
+            String error = "Error on line: " + line + " : "+ pos+". Type error while applying OR!";
             errorList.add( error );
         }
         // TODO: Add more stuff here
@@ -128,7 +128,7 @@ public class TypeCheck extends GrammarBaseListener {
         int line = ctx.start.getLine();
         int pos = ctx.start.getCharPositionInLine();
         if (! (first == Type.Bool && second == Type.Bool)){
-            String error = " Error on line: " + line + " and the position: "+ pos+". Type error while applying OR!";
+            String error =  "Error on line: " + line + " : "+ pos+". Type error while applying OR!";
             errorList.add( error );
         }
         // TODO: Add more stuff here
@@ -152,7 +152,7 @@ public class TypeCheck extends GrammarBaseListener {
         if (table.getValue(ctx.ID().getText()) == Type.NotInScope) {
             int line = ctx.start.getLine();
             int pos = ctx.start.getCharPositionInLine();
-            String error = " Error on line: " + line + " and the position: " + pos + ". Variable [" +
+            String error =  "Error on line: " + line + " : "+ pos+ ". Variable [" +
                     ctx.ID().getText() + "] out of scope!";
             errorList.add(error);
             tree.put(ctx, Type.Empty);
@@ -169,7 +169,7 @@ public class TypeCheck extends GrammarBaseListener {
             if (curr != prev){
                 int line = ctx.start.getLine();
                 int pos = ctx.start.getCharPositionInLine();
-                String error = " Error on line: " + line + " and the position: "+ pos+". Contents of array does not match!";
+                String error =  "Error on line: " + line + " : "+ pos+". Contents of array does not match!";
                 errorList.add( error );
                 good = false;
             }
@@ -181,7 +181,6 @@ public class TypeCheck extends GrammarBaseListener {
             tree.put(ctx, type );
         }
     }
-
     @Override public void enterEmptyArr(GrammarParser.EmptyArrContext ctx) {
         tree.put(ctx, Type.Empty);
     }
@@ -203,7 +202,7 @@ public class TypeCheck extends GrammarBaseListener {
         int line = ctx.start.getLine();
         int pos = ctx.start.getCharPositionInLine();
         if (first != second){
-            String error = " Error on line: " + line + " and the position: "+ pos+". Compared expressions do not match!";
+            String error =  "Error on line: " + line + " : "+ pos+". Compared expressions do not match!";
             errorList.add( error );
         }
         // TODO: Add more stuff here
@@ -215,7 +214,7 @@ public class TypeCheck extends GrammarBaseListener {
         if (table.getValue(ctx.ID().getText()) == Type.NotInScope) {
             int line = ctx.start.getLine();
             int pos = ctx.start.getCharPositionInLine();
-            String error = " Error on line: " + line + " and the position: " + pos + ". Variable [" +
+            String error =  "Error on line: " + line + " : "+ pos+ ". Variable [" +
                     ctx.ID().getText() + "] out of scope!";
             errorList.add(error);
             tree.put(ctx, Type.Empty);
@@ -223,7 +222,7 @@ public class TypeCheck extends GrammarBaseListener {
         else if (table.getValue(ctx.ID().getText()) != type) {
             int line = ctx.start.getLine();
             int pos = ctx.start.getCharPositionInLine();
-            String error = " Error on line: " + line + " and the position: " + pos + ". Variable [" +
+            String error =  "Error on line: " + line + " : "+ pos+ ". Variable [" +
                     ctx.ID().getText() + "] has a different type!";
             errorList.add(error);
             tree.put(ctx, Type.Empty);
