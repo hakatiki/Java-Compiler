@@ -26,12 +26,13 @@ public class TestClass {
         testWhile(false);
         testThreaded(false); //Doesn't get Thread.id correctly as type Int
         testLocks(false);
-        testArrays(true); //Doesn't correctly define array's + doesn't get index correctly
+        testArrays(false); //Doesn't correctly define array's + doesn't get index correctly
         //testEqArrays(false); //same as above
         testIfScope(false);
         testWrongIfScope(false);
         testWhileScope(false);
-        testWrongWhileScope(true);
+        testWrongWhileScope(false);
+        testWrongType(true);
     }
 
 
@@ -130,6 +131,15 @@ public class TestClass {
                 System.out.println(tool.errorList.get(i));
         reset();
     }
+
+    public void testWrongType(boolean print){
+        assertEquals(1,check("src/Sample/wrongType.txt"));
+        if (print)
+            for (int i = 0; i <tool.errorList.size();i++)
+                System.out.println(tool.errorList.get(i));
+        reset();
+    }
+
 
 
     private void reset(){

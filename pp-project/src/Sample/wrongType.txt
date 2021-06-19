@@ -1,0 +1,7 @@
+class main {
+    Local Int ting = 5;
+
+    ting = 12;
+
+    ting = False;
+}
