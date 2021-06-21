@@ -8,7 +8,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.junit.Test;
-import sun.nio.cs.Surrogate;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

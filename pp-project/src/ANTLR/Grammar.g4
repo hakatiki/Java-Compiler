@@ -16,10 +16,10 @@ stat    : '{' stat* '}'                         #blockStat
         ;
 
 expr:   '!' expr                                #notExpr
-        | expr ('+' | '-') expr                 #addExpr
+        | expr (PLUS | MINUS) expr              #addExpr
         | expr '&&' expr                        #andExpr
         | expr '||'  expr                       #orExpr
-        | expr ('<' | '>' | '==' | '!=') expr   #compExpr
+        | expr (GT | LT | EQ | NEQ) expr        #compExpr
         | '(' expr ')'                          #parExpr
         | (NUM | TRUE | FALSE)                  #constExpr
         | '[' arr ']'                           #arrayExpr
@@ -50,6 +50,13 @@ TRUE: 'True';
 FALSE: 'False';
 THREADED: '@Threaded';
 LOCK: 'Lock';
+PLUS: '+';
+MINUS: '-';
+GT: '>';
+LT: '<';
+EQ: '==';
+NEQ: '!=';
+
 
 fragment LETTER: [a-zA-Z];
 fragment DIGIT: [0-9];

@@ -6,6 +6,7 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
+import org.antlr.v4.runtime.tree.TerminalNode;
 import org.junit.Test;
 
 import java.util.LinkedList;
@@ -13,6 +14,7 @@ import java.util.List;
 // TODO :: visitWhileLoop lengthStat+1???????
 // TODO Check if continue scope is everywhere!
 // TODO Dont forget to add registers to regs ParseTreeProperty
+// TODO: Check whether getChild() function actually does what I think it does... (for add/compExpr)
 // HARDCODED 4 in visitGetIndex
 
 public class Generator extends GrammarBaseVisitor<List<String>> {
@@ -56,20 +58,85 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
 
 
 
-    @Override public List<String>  visitCompExpr(GrammarParser.CompExprContext ctx) { return visitChildren(ctx); }
+    @Override public List<String>  visitCompExpr(GrammarParser.CompExprContext ctx) {
+        continueScope(ctx);
 
-    @Override public List<String>  visitOrExpr(GrammarParser.OrExprContext ctx) { return visitChildren(ctx); }
+        List<String> current = new LinkedList<>();
+        List<String> lhs  = visit(ctx.expr(0));
+        String reg0 = regs.get(ctx.expr(0));
+        List<String> rhs  = visit(ctx.expr(1));
+        String reg1 = regs.get(ctx.expr(1));
+
+        String op = ctx.getChild(1).getText();
+        String instr = op.equals(">")?"Gt":(op.equals("<")?"Lt":(op.equals("==")?"Equal":"NEq"));
+
+        // Getting child correct?
+        // Might still need fixing if -- memory allocation ting
+        String save = "Push "+ reg0;
+        String reg2 = reg1.equals(reg0)?(reg0.equals("1")?"2":"1"):reg0;
+        String get = "Pop "+ reg2;
+        String addInstr = "Compute " + instr + " " + reg2 + " " + reg1 + " " + reg0;
+        current.addAll(lhs);
+        current.add(save);
+        current.addAll(rhs);
+        current.add(get);
+        current.add(addInstr);
+        regs.put(ctx,reg0);
+        return current;
+    }
+
+    @Override public List<String>  visitOrExpr(GrammarParser.OrExprContext ctx) {
+        continueScope(ctx);
+        List<String> current = new LinkedList<>();
+        List<String> lhs  = visit(ctx.expr(0));
+        String reg0 = regs.get(ctx.expr(0));
+        List<String> rhs  = visit(ctx.expr(1));
+        String reg1 = regs.get(ctx.expr(1));
+
+        // Might still need fixing if -- memory allocation ting
+        String save = "Push "+ reg0;
+        String reg2 = reg1.equals(reg0)?(reg0.equals("1")?"2":"1"):reg0;
+        String get = "Pop "+ reg2;
+        String addInstr = "Compute Or "+reg2+ " " + reg1 + " " + reg0;
+        current.addAll(lhs);
+        current.add(save);
+        current.addAll(rhs);
+        current.add(get);
+        current.add(addInstr);
+        regs.put(ctx,reg0);
+        return current;
+    }
 
     @Override public List<String>  visitConstExpr(GrammarParser.ConstExprContext ctx) { return visitChildren(ctx); }
 
 
+    @Override public List<String>  visitAndExpr(GrammarParser.AndExprContext ctx) {
+        continueScope(ctx);
+        List<String> current = new LinkedList<>();
+        List<String> lhs  = visit(ctx.expr(0));
+        String reg0 = regs.get(ctx.expr(0));
+        List<String> rhs  = visit(ctx.expr(1));
+        String reg1 = regs.get(ctx.expr(1));
 
-    @Override public List<String>  visitAndExpr(GrammarParser.AndExprContext ctx) { return visitChildren(ctx); }
+        // Might still need fixing if -- memory allocation ting
+        String save = "Push "+ reg0;
+        String reg2 = reg1.equals(reg0)?(reg0.equals("1")?"2":"1"):reg0;
+        String get = "Pop "+ reg2;
+        String addInstr = "Compute And "+reg2+ " " + reg1 + " " + reg0;
+        current.addAll(lhs);
+        current.add(save);
+        current.addAll(rhs);
+        current.add(get);
+        current.add(addInstr);
+        regs.put(ctx,reg0);
+        return current;
+    }
+
 // TODO fix this shit
     @Override public List<String>  visitArrContents(GrammarParser.ArrContentsContext ctx) {
         continueScope(ctx);
         List<String> current = new LinkedList<>();
-        for (int i =  0; i < ctx.expr().size();i++){
+        for (int i =  0; i < ctx.expr().size();i++) {
             List<String> currExpr = visit(ctx.expr(i));
             String reg0 = regs.get(ctx.expr(i));
             String saveToMem = "Store " + reg0+ " (DirAddr ";
@@ -213,17 +280,22 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
     }
     @Override public List<String>  visitAddExpr(GrammarParser.AddExprContext ctx) {
         continueScope(ctx);
+
         List<String> current = new LinkedList<>();
         List<String> lhs  = visit(ctx.expr(0));
         String reg0 = regs.get(ctx.expr(0));
         List<String> rhs  = visit(ctx.expr(1));
         String reg1 = regs.get(ctx.expr(1));
-        // Idk about this is stack and memory different????? if yes this is good
-        // If they are the same then it will mess up scopes...
+
+        String op = ctx.getChild(1).getText();
+        String instr = op.equals("+")?"Add":"Sub";
+
+        // Getting child correct?
+        // Might still need fixing if -- memory allocation ting
         String save = "Push "+ reg0;
         String reg2 = reg1.equals(reg0)?(reg0.equals("1")?"2":"1"):reg0;
         String get = "Pop "+ reg2;
-        String addInstr = "Compute Add "+reg2+ " " + reg1 + " " + reg0;
+        String addInstr = "Compute " + instr + " " + reg2 + " " + reg1 + " " + reg0;
         current.addAll(lhs);
         current.add(save);
         current.addAll(rhs);
