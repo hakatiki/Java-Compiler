@@ -11,17 +11,14 @@ import org.junit.Test;
 import java.util.LinkedList;
 import java.util.List;
 // TODO :: visitWhileLoop lengthStat+1???????
+// TODO Check if continue scope is everywhere!
+// TODO Dont forget to add registers to regs ParseTreeProperty
 
 public class Generator extends GrammarBaseVisitor<List<String>> {
 
-    /** The base register. */
-    private Reg arp = new Reg("r_arp");
-    /** The outcome of the checker phase. */
     private Result checkResult;
-    /** Association of statement nodes to labels. */
     private ParseTreeProperty<Label> labels;
-    /** The program being built. */
-    private ParseTreeProperty<Reg> regs;
+    private ParseTreeProperty<String> regs;
     private ParseTreeProperty<Scope> scope;
 
     public void generate(ParseTree tree, Result checkResult) {
@@ -31,26 +28,21 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         tree.accept
                 (this);
     }
-    private Num offset(ParseTree node) {
-        return new Num(this.checkResult.getOffset(node));
-    }
 
-    private void setReg(ParseTree node, Reg reg) {
+    private void setReg(ParseTree node, String reg) {
         this.regs.put(node, reg);
     }
-    private Reg getReg(ParseTree node) {
+    private String getReg(ParseTree node) {
         return this.regs.get(node);
     }
     private void continueScope(ParseTree node){
         this.scope.put(node, this.scope.get(node.getParent()));
     }
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     @Override public List<String> visitProgram(GrammarParser.ProgramContext ctx) { return visitChildren(ctx); }
 
     @Override public List<String> visitClassDec(GrammarParser.ClassDecContext ctx) { return visitChildren(ctx); }
-
-
-    @Override public List<String>  visitVarDec(GrammarParser.VarDecContext ctx) { return visitChildren(ctx); }
 
     @Override public List<String>  visitThreadedBlock(GrammarParser.ThreadedBlockContext ctx) { return visitChildren(ctx); }
 
@@ -58,7 +50,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
 
     @Override public List<String>  visitPutUnlock(GrammarParser.PutUnlockContext ctx) { return visitChildren(ctx); }
 
-    @Override public List<String>  visitCopyOver(GrammarParser.CopyOverContext ctx) { return visitChildren(ctx); }
+
 
     @Override public List<String>  visitParExpr(GrammarParser.ParExprContext ctx) { return visitChildren(ctx); }
 
@@ -78,7 +70,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
 
     @Override public List<String>  visitConstExpr(GrammarParser.ConstExprContext ctx) { return visitChildren(ctx); }
 
-    @Override public List<String>  visitIdExpr(GrammarParser.IdExprContext ctx) { return visitChildren(ctx); }
+
 
     @Override public List<String>  visitAndExpr(GrammarParser.AndExprContext ctx) { return visitChildren(ctx); }
 
@@ -103,7 +95,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         continueScope(ctx);
         List<String> current = new LinkedList<>();
         List<String> exprCode = visit(ctx.expr());      // Code for expr must be executed 1st
-        Reg reg = getReg(ctx.expr());                   // Register to be compared.
+        String reg = getReg(ctx.expr());                   // Register to be compared.
         List <String> ifCode = visit(ctx.stat(0));
         int lengthIf = ifCode.size();
         int lengthElse = 0;
@@ -126,7 +118,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         continueScope(ctx);
         List<String> current = new LinkedList<>();
         List<String> exprCode = visit(ctx.expr());      // Code for expr must be executed 1st
-        Reg reg = getReg(ctx.expr());                   // Register to be compared.
+        String reg = getReg(ctx.expr());                   // Register to be compared.
         List <String> statCode = visit(ctx.stat());
         int lengthStat = statCode.size();
         int lengthExpr = statCode.size();
@@ -150,5 +142,41 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
 
         return current;
     }
+    @Override public List<String>  visitVarDec(GrammarParser.VarDecContext ctx) {
+        continueScope(ctx);
+        List<String> current = new LinkedList<>();
+        List<String> exprCode = visit(ctx.expr());
+        String ID = ctx.ID().toString();
+        String reg = regs.get(ctx.expr());
 
+        Scope currScope = scope.get(ctx);
+        currScope.put(ID);
+        String store = "Store "+reg.toString()+" (DirAddr "+ currScope.address(ID)+" )";
+        current.addAll(exprCode);
+        current.add(store);
+        return current;
+    }
+    @Override public List<String>  visitCopyOver(GrammarParser.CopyOverContext ctx) {
+        continueScope(ctx);
+        List<String> current = new LinkedList<>();
+
+        List<String> exprCode = visit(ctx.expr());
+        String ID = ctx.ID().toString();
+        String reg = regs.get(ctx.expr());
+        Scope currScope = scope.get(ctx);
+        String store = "Store "+reg.toString()+" (DirAddr "+ currScope.address(ID)+" )";
+        current.addAll(exprCode);
+        current.add(store);
+        return current;
+    }
+    @Override public List<String>  visitIdExpr(GrammarParser.IdExprContext ctx) {
+        continueScope(ctx);
+        List<String> current = new LinkedList<>();
+        Scope currScope = this.scope.get(ctx);
+        int address = currScope.address(ctx.ID().getText());
+        String instr = "Load (DirAddr "+ address+ " ) 1";
+        setReg(ctx,"1");
+        current.add(instr);
+        return current;
+    }
 }
