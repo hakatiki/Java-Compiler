@@ -1,16 +1,8 @@
-package pp.iloc.model;
+package Generation;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import pp.iloc.model.Num.NumKind;
-import pp.iloc.model.Operand.Type;
-import pp.iloc.parse.FormatException;
+import Generation.Num.NumKind;
+import Generation.Operand.Type;
+import java.util.*;
 
 /** ILOC program.
  * @author Arend Rensink
@@ -128,16 +120,16 @@ public class Program {
 	 * Checks for internal consistency, in particular whether
 	 * all used labels are defined.
 	 */
-	public void check() throws FormatException {
+	public void check()  {/*throws FormatException*/
 		List<String> messages = new ArrayList<>();
 		for (Instr instr : getInstr()) {
 			for (Op op : instr) {
 				messages.addAll(checkOpnds(op.getLine(), op.getArgs()));
 			}
 		}
-		if (!messages.isEmpty()) {
+		/*if (!messages.isEmpty()) {
 			throw new FormatException(messages);
-		}
+		}*/
 	}
 
 	private List<String> checkOpnds(int loc, List<Operand> opnds) {

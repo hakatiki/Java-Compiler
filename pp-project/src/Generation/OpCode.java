@@ -1,19 +1,10 @@
-package pp.iloc.model;
+package Generation;
 
-import static pp.iloc.model.OpClaz.COMMENT;
-import static pp.iloc.model.OpClaz.CONTROL;
-import static pp.iloc.model.OpClaz.NORMAL;
-import static pp.iloc.model.Operand.Type.LABEL;
-import static pp.iloc.model.Operand.Type.NUM;
-import static pp.iloc.model.Operand.Type.REG;
-import static pp.iloc.model.Operand.Type.STR;
+import java.util.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
+import static Generation.OpClaz.*;
+import static Generation.Operand.Type.*;
 /**
  * Code defining the type of a (non-control flow) operation.
  * @author Arend Rensink
@@ -25,7 +16,7 @@ public enum OpCode {
 
 	// Register arithmetic
 	/** Addition (reg0 + reg1 => reg2). */
-	add(2, REG, REG, REG),
+	Add(2, REG, REG),
 	/** Subtraction (reg0 - reg1 => reg2). */
 	sub(2, REG, REG, REG),
 	/** Multiplication (reg0 * reg1 => reg2). */
@@ -35,7 +26,7 @@ public enum OpCode {
 
 	// Immediate arithmetic
 	/** Addition of immediate value (reg0 + num1 => reg2). */
-	addI(2, REG, NUM, REG),
+	AddI(2, REG, NUM, REG),
 	/** Subtraction of immediate value (reg0 - num1 => reg2). */
 	subI(2, REG, NUM, REG),
 	/** Subtraction from immediate value (num1 - reg0 => reg2). */

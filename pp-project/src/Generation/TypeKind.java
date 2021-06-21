@@ -1,4 +1,4 @@
-package pp.block5.cc.simple;
+package Generation;
 
 /** Pascal data type kind. */
 public enum TypeKind {

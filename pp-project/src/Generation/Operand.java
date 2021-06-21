@@ -1,4 +1,4 @@
-package pp.iloc.model;
+package Generation;
 
 /** Abstract supertype of all kinds of operands. */
 abstract public class Operand {
@@ -18,7 +18,7 @@ abstract public class Operand {
 	public static enum Type {
 		/** Register-type operand; class {@link Reg}. */
 		REG,
-		/** Numeric operand; class {@link Num} or {@link Symb}. */
+		/** Numeric operand; class {@link Num} or. */
 		NUM,
 		/** Label operand; class {@link Label}. */
 		LABEL,

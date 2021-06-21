@@ -1,4 +1,4 @@
-package pp.block5.cc.simple;
+package Generation;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;

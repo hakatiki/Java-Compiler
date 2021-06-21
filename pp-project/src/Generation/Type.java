@@ -1,10 +1,9 @@
-package pp.block5.cc.simple;
+package Generation;
 
-import pp.block5.cc.simple.TypeKind;
-import pp.iloc.eval.Machine;
 
 /** Pascal data type. */
 abstract public class Type {
+	public static final int INT_SIZE = 4;
 	/** The singleton instance of the {@link Bool} type. */
 	public static final Type BOOL = new Bool();
 	/** The singleton instance of the {@link Int} type. */
@@ -32,7 +31,7 @@ abstract public class Type {
 
 		@Override
 		public int size() {
-			return Machine.INT_SIZE;
+			return INT_SIZE;
 		}
 
 		@Override
@@ -49,7 +48,7 @@ abstract public class Type {
 
 		@Override
 		public int size() {
-			return Machine.INT_SIZE;
+			return INT_SIZE;
 		}
 
 		@Override

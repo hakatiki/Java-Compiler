@@ -1,15 +1,9 @@
-package pp.iloc.model;
+package Generation;
 
-import static pp.iloc.model.OpClaz.COMMENT;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-
-import pp.iloc.model.Operand.Type;
-
+import java.util.*;
+import Generation.Operand.Type;
+import static Generation.OpClaz.COMMENT;
 /**
  * ILOC operation
  * @author Arend Rensink
@@ -86,22 +80,22 @@ public class Op extends Instr {
 		return this.args;
 	}
 
-	/** Convenience method to retrieve a given argument as {@link Reg}. */
+	/** Convenience method to retrieve a given argument as  */
 	public Reg reg(int i) {
 		return (Reg) this.args.get(i);
 	}
 
-	/** Convenience method to retrieve a given argument as {@link Str}. */
+	/** Convenience method to retrieve a given argument as */
 	public Str str(int i) {
 		return (Str) this.args.get(i);
 	}
 
-	/** Convenience method to retrieve a given argument as {@link Num}. */
+	/** Convenience method to retrieve a given argument as . */
 	public Num num(int i) {
 		return (Num) this.args.get(i);
 	}
 
-	/** Convenience method to retrieve a given operand as {@link Label}. */
+	/** Convenience method to retrieve a given operand as */
 	public Label label(int i) {
 		return (Label) this.args.get(i);
 	}
