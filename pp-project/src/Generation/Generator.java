@@ -17,18 +17,10 @@ import java.util.List;
 
 public class Generator extends GrammarBaseVisitor<List<String>> {
 
-    private Result checkResult;
-    private ParseTreeProperty<Label> labels;
-    private ParseTreeProperty<String> regs;
-    private ParseTreeProperty<Scope> scope;
+    private ParseTreeProperty<String> regs  = new ParseTreeProperty<>();
+    private ParseTreeProperty<Scope> scope = new ParseTreeProperty<>();
 
-    public void generate(ParseTree tree, Result checkResult) {
-        this.checkResult = checkResult;
-        this.regs = new ParseTreeProperty<>();
-        this.labels = new ParseTreeProperty<>();
-        tree.accept
-                (this);
-    }
+
 
     private void setReg(ParseTree node, String reg) {
         this.regs.put(node, reg);
@@ -43,7 +35,9 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     @Override public List<String> visitProgram(GrammarParser.ProgramContext ctx) { return visitChildren(ctx); }
 
-    @Override public List<String> visitClassDec(GrammarParser.ClassDecContext ctx) { return visitChildren(ctx); }
+    @Override public List<String> visitClassDec(GrammarParser.ClassDecContext ctx) {
+        scope.put(ctx, new Scope());
+        return visitChildren(ctx); }
 
     @Override public List<String>  visitThreadedBlock(GrammarParser.ThreadedBlockContext ctx) { return visitChildren(ctx); }
 
