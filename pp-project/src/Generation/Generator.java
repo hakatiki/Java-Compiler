@@ -61,27 +61,6 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
     @Override public List<String>  visitGetThreadId(GrammarParser.GetThreadIdContext ctx) { return visitChildren(ctx); }
 
 
-    @Override public List<String>  visitAddExpr(GrammarParser.AddExprContext ctx) {
-        continueScope(ctx);
-        List<String> current = new LinkedList<>();
-        List<String> lhs  = visit(ctx.expr(0));
-        String reg0 = regs.get(ctx.expr(0));
-        List<String> rhs  = visit(ctx.expr(1));
-        String reg1 = regs.get(ctx.expr(1));
-        // Idk about this is stack and memory different????? if yes this is good
-        // If they are the same then it will mess up scopes...
-        String save = "Push "+ reg0;
-        String reg2 = reg1.equals(reg0)?(reg0.equals("1")?"2":"1"):reg0;
-        String get = "Pop "+ reg2;
-        String addInstr = "Compute Add "+reg2+ " " + reg1 + " " + reg0;
-        current.addAll(lhs);
-        current.add(save);
-        current.addAll(rhs);
-        current.add(get);
-        current.add(addInstr);
-        regs.put(ctx,reg0);
-        return current;
-    }
 
     @Override public List<String>  visitCompExpr(GrammarParser.CompExprContext ctx) { return visitChildren(ctx); }
 
@@ -92,8 +71,18 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
 
 
     @Override public List<String>  visitAndExpr(GrammarParser.AndExprContext ctx) { return visitChildren(ctx); }
+// TODO fix this shit
+    @Override public List<String>  visitArrContents(GrammarParser.ArrContentsContext ctx) {
+        continueScope(ctx);
+        List<String> current = new LinkedList<>();
+        for (int i =  0; i < ctx.expr().size();i++){
+            List<String> currExpr = visit(ctx.expr(i));
+            String reg0 = regs.get(ctx.expr(i));
+            String saveToMem = "Store " + reg0+ " (DirAddr ";
+        }
 
-    @Override public List<String>  visitArrContents(GrammarParser.ArrContentsContext ctx) { return visitChildren(ctx); }
+
+        return visitChildren(ctx); }
 
     @Override public List<String>  visitEmptyArr(GrammarParser.EmptyArrContext ctx) { return visitChildren(ctx); }
 
@@ -226,6 +215,27 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         String instr = "Load (DirAddr "+ address+ " ) 1";
         setReg(ctx,"1");
         current.add(instr);
+        return current;
+    }
+    @Override public List<String>  visitAddExpr(GrammarParser.AddExprContext ctx) {
+        continueScope(ctx);
+        List<String> current = new LinkedList<>();
+        List<String> lhs  = visit(ctx.expr(0));
+        String reg0 = regs.get(ctx.expr(0));
+        List<String> rhs  = visit(ctx.expr(1));
+        String reg1 = regs.get(ctx.expr(1));
+        // Idk about this is stack and memory different????? if yes this is good
+        // If they are the same then it will mess up scopes...
+        String save = "Push "+ reg0;
+        String reg2 = reg1.equals(reg0)?(reg0.equals("1")?"2":"1"):reg0;
+        String get = "Pop "+ reg2;
+        String addInstr = "Compute Add "+reg2+ " " + reg1 + " " + reg0;
+        current.addAll(lhs);
+        current.add(save);
+        current.addAll(rhs);
+        current.add(get);
+        current.add(addInstr);
+        regs.put(ctx,reg0);
         return current;
     }
 }
