@@ -2,6 +2,7 @@ package Generation;
 
 import ANTLR.GrammarBaseVisitor;
 import ANTLR.GrammarParser;
+import Elaboration.Type;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -14,12 +15,13 @@ import java.util.List;
 // TODO Check if continue scope is everywhere!
 // TODO Dont forget to add registers to regs ParseTreeProperty
 // HARDCODED 4 in visitGetIndex
+// HARDCODED 4 in visitArrContents
 
 public class Generator extends GrammarBaseVisitor<List<String>> {
 
     private ParseTreeProperty<String> regs  = new ParseTreeProperty<>();
     private ParseTreeProperty<Scope> scope = new ParseTreeProperty<>();
-
+    private String varDec = "";
 
 
     private void setReg(ParseTree node, String reg) {
@@ -35,9 +37,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     @Override public List<String> visitProgram(GrammarParser.ProgramContext ctx) { return visitChildren(ctx); }
 
-    @Override public List<String> visitClassDec(GrammarParser.ClassDecContext ctx) {
-        scope.put(ctx, new Scope());
-        return visitChildren(ctx); }
+
 
     @Override public List<String>  visitThreadedBlock(GrammarParser.ThreadedBlockContext ctx) { return visitChildren(ctx); }
 
@@ -60,23 +60,34 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
 
     @Override public List<String>  visitOrExpr(GrammarParser.OrExprContext ctx) { return visitChildren(ctx); }
 
-    @Override public List<String>  visitConstExpr(GrammarParser.ConstExprContext ctx) { return visitChildren(ctx); }
+    @Override public List<String>  visitConstExpr(GrammarParser.ConstExprContext ctx) {
+        continueScope(ctx);
+        List<String> current = new LinkedList<>();
+        String reg = "regA";
+        String str = ctx.getText();
+        int address = scope.get(ctx).address(varDec);
+        if (str.equals("True") || str.equals("False")){
+            int val =  str.equals("True")?1:0;
+            String load = "Load (ImmValue "+val + " " + reg;
+            String store = "Store "+reg+ " (DirAddr " + address+" )";
+            current.add(load);
+            current.add(store);
+        }
+        else {
+            int val = Integer.valueOf(str);
+            String load = "Load (ImmValue "+val + " " + reg;
+            String store = "Store "+reg+ " (DirAddr " + address+" )";
+            current.add(load);
+            current.add(store);
+        }
+        regs.put(ctx,reg);
+        return current;
+    }
 
 
 
     @Override public List<String>  visitAndExpr(GrammarParser.AndExprContext ctx) { return visitChildren(ctx); }
-// TODO fix this shit
-    @Override public List<String>  visitArrContents(GrammarParser.ArrContentsContext ctx) {
-        continueScope(ctx);
-        List<String> current = new LinkedList<>();
-        for (int i =  0; i < ctx.expr().size();i++){
-            List<String> currExpr = visit(ctx.expr(i));
-            String reg0 = regs.get(ctx.expr(i));
-            String saveToMem = "Store " + reg0+ " (DirAddr ";
-        }
 
-
-        return visitChildren(ctx); }
 
     @Override public List<String>  visitEmptyArr(GrammarParser.EmptyArrContext ctx) { return visitChildren(ctx); }
 
@@ -176,6 +187,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
     }
     @Override public List<String>  visitVarDec(GrammarParser.VarDecContext ctx) {
         continueScope(ctx);
+        varDec = ctx.ID().getText();
         List<String> current = new LinkedList<>();
         List<String> exprCode = visit(ctx.expr());
         String ID = ctx.ID().toString();
@@ -186,6 +198,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         String store = "Store "+reg.toString()+" (DirAddr "+ currScope.address(ID)+" )";
         current.addAll(exprCode);
         current.add(store);
+        varDec = "";
         return current;
     }
     @Override public List<String>  visitCopyOver(GrammarParser.CopyOverContext ctx) {
@@ -232,4 +245,23 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         regs.put(ctx,reg0);
         return current;
     }
+    // TODO fix this shit
+    @Override public List<String>  visitArrContents(GrammarParser.ArrContentsContext ctx) {
+        continueScope(ctx);
+        List<String> current = new LinkedList<>();
+        Scope s = scope.get(ctx);
+        int baseAddress = s.address(varDec);
+        for (int i =  0; i < ctx.expr().size();i++){
+            String name = varDec + "[" + i + "]";
+            s.put(name);
+            List<String> currExpr = visit(ctx.expr(i));
+            String reg0 = regs.get(ctx.expr(i));
+            String saveToMem = "Store "+reg0+ " (DirAddr " + baseAddress + i * 4 + " )";
+            current.addAll(currExpr);
+            current.add(saveToMem);
+        }
+        return current; }
+    @Override public List<String> visitClassDec(GrammarParser.ClassDecContext ctx) {
+        scope.put(ctx, new Scope());
+        return visitChildren(ctx); }
 }
