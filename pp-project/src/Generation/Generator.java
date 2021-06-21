@@ -41,19 +41,15 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
     private Reg getReg(ParseTree node) {
         return this.regs.get(node);
     }
+    private void continueScope(ParseTree node){
+        this.scope.put(node, this.scope.get(node.getParent()));
+    }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     @Override public List<String> visitProgram(GrammarParser.ProgramContext ctx) { return visitChildren(ctx); }
 
     @Override public List<String> visitClassDec(GrammarParser.ClassDecContext ctx) { return visitChildren(ctx); }
 
-    @Override public List<String>  visitBlockStat(GrammarParser.BlockStatContext ctx) {
-        // scope.put(ctx, new Scope());
-        List<String> current = new LinkedList<>();
-        for (int i = 0; i < ctx.stat().size();i++){
-            current.addAll(visit(ctx.stat(i)));
-        }
-        return current;
-    }
+
     @Override public List<String>  visitVarDec(GrammarParser.VarDecContext ctx) { return visitChildren(ctx); }
 
     @Override public List<String>  visitThreadedBlock(GrammarParser.ThreadedBlockContext ctx) { return visitChildren(ctx); }
@@ -104,6 +100,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     @Override public List<String>  visitIfStatement(GrammarParser.IfStatementContext ctx) {
+        continueScope(ctx);
         List<String> current = new LinkedList<>();
         List<String> exprCode = visit(ctx.expr());      // Code for expr must be executed 1st
         Reg reg = getReg(ctx.expr());                   // Register to be compared.
@@ -111,7 +108,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         int lengthIf = ifCode.size();
         int lengthElse = 0;
         List<String> elseCode = new LinkedList<>();
-        if (ctx.stat().size()==2){
+        if (ctx.stat().size()==2) {
             elseCode = visit(ctx.stat(1));
             lengthElse = elseCode.size();
         }
@@ -125,8 +122,8 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         current.addAll(elseCode);
         return current;
     }
-
     @Override public List<String>  visitWhileLoop(GrammarParser.WhileLoopContext ctx) {
+        continueScope(ctx);
         List<String> current = new LinkedList<>();
         List<String> exprCode = visit(ctx.expr());      // Code for expr must be executed 1st
         Reg reg = getReg(ctx.expr());                   // Register to be compared.
@@ -140,6 +137,17 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         current.add(branch);
         current.addAll(statCode);
         current.add(back);
+        return current;
+    }
+    @Override public List<String>  visitBlockStat(GrammarParser.BlockStatContext ctx) {
+        Scope oldScope = scope.get(ctx.parent);
+        Scope newScope = oldScope.getCopy();
+        scope.put(ctx, newScope);
+        List<String> current = new LinkedList<>();
+        for (int i = 0; i < ctx.stat().size();i++){
+            current.addAll(visit(ctx.stat(i)));
+        }
+
         return current;
     }
 

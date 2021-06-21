@@ -9,15 +9,22 @@ public class Scope {
 	 * Used to calculate offsets of newly declared variables. */
 	private int size;
 	/** Map from declared variables to their types. */
-	private final Map<String, Type> types;
+	private  Map<String, Type> types;
 	/** Map from declared variables to their offset within the allocation
 	 * record of this scope. */
-	private final Map<String, Integer> offsets;
+	private  Map<String, Integer> offsets;
 
 	/** Constructs a fresh, initially empty scope. */
 	public Scope() {
 		this.types = new LinkedHashMap<>();
 		this.offsets = new LinkedHashMap<>();
+	}
+	public Scope getCopy(){
+		Scope scope = new Scope();
+		scope.types.putAll(this.types);
+		scope.offsets.putAll(this.offsets);
+		scope.size = this.size;
+		return scope;
 	}
 
 	/** Tests if a given identifier is declared in this scope. */
