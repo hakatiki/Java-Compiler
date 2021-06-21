@@ -1,13 +1,18 @@
 package Generation;
 
 import ANTLR.GrammarBaseVisitor;
+import ANTLR.GrammarParser;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
 import org.junit.Test;
 
-public class Generator extends GrammarBaseVisitor {
+import java.util.LinkedList;
+import java.util.List;
+// TODO :: visitWhileLoop lengthStat+1???????
+
+public class Generator extends GrammarBaseVisitor<List<String>> {
 
     /** The base register. */
     private Reg arp = new Reg("r_arp");
@@ -16,101 +21,126 @@ public class Generator extends GrammarBaseVisitor {
     /** Association of statement nodes to labels. */
     private ParseTreeProperty<Label> labels;
     /** The program being built. */
-    private Program prog;
-    /** Register count, used to generate fresh registers. */
-    private int regCount;
-    /** Association of expression and target nodes to registers. */
     private ParseTreeProperty<Reg> regs;
+    private ParseTreeProperty<Scope> scope;
 
-    public Program generate(ParseTree tree, Result checkResult) {
-        this.prog = new Program();
+    public void generate(ParseTree tree, Result checkResult) {
         this.checkResult = checkResult;
         this.regs = new ParseTreeProperty<>();
         this.labels = new ParseTreeProperty<>();
-        this.regCount = 0;
         tree.accept
                 (this);
-        return this.prog;
     }
-
-    /** Constructs an operation from the parameters
-     * and adds it to the program under construction. */
-    private Op emit(Label label, OpCode opCode, Operand... args) {
-        Op result = new Op(label, opCode, args);
-        this.prog.addInstr(result);
-        return result;
-    }
-
-
-    @Test
-    public void instrTest(){
-        this.prog = new Program();
-        this.regs = new ParseTreeProperty<>();
-        this.labels = new ParseTreeProperty<>();
-        this.regCount = 0;
-        Reg r0 = new Reg("reg_a");
-        Reg r1 = new Reg("reg_b");
-        Reg result = new Reg("reg_r");
-        Num n = new Num(12);
-        Op i = emit(OpCode.Add, r0, r1);
-        Op j = emit(OpCode.Add, r1, result);
-        Op k = emit(OpCode.AddI, r1, n, result);
-        System.out.println(prog.prettyPrint());
-    }
-
-
-    /** Constructs an operation from the parameters
-     * and adds it to the program under construction. */
-    private Op emit(OpCode opCode, Operand... args) {
-        return emit((Label) null, opCode, args);
-    }
-
-    /**
-     * Looks up the label for a given parse tree node,
-     * creating it if none has been created before.
-     * The label is actually constructed from the entry node
-     * in the flow graph, as stored in the checker result.
-     */
-    private Label label(ParserRuleContext node) {
-        Label result = this.labels.get(node);
-        if (result == null) {
-            ParserRuleContext entry = this.checkResult.getEntry(node);
-            result = createLabel(entry, "n");
-            this.labels.put(node, result);
-        }
-        return result;
-    }
-
-    /** Creates a label for a given parse tree node and prefix. */
-    private Label createLabel(ParserRuleContext node, String prefix) {
-        Token token = node.getStart();
-        int line = token.getLine();
-        int column = token.getCharPositionInLine();
-        String result = prefix + "_" + line + "_" + column;
-        return new Label(result);
-    }
-
-    /** Retrieves the offset of a variable node from the checker result,
-     * wrapped in a {@link Num} operand. */
     private Num offset(ParseTree node) {
         return new Num(this.checkResult.getOffset(node));
     }
 
-    /** Returns a register for a given parse tree node,
-     * creating a fresh register if there is none for that node. */
-    private Reg reg(ParseTree node) {
-        Reg result = this.regs.get(node);
-        if (result == null) {
-            result = new Reg("r_" + this.regCount);
-            this.regs.put(node, result);
-            this.regCount++;
-        }
-        return result;
-    }
-
-    /** Assigns a register to a given parse tree node. */
     private void setReg(ParseTree node, Reg reg) {
         this.regs.put(node, reg);
+    }
+    private Reg getReg(ParseTree node) {
+        return this.regs.get(node);
+    }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    @Override public List<String> visitProgram(GrammarParser.ProgramContext ctx) { return visitChildren(ctx); }
+
+    @Override public List<String> visitClassDec(GrammarParser.ClassDecContext ctx) { return visitChildren(ctx); }
+
+    @Override public List<String>  visitBlockStat(GrammarParser.BlockStatContext ctx) {
+        // scope.put(ctx, new Scope());
+        List<String> current = new LinkedList<>();
+        for (int i = 0; i < ctx.stat().size();i++){
+            current.addAll(visit(ctx.stat(i)));
+        }
+        return current;
+    }
+    @Override public List<String>  visitVarDec(GrammarParser.VarDecContext ctx) { return visitChildren(ctx); }
+
+    @Override public List<String>  visitThreadedBlock(GrammarParser.ThreadedBlockContext ctx) { return visitChildren(ctx); }
+
+    @Override public List<String>  visitPutLock(GrammarParser.PutLockContext ctx) { return visitChildren(ctx); }
+
+    @Override public List<String>  visitPutUnlock(GrammarParser.PutUnlockContext ctx) { return visitChildren(ctx); }
+
+    @Override public List<String>  visitCopyOver(GrammarParser.CopyOverContext ctx) { return visitChildren(ctx); }
+
+    @Override public List<String>  visitParExpr(GrammarParser.ParExprContext ctx) { return visitChildren(ctx); }
+
+    @Override public List<String>  visitNotExpr(GrammarParser.NotExprContext ctx) { return visitChildren(ctx); }
+
+    @Override public List<String>  visitArrayExpr(GrammarParser.ArrayExprContext ctx) { return visitChildren(ctx); }
+
+    @Override public List<String>  visitGetThreadId(GrammarParser.GetThreadIdContext ctx) { return visitChildren(ctx); }
+
+    @Override public List<String>  visitGetIndex(GrammarParser.GetIndexContext ctx) { return visitChildren(ctx); }
+
+    @Override public List<String>  visitAddExpr(GrammarParser.AddExprContext ctx) { return visitChildren(ctx); }
+
+    @Override public List<String>  visitCompExpr(GrammarParser.CompExprContext ctx) { return visitChildren(ctx); }
+
+    @Override public List<String>  visitOrExpr(GrammarParser.OrExprContext ctx) { return visitChildren(ctx); }
+
+    @Override public List<String>  visitConstExpr(GrammarParser.ConstExprContext ctx) { return visitChildren(ctx); }
+
+    @Override public List<String>  visitIdExpr(GrammarParser.IdExprContext ctx) { return visitChildren(ctx); }
+
+    @Override public List<String>  visitAndExpr(GrammarParser.AndExprContext ctx) { return visitChildren(ctx); }
+
+    @Override public List<String>  visitArrContents(GrammarParser.ArrContentsContext ctx) { return visitChildren(ctx); }
+
+    @Override public List<String>  visitEmptyArr(GrammarParser.EmptyArrContext ctx) { return visitChildren(ctx); }
+
+    @Override public List<String>  visitIntArray(GrammarParser.IntArrayContext ctx) { return visitChildren(ctx); }
+
+    @Override public List<String>  visitBoolArray(GrammarParser.BoolArrayContext ctx) { return visitChildren(ctx); }
+
+    @Override public List<String>  visitInt(GrammarParser.IntContext ctx) { return visitChildren(ctx); }
+
+    @Override public List<String>  visitBool(GrammarParser.BoolContext ctx) { return visitChildren(ctx); }
+
+    @Override public List<String>  visitIsLocal(GrammarParser.IsLocalContext ctx) { return visitChildren(ctx); }
+
+    @Override public List<String>  visitIsShared(GrammarParser.IsSharedContext ctx) { return visitChildren(ctx); }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    @Override public List<String>  visitIfStatement(GrammarParser.IfStatementContext ctx) {
+        List<String> current = new LinkedList<>();
+        List<String> exprCode = visit(ctx.expr());      // Code for expr must be executed 1st
+        Reg reg = getReg(ctx.expr());                   // Register to be compared.
+        List <String> ifCode = visit(ctx.stat(0));
+        int lengthIf = ifCode.size();
+        int lengthElse = 0;
+        List<String> elseCode = new LinkedList<>();
+        if (ctx.stat().size()==2){
+            elseCode = visit(ctx.stat(1));
+            lengthElse = elseCode.size();
+        }
+        // TODO might need to fix plus 1 or plus 0
+        String branch = "Branch "+reg.toString()+" (Rel "+ (lengthIf+1) +")";
+        String endIfJump = "Jump (Rel ( "+ (lengthElse+1) +"))";
+        current.addAll(exprCode);
+        current.add(branch);
+        current.addAll(ifCode);
+        current.add(endIfJump);
+        current.addAll(elseCode);
+        return current;
+    }
+
+    @Override public List<String>  visitWhileLoop(GrammarParser.WhileLoopContext ctx) {
+        List<String> current = new LinkedList<>();
+        List<String> exprCode = visit(ctx.expr());      // Code for expr must be executed 1st
+        Reg reg = getReg(ctx.expr());                   // Register to be compared.
+        List <String> statCode = visit(ctx.stat());
+        int lengthStat = statCode.size();
+        int lengthExpr = statCode.size();
+        // TODO might need to fix plus 1 or plus 0
+        String branch = "Branch "+reg.toString()+" (Rel "+ (lengthStat+1) +")";
+        String back = "Jump (Rel ( "+ -(lengthStat+lengthExpr+1) + "))";
+        current.addAll(exprCode);
+        current.add(branch);
+        current.addAll(statCode);
+        current.add(back);
+        return current;
     }
 
 }

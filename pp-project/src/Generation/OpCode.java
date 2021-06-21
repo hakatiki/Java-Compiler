@@ -121,6 +121,7 @@ public enum OpCode {
 	jumpI(CONTROL, 0, LABEL),
 	/** Register jump (reg0 => pc). */
 	jump(CONTROL, 0, REG),
+	jumpRel (CONTROL, 0, REG),
 	/** Pseudo-op to record labels of a register jump. */
 	tbl(2, REG, LABEL),
 
