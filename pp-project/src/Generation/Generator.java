@@ -52,7 +52,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
 
 
 
-    @Override public List<String>  visitParExpr(GrammarParser.ParExprContext ctx) { return visitChildren(ctx); }
+
 
     @Override public List<String>  visitNotExpr(GrammarParser.NotExprContext ctx) { return visitChildren(ctx); }
 
@@ -91,6 +91,20 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
     @Override public List<String>  visitIsShared(GrammarParser.IsSharedContext ctx) { return visitChildren(ctx); }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    // definitely not correct... :(
+    @Override public List<String>  visitParExpr(GrammarParser.ParExprContext ctx) {
+        List<String> current = new LinkedList<>();
+        List<String> exprCode = visit(ctx.expr());
+        String reg = regs.get(ctx.expr());
+
+        String store = "Store "+ reg.toString() +" (DirAddr " + " " + " )";
+        current.addAll(exprCode);
+        current.add(store);
+        return current;
+    }
+
     @Override public List<String>  visitIfStatement(GrammarParser.IfStatementContext ctx) {
         continueScope(ctx);
         List<String> current = new LinkedList<>();
