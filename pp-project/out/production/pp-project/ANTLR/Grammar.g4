@@ -14,6 +14,7 @@ stat    : '{' stat* '}'                         #blockStat
         | 'lock' '(' ')' ';'                    #putLock
         | 'unlock' '(' ')' ';'                  #putUnlock
         | ID '=' expr ';'                       #copyOver
+        | OUT expr ';'                          #output
         ;
 
 expr:   '!' expr                                #notExpr
@@ -44,6 +45,7 @@ mem     : 'Local'                               #isLocal
         ;
 
 CLASS: 'class';
+OUT : 'out';
 IF: 'if';
 ELSE: 'else';
 WHILE: 'while';

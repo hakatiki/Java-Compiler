@@ -37,7 +37,6 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
     }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // @Override public List<String> visitProgram(GrammarParser.ProgramContext ctx) { return visitChildren(ctx); }
 
 
 
@@ -47,17 +46,9 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
 
     @Override public List<String>  visitPutUnlock(GrammarParser.PutUnlockContext ctx) { return visitChildren(ctx); }
 
-
-
-
-
     @Override public List<String>  visitNotExpr(GrammarParser.NotExprContext ctx) { return visitChildren(ctx); }
 
-
     @Override public List<String>  visitGetThreadId(GrammarParser.GetThreadIdContext ctx) { return visitChildren(ctx); }
-
-
-
 
     @Override public List<String>  visitEmptyArr(GrammarParser.EmptyArrContext ctx) { return visitChildren(ctx); }
 
@@ -124,7 +115,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         }
         // TODO might need to fix plus 1 or plus 0
         String branch = "Branch "+reg+" (Rel "+ (lengthIf+2) +")";
-        String endIfJump = "Jump (Rel ( "+ (lengthElse+1) +"))";
+        String endIfJump = "Jump (Rel "+ (lengthElse+1) +" )";
         current.addAll(exprCode);
         current.add(branch);
         current.addAll(ifCode);
@@ -305,13 +296,12 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         String reg = "regA";
         String str = ctx.getText();
         if (str.equals("True") || str.equals("False")){
-            int val =  str.equals("True")?1:0;
-            String load = "Load (ImmValue "+val + " ) " + reg;
+            int val =  str.equals("True") ? 1 : 0;
+            String load = "Load (ImmValue "+ val + " ) " + reg;
             current.add(load);
         }
         else {
-            int val = Integer.valueOf(str);
-            String load = "Load (ImmValue "+val + " ) " + reg;
+            String load = "Load (ImmValue "+ str + " ) " + reg;
             current.add(load);
         }
         regs.put(ctx,reg);
@@ -326,10 +316,10 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         String reg1 = regs.get(ctx.expr(1));
 
         // Might still need fixing if -- memory allocation ting
-        String save = "Push "+ reg0;
-        String reg2 = reg1.equals(reg0)?(reg0.equals("regA")?"regB":"regA"):reg0;
-        String get = "Pop "+ reg2;
-        String addInstr = "Compute And "+reg2+ " " + reg1 + " " + reg0;
+        String save = "Push " + reg0;
+        String reg2 = reg1.equals(reg0) ? (reg0.equals("regA") ? "regB" : "regA") : reg0;
+        String get = "Pop " + reg2;
+        String addInstr = "Compute And " + reg2 + " " + reg1 + " " + reg0;
         current.addAll(lhs);
         current.add(save);
         current.addAll(rhs);
