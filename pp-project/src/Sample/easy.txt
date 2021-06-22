@@ -1,7 +1,9 @@
 class main {
-    Local Int y = 1;
-    while (y<10){
-        y = y + 1;
+    Local Int[] array = [0,1];
+    if (array[0]+array[1] < 0){
+         Local Int x = array[0];
     }
-    Local
+    else{
+        Local Int x = array[1];
+    }
 }

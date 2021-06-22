@@ -97,9 +97,14 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         String reg1 = reg0.equals("regA")? "regB":"regA";
         String loadFour = "Load (ImmValue 4) "+reg1+"";
         String offsetComp = "Compute Mul " +reg0+" " + reg1+" " + reg0;
-        String loadInstr = "Load ( DirAddr " + reg0 +" ) " + reg0;
+        String addressComp1 = "Load (ImmValue " +  addressA + " ) " +reg1;
+        String addressComp2 = "Compute Add "+ reg1 + " " + reg0 + " " + reg0;
+        String loadInstr = "Load ( IndAddr " + reg0 +" ) " + reg0;
+        current.addAll(exprCode);
         current.add(loadFour);
         current.add(offsetComp);
+        current.add(addressComp1);
+        current.add(addressComp2);
         current.add(loadInstr);
         regs.put(ctx, reg0);
         return current;
@@ -118,7 +123,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
             lengthElse = elseCode.size();
         }
         // TODO might need to fix plus 1 or plus 0
-        String branch = "Branch "+reg+" (Rel "+ (lengthIf+1) +")";
+        String branch = "Branch "+reg+" (Rel "+ (lengthIf+2) +")";
         String endIfJump = "Jump (Rel ( "+ (lengthElse+1) +"))";
         current.addAll(exprCode);
         current.add(branch);
@@ -136,7 +141,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         int lengthStat = statCode.size();
         int lengthExpr = exprCode.size();
         // TODO might need to fix plus 1 or plus 0
-        String branch = "Branch "+reg+" (Rel "+ (lengthStat+1) +")";
+        String branch = "Branch "+reg+" (Rel "+ (lengthStat+2) +")";
         String back = "Jump (Rel ( "+ -(lengthStat+lengthExpr+1) + "))";
         current.addAll(exprCode);
         current.add(branch);
@@ -160,12 +165,14 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         List<String> exprCode = visit(ctx.expr());
         String ID = ctx.ID().toString();
         String reg = regs.get(ctx.expr());
-
-        //Scope currScope = scope.get(ctx);
-        //currScope.put(ID);
-        //String store = "Store "+reg.toString()+" (DirAddr "+ currScope.address(ID)+" )";
         current.addAll(exprCode);
-        //current.add(store);
+
+        if (ctx.type().getText().equals("Int") || ctx.type().getText().equals("Bool")){
+            Scope currScope = scope.get(ctx);
+            currScope.put(ID);
+            String store = "Store "+reg+" (DirAddr "+ currScope.address(ID)+" )";
+            current.add(store);
+        }
         varDec = "";
         return current;
     }
@@ -225,21 +232,23 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         s.put(varDec);
         int baseAddress = s.address(varDec);
         for (int i =  0; i < ctx.expr().size();i++){
-            String name = varDec + "[" + i + "]";
-            s.put(name);
+            if (i != 0)
+                s.put(varDec + "[" + i + "]");
             List<String> currExpr = visit(ctx.expr(i));
+            // currExpr.remove(currExpr.size()-1);
             String reg0 = regs.get(ctx.expr(i));
-            String saveToMem = "Store "+reg0+ " (DirAddr " + baseAddress + i * 4 + " )";
+            String saveToMem = "Store "+reg0+ " (DirAddr " + (baseAddress + i * 4) + " )";
+
             current.addAll(currExpr);
             current.add(saveToMem);
         }
         return current; }
-    @Override public List<String> visitClassDec(GrammarParser.ClassDecContext ctx) {
+    @Override public List<String>  visitClassDec(GrammarParser.ClassDecContext ctx) {
         scope.put(ctx, new Scope());
         List <String> ret = visit(ctx.stat());
         return ret;
     }
-    @Override public List<String> visitBeginDec(GrammarParser.BeginDecContext ctx) {
+    @Override public List<String>  visitBeginDec(GrammarParser.BeginDecContext ctx) {
         continueScope(ctx);
         return visit(ctx.def());
     }
@@ -295,28 +304,15 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         List<String> current = new LinkedList<>();
         String reg = "regA";
         String str = ctx.getText();
-        int address =-1;
-        if (!varDec.equals("")){
-            scope.get(ctx).put(varDec);
-            address = scope.get(ctx).address(varDec);
-        }
         if (str.equals("True") || str.equals("False")){
             int val =  str.equals("True")?1:0;
             String load = "Load (ImmValue "+val + " ) " + reg;
             current.add(load);
-            if (!varDec.equals("")){
-                String store = "Store "+reg+ " (DirAddr " + address+" )";
-                current.add(store);
-            }
         }
         else {
             int val = Integer.valueOf(str);
             String load = "Load (ImmValue "+val + " ) " + reg;
             current.add(load);
-            if (!varDec.equals("")){
-                String store = "Store "+reg+ " (DirAddr " + address+" )";
-                current.add(store);
-            }
         }
         regs.put(ctx,reg);
         return current;
