@@ -13,6 +13,7 @@ public class Scope {
 	/** Map from declared variables to their offset within the allocation
 	 * record of this scope. */
 	private  Map<String, Integer> offsets;
+	private  Map<String, String> position;
 
 	/** Constructs a fresh, initially empty scope. */
 	public Scope() {
