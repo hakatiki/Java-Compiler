@@ -1,6 +1,7 @@
 grammar Grammar;
 
-program : def EOF; // start symbol
+program : def EOF                               #beginDec
+        ;                  // start symbol
 
 def     : CLASS 'main' stat                     #classDec
         ;
@@ -16,7 +17,7 @@ stat    : '{' stat* '}'                         #blockStat
         ;
 
 expr:   '!' expr                                #notExpr
-        | expr (PLUS | MINUS) expr                 #addExpr
+        | expr (PLUS | MINUS) expr              #addExpr
         | expr '&&' expr                        #andExpr
         | expr '||'  expr                       #orExpr
         | expr (GT | LT | EQ | NEQ) expr        #compExpr

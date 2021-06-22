@@ -1,3 +1,7 @@
 class main {
-    Local Int x = 10;
+    Local Int y = 1;
+    while (y<10){
+        y = y + 1;
+    }
+    Local
 }

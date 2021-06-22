@@ -27,6 +27,9 @@ public class Assembler {
     @Test
     public void Test(){
         List<String>  prog = check("src/Sample/easy.txt");
+        for (int i = 0; i < prog.size();i++){
+            System.out.println(prog.get(i));
+        }
     }
     private List<String> check(String file){
         String str = "";

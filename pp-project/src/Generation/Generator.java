@@ -37,7 +37,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
     }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    @Override public List<String> visitProgram(GrammarParser.ProgramContext ctx) { return visitChildren(ctx); }
+    // @Override public List<String> visitProgram(GrammarParser.ProgramContext ctx) { return visitChildren(ctx); }
 
 
 
@@ -58,102 +58,6 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
 
 
 
-    @Override public List<String>  visitCompExpr(GrammarParser.CompExprContext ctx) {
-        continueScope(ctx);
-
-        List<String> current = new LinkedList<>();
-        List<String> lhs  = visit(ctx.expr(0));
-        String reg0 = regs.get(ctx.expr(0));
-        List<String> rhs  = visit(ctx.expr(1));
-        String reg1 = regs.get(ctx.expr(1));
-
-        String op = ctx.getChild(1).getText();
-        String instr = op.equals(">")?"Gt":(op.equals("<")?"Lt":(op.equals("==")?"Equal":"NEq"));
-
-        // Getting child correct?
-        // Might still need fixing if -- memory allocation ting
-        String save = "Push "+ reg0;
-        String reg2 = reg1.equals(reg0)?(reg0.equals("1")?"2":"1"):reg0;
-        String get = "Pop "+ reg2;
-        String addInstr = "Compute " + instr + " " + reg2 + " " + reg1 + " " + reg0;
-        current.addAll(lhs);
-        current.add(save);
-        current.addAll(rhs);
-        current.add(get);
-        current.add(addInstr);
-        regs.put(ctx,reg0);
-        return current;
-    }
-
-    @Override public List<String>  visitOrExpr(GrammarParser.OrExprContext ctx) {
-        continueScope(ctx);
-        List<String> current = new LinkedList<>();
-        List<String> lhs  = visit(ctx.expr(0));
-        String reg0 = regs.get(ctx.expr(0));
-        List<String> rhs  = visit(ctx.expr(1));
-        String reg1 = regs.get(ctx.expr(1));
-
-        // Might still need fixing if -- memory allocation ting
-        String save = "Push "+ reg0;
-        String reg2 = reg1.equals(reg0)?(reg0.equals("1")?"2":"1"):reg0;
-        String get = "Pop "+ reg2;
-        String addInstr = "Compute Or "+reg2+ " " + reg1 + " " + reg0;
-        current.addAll(lhs);
-        current.add(save);
-        current.addAll(rhs);
-        current.add(get);
-        current.add(addInstr);
-        regs.put(ctx,reg0);
-        return current;
-    }
-
-    @Override public List<String>  visitConstExpr(GrammarParser.ConstExprContext ctx) {
-        continueScope(ctx);
-        List<String> current = new LinkedList<>();
-        String reg = "regA";
-        String str = ctx.getText();
-        int address = scope.get(ctx).address(varDec);
-        if (str.equals("True") || str.equals("False")){
-            int val =  str.equals("True")?1:0;
-            String load = "Load (ImmValue "+val + " " + reg;
-            String store = "Store "+reg+ " (DirAddr " + address+" )";
-            current.add(load);
-            current.add(store);
-        }
-        else {
-            int val = Integer.valueOf(str);
-            String load = "Load (ImmValue "+val + " " + reg;
-            String store = "Store "+reg+ " (DirAddr " + address+" )";
-            current.add(load);
-            current.add(store);
-        }
-        regs.put(ctx,reg);
-        return current;
-    }
-
-
-
-    @Override public List<String>  visitAndExpr(GrammarParser.AndExprContext ctx) {
-        continueScope(ctx);
-        List<String> current = new LinkedList<>();
-        List<String> lhs  = visit(ctx.expr(0));
-        String reg0 = regs.get(ctx.expr(0));
-        List<String> rhs  = visit(ctx.expr(1));
-        String reg1 = regs.get(ctx.expr(1));
-
-        // Might still need fixing if -- memory allocation ting
-        String save = "Push "+ reg0;
-        String reg2 = reg1.equals(reg0)?(reg0.equals("1")?"2":"1"):reg0;
-        String get = "Pop "+ reg2;
-        String addInstr = "Compute And "+reg2+ " " + reg1 + " " + reg0;
-        current.addAll(lhs);
-        current.add(save);
-        current.addAll(rhs);
-        current.add(get);
-        current.add(addInstr);
-        regs.put(ctx,reg0);
-        return current;
-    }
 
     @Override public List<String>  visitEmptyArr(GrammarParser.EmptyArrContext ctx) { return visitChildren(ctx); }
 
@@ -190,7 +94,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         int addressA = currScope.address(ctx.ID().getText());
         List<String> exprCode = visit(ctx.expr());
         String reg0 = regs.get(ctx.expr());
-        String reg1 = reg0.equals("1")? "2":"1";
+        String reg1 = reg0.equals("regA")? "regB":"regA";
         String loadFour = "Load (ImmValue 4) "+reg1+"";
         String offsetComp = "Compute Mul " +reg0+" " + reg1+" " + reg0;
         String loadInstr = "Load ( DirAddr " + reg0 +" ) " + reg0;
@@ -214,7 +118,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
             lengthElse = elseCode.size();
         }
         // TODO might need to fix plus 1 or plus 0
-        String branch = "Branch "+reg.toString()+" (Rel "+ (lengthIf+1) +")";
+        String branch = "Branch "+reg+" (Rel "+ (lengthIf+1) +")";
         String endIfJump = "Jump (Rel ( "+ (lengthElse+1) +"))";
         current.addAll(exprCode);
         current.add(branch);
@@ -230,9 +134,9 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         String reg = getReg(ctx.expr());                   // Register to be compared.
         List <String> statCode = visit(ctx.stat());
         int lengthStat = statCode.size();
-        int lengthExpr = statCode.size();
+        int lengthExpr = exprCode.size();
         // TODO might need to fix plus 1 or plus 0
-        String branch = "Branch "+reg.toString()+" (Rel "+ (lengthStat+1) +")";
+        String branch = "Branch "+reg+" (Rel "+ (lengthStat+1) +")";
         String back = "Jump (Rel ( "+ -(lengthStat+lengthExpr+1) + "))";
         current.addAll(exprCode);
         current.add(branch);
@@ -245,10 +149,8 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         Scope newScope = oldScope.getCopy();
         scope.put(ctx, newScope);
         List<String> current = new LinkedList<>();
-        for (int i = 0; i < ctx.stat().size();i++){
+        for (int i = 0; i < ctx.stat().size();i++)
             current.addAll(visit(ctx.stat(i)));
-        }
-
         return current;
     }
     @Override public List<String>  visitVarDec(GrammarParser.VarDecContext ctx) {
@@ -259,11 +161,11 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         String ID = ctx.ID().toString();
         String reg = regs.get(ctx.expr());
 
-        Scope currScope = scope.get(ctx);
-        currScope.put(ID);
-        String store = "Store "+reg.toString()+" (DirAddr "+ currScope.address(ID)+" )";
+        //Scope currScope = scope.get(ctx);
+        //currScope.put(ID);
+        //String store = "Store "+reg.toString()+" (DirAddr "+ currScope.address(ID)+" )";
         current.addAll(exprCode);
-        current.add(store);
+        //current.add(store);
         varDec = "";
         return current;
     }
@@ -275,7 +177,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         String ID = ctx.ID().toString();
         String reg = regs.get(ctx.expr());
         Scope currScope = scope.get(ctx);
-        String store = "Store "+reg.toString()+" (DirAddr "+ currScope.address(ID)+" )";
+        String store = "Store "+reg+" (DirAddr "+ currScope.address(ID)+" )";
         current.addAll(exprCode);
         current.add(store);
         return current;
@@ -285,8 +187,8 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         List<String> current = new LinkedList<>();
         Scope currScope = this.scope.get(ctx);
         int address = currScope.address(ctx.ID().getText());
-        String instr = "Load (DirAddr "+ address+ " ) 1";
-        setReg(ctx,"1");
+        String instr = "Load (DirAddr "+ address+ " ) regA";
+        setReg(ctx,"regA");
         current.add(instr);
         return current;
     }
@@ -305,7 +207,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         // Getting child correct?
         // Might still need fixing if -- memory allocation ting
         String save = "Push "+ reg0;
-        String reg2 = reg1.equals(reg0)?(reg0.equals("1")?"2":"1"):reg0;
+        String reg2 = reg1.equals(reg0)?(reg0.equals("regA")?"regB":"regA"):reg0;
         String get = "Pop "+ reg2;
         String addInstr = "Compute " + instr + " " + reg2 + " " + reg1 + " " + reg0;
         current.addAll(lhs);
@@ -316,11 +218,11 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         regs.put(ctx,reg0);
         return current;
     }
-    // TODO fix this shit
     @Override public List<String>  visitArrContents(GrammarParser.ArrContentsContext ctx) {
         continueScope(ctx);
         List<String> current = new LinkedList<>();
         Scope s = scope.get(ctx);
+        s.put(varDec);
         int baseAddress = s.address(varDec);
         for (int i =  0; i < ctx.expr().size();i++){
             String name = varDec + "[" + i + "]";
@@ -334,5 +236,111 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         return current; }
     @Override public List<String> visitClassDec(GrammarParser.ClassDecContext ctx) {
         scope.put(ctx, new Scope());
-        return visitChildren(ctx); }
+        List <String> ret = visit(ctx.stat());
+        return ret;
+    }
+    @Override public List<String> visitBeginDec(GrammarParser.BeginDecContext ctx) {
+        continueScope(ctx);
+        return visit(ctx.def());
+    }
+    @Override public List<String>  visitCompExpr(GrammarParser.CompExprContext ctx) {
+        continueScope(ctx);
+
+        List<String> current = new LinkedList<>();
+        List<String> lhs  = visit(ctx.expr(0));
+        String reg0 = regs.get(ctx.expr(0));
+        List<String> rhs  = visit(ctx.expr(1));
+        String reg1 = regs.get(ctx.expr(1));
+
+        String op = ctx.getChild(1).getText();
+        String instr = op.equals(">")?"Gt":(op.equals("<")?"Lt":(op.equals("==")?"Equal":"NEq"));
+
+        // Getting child correct?
+        // Might still need fixing if -- memory allocation ting
+        String save = "Push "+ reg0;
+        String reg2 = reg1.equals(reg0)?(reg0.equals("regA")?"regB":"regA"):reg0;
+        String get = "Pop "+ reg2;
+        String addInstr = "Compute " + instr + " " + reg2 + " " + reg1 + " " + reg0;
+        current.addAll(lhs);
+        current.add(save);
+        current.addAll(rhs);
+        current.add(get);
+        current.add(addInstr);
+        regs.put(ctx,reg0);
+        return current;
+    }
+    @Override public List<String>  visitOrExpr(GrammarParser.OrExprContext ctx) {
+        continueScope(ctx);
+        List<String> current = new LinkedList<>();
+        List<String> lhs  = visit(ctx.expr(0));
+        String reg0 = regs.get(ctx.expr(0));
+        List<String> rhs  = visit(ctx.expr(1));
+        String reg1 = regs.get(ctx.expr(1));
+
+        // Might still need fixing if -- memory allocation ting
+        String save = "Push "+ reg0;
+        String reg2 = reg1.equals(reg0)?(reg0.equals("regA")?"regB":"regA"):reg0;
+        String get = "Pop "+ reg2;
+        String addInstr = "Compute Or "+reg2+ " " + reg1 + " " + reg0;
+        current.addAll(lhs);
+        current.add(save);
+        current.addAll(rhs);
+        current.add(get);
+        current.add(addInstr);
+        regs.put(ctx,reg0);
+        return current;
+    }
+    @Override public List<String>  visitConstExpr(GrammarParser.ConstExprContext ctx) {
+        continueScope(ctx);
+        List<String> current = new LinkedList<>();
+        String reg = "regA";
+        String str = ctx.getText();
+        int address =-1;
+        if (!varDec.equals("")){
+            scope.get(ctx).put(varDec);
+            address = scope.get(ctx).address(varDec);
+        }
+        if (str.equals("True") || str.equals("False")){
+            int val =  str.equals("True")?1:0;
+            String load = "Load (ImmValue "+val + " ) " + reg;
+            current.add(load);
+            if (!varDec.equals("")){
+                String store = "Store "+reg+ " (DirAddr " + address+" )";
+                current.add(store);
+            }
+        }
+        else {
+            int val = Integer.valueOf(str);
+            String load = "Load (ImmValue "+val + " ) " + reg;
+            current.add(load);
+            if (!varDec.equals("")){
+                String store = "Store "+reg+ " (DirAddr " + address+" )";
+                current.add(store);
+            }
+        }
+        regs.put(ctx,reg);
+        return current;
+    }
+    @Override public List<String>  visitAndExpr(GrammarParser.AndExprContext ctx) {
+        continueScope(ctx);
+        List<String> current = new LinkedList<>();
+        List<String> lhs  = visit(ctx.expr(0));
+        String reg0 = regs.get(ctx.expr(0));
+        List<String> rhs  = visit(ctx.expr(1));
+        String reg1 = regs.get(ctx.expr(1));
+
+        // Might still need fixing if -- memory allocation ting
+        String save = "Push "+ reg0;
+        String reg2 = reg1.equals(reg0)?(reg0.equals("regA")?"regB":"regA"):reg0;
+        String get = "Pop "+ reg2;
+        String addInstr = "Compute And "+reg2+ " " + reg1 + " " + reg0;
+        current.addAll(lhs);
+        current.add(save);
+        current.addAll(rhs);
+        current.add(get);
+        current.add(addInstr);
+        regs.put(ctx,reg0);
+        return current;
+    }
+
 }

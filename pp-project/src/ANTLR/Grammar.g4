@@ -1,6 +1,7 @@
 grammar Grammar;
 
-program : def EOF; // start symbol
+program : def EOF                               #beginDec
+        ;                  // start symbol
 
 def     : CLASS 'main' stat                     #classDec
         ;
