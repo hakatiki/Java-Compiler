@@ -336,11 +336,9 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         String reg = "regA";
         String str = ctx.getText();
         String load;
-        Scope currentScope = scope.get(ctx);
         if (str.equals("True") || str.equals("False")){
             int val =  str.equals("True") ? 1 : 0;
             load = "Load (ImmValue "+ val + " ) " + reg;
-
         }
         else {
             load = "Load (ImmValue "+ str + " ) " + reg;
