@@ -8,15 +8,17 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
  */
 public interface GrammarListener extends ParseTreeListener {
 	/**
-	 * Enter a parse tree produced by {@link GrammarParser#program}.
+	 * Enter a parse tree produced by the {@code beginDec}
+	 * labeled alternative in {@link GrammarParser#program}.
 	 * @param ctx the parse tree
 	 */
-	void enterProgram(GrammarParser.ProgramContext ctx);
+	void enterBeginDec(GrammarParser.BeginDecContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link GrammarParser#program}.
+	 * Exit a parse tree produced by the {@code beginDec}
+	 * labeled alternative in {@link GrammarParser#program}.
 	 * @param ctx the parse tree
 	 */
-	void exitProgram(GrammarParser.ProgramContext ctx);
+	void exitBeginDec(GrammarParser.BeginDecContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code classDec}
 	 * labeled alternative in {@link GrammarParser#def}.
@@ -125,6 +127,18 @@ public interface GrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitCopyOver(GrammarParser.CopyOverContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code output}
+	 * labeled alternative in {@link GrammarParser#stat}.
+	 * @param ctx the parse tree
+	 */
+	void enterOutput(GrammarParser.OutputContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code output}
+	 * labeled alternative in {@link GrammarParser#stat}.
+	 * @param ctx the parse tree
+	 */
+	void exitOutput(GrammarParser.OutputContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code parExpr}
 	 * labeled alternative in {@link GrammarParser#expr}.

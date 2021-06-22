@@ -151,22 +151,27 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
     }
     @Override public List<String>  visitVarDec(GrammarParser.VarDecContext ctx) {
         continueScope(ctx);
-        varDec = ctx.ID().getText();
-        List<String> current = new LinkedList<>();
-        List<String> exprCode = visit(ctx.expr());
+
+        Scope currScope = this.scope.get(ctx);
+        boolean isShared = ctx.mem().getText().equals("Shared"); //checks whether variable is shared or not
         String ID = ctx.ID().toString();
         String reg = regs.get(ctx.expr());
+        List<String> current = new LinkedList<>();
+        List<String> exprCode = visit(ctx.expr());
+
+        varDec = ctx.ID().getText();
+        currScope.putShared(ID,isShared); //saves whether ID is shared or not
         current.addAll(exprCode);
 
         if (ctx.type().getText().equals("Int") || ctx.type().getText().equals("Bool")){
-            Scope currScope = scope.get(ctx);
-            currScope.put(ID);
-            String store = "Store "+reg+" (DirAddr "+ currScope.address(ID)+" )";
+            currScope.put(ID,isShared); //modified it to now add the correct offsets, depending on isShared
+            String store = (isShared?"WriteInstr":"Store") + " " + reg +" (DirAddr "+ currScope.address(ID)+" )"; //modifies depending on isShared
             current.add(store);
         }
         varDec = "";
         return current;
     }
+
     @Override public List<String>  visitCopyOver(GrammarParser.CopyOverContext ctx) {
         continueScope(ctx);
         List<String> current = new LinkedList<>();
@@ -219,16 +224,19 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
     @Override public List<String>  visitArrContents(GrammarParser.ArrContentsContext ctx) {
         continueScope(ctx);
         List<String> current = new LinkedList<>();
+        boolean isShared = ctx.getParent().getParent().getChild(0).getText().equals("Shared");
+
+
         Scope s = scope.get(ctx);
-        s.put(varDec);
+        s.put(varDec, isShared);
         int baseAddress = s.address(varDec);
         for (int i =  0; i < ctx.expr().size();i++){
             if (i != 0)
-                s.put(varDec + "[" + i + "]");
+                s.put(varDec + "[" + i + "]", isShared);
             List<String> currExpr = visit(ctx.expr(i));
             // currExpr.remove(currExpr.size()-1);
             String reg0 = regs.get(ctx.expr(i));
-            String saveToMem = "Store "+reg0+ " (DirAddr " + (baseAddress + i * 4) + " )";
+            String saveToMem = (isShared?"WriteInstr":"Store") + " " + reg0 + " (DirAddr " + (baseAddress + i * 4) + " )";
 
             current.addAll(currExpr);
             current.add(saveToMem);

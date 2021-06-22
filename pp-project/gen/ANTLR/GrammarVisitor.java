@@ -11,11 +11,12 @@ import org.antlr.v4.runtime.tree.ParseTreeVisitor;
  */
 public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	/**
-	 * Visit a parse tree produced by {@link GrammarParser#program}.
+	 * Visit a parse tree produced by the {@code beginDec}
+	 * labeled alternative in {@link GrammarParser#program}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitProgram(GrammarParser.ProgramContext ctx);
+	T visitBeginDec(GrammarParser.BeginDecContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code classDec}
 	 * labeled alternative in {@link GrammarParser#def}.
@@ -79,6 +80,13 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitCopyOver(GrammarParser.CopyOverContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code output}
+	 * labeled alternative in {@link GrammarParser#stat}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitOutput(GrammarParser.OutputContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code parExpr}
 	 * labeled alternative in {@link GrammarParser#expr}.
