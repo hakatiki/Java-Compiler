@@ -59,6 +59,8 @@ public class Scope {
 	    this.shared.put(id,isShared);
     }
 
+    public boolean getShared(String id) { return this.shared.get(id); }
+
 	/** Returns the type of a given (presumably declared) identifier.
 	 */
 
