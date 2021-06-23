@@ -232,7 +232,15 @@ public class TypeCheck extends GrammarBaseListener {
             tree.put(ctx, table.getValue(ctx.ID().getText()));
     }
 
-//    @Override public void exitOutput(GrammarParser.OutputContext ctx) { }
+    @Override public void exitOutput(GrammarParser.OutputContext ctx) {
+        Type type = tree.get(ctx.expr());
+        if (type != Type.Int) {
+            int line = ctx.start.getLine();
+            int pos = ctx.start.getCharPositionInLine();
+            String error =  "Error on line: " + line + " : "+ pos+ ". Can only print numbers!";
+            errorList.add(error);
+        }
+    }
     //@Override public void enterCopyOver(GrammarParser.CopyOverContext ctx) { }
     //@Override public void exitType(GrammarParser.TypeContext ctx) { }
     //@Override public void exitEmptyArr(GrammarParser.EmptyArrContext ctx) { }

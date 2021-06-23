@@ -1,6 +1,5 @@
 class main {
-   Local Int x = 0;
-   while (x < 3){
-        x = x + 1;
-   }
+   Local Int x = 15;
+   printf(x);
+   printf(15);
 }

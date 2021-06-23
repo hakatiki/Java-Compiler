@@ -15,7 +15,6 @@ import java.util.List;
 // TODO :: visitWhileLoop lengthStat+1???????
 // TODO Check if continue scope is everywhere!
 // TODO Dont forget to add registers to regs ParseTreeProperty
-// TODO: Check whether getChild() function actually does what I think it does... (for add/compExpr)
 // HARDCODED 4 in visitGetIndex
 // HARDCODED 4 in visitArrContents
 // TODO FIX comparison
@@ -351,7 +350,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         regs.put(ctx,reg);
         return current;
     }
-    @Override public List<String>  visitAndExpr(GrammarParser.AndExprContext ctx) {
+    @Override public List<String> visitAndExpr(GrammarParser.AndExprContext ctx) {
         continueScope(ctx);
         List<String> current = new LinkedList<>();
         List<String> lhs  = visit(ctx.expr(0));
@@ -370,6 +369,14 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         current.add(get);
         current.add(addInstr);
         regs.put(ctx,reg0);
+        return current;
+    }
+
+    @Override public List<String> visitOutput(GrammarParser.OutputContext ctx) {
+        continueScope(ctx);
+        List<String> current  = visit(ctx.expr());
+        String myPrint = "WriteInstr regA numberIO";
+        current.add(myPrint);
         return current;
     }
 
