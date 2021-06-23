@@ -1,12 +1,9 @@
 class main {
-   Shared Int a = 5;
-   Shared Int b = 5;
-   Shared Int c = 5;
-   Shared Int d = 5;
-   Shared Int e = 5;
-   Shared Int f = 5;
-   Shared Int g = 5;
-   Shared Int h = 5;
-   Shared Int x = 5;
-   printf(a);
+   Local Int x = 0;
+   Local Int[] y = [0,1,2,3,4,5];
+   while (x < 5){
+        printf(y[x]);
+        x = x + 1;
+   }
+
 }

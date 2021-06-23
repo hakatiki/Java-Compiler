@@ -31,11 +31,11 @@ public class Assembler {
 
     public void CompileFile(String src, String dst) {
         List<String>  prog = check(src);
-        String code = String.join(",\n\t", prog );
+        String code = String.join(",\n    ", prog );
         String pre = "import Sprockell\n" +
                 "prog :: [Instruction]\n" +
-                "prog = [\n\t";
-        String post =  ",\n\tEndProg]\n"+
+                "prog = [\n    ";
+        String post =  ",\n    EndProg]\n"+
                 "main = run [prog]";
         String comb = pre + code + post;
         try {
