@@ -123,7 +123,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
             current.add(temp);
             temp = "Compute Mul " +reg0+" " + reg1+" " + reg0;
             current.add(temp);
-            temp = "ReadInstr (ImmValue " +  addressA + " )";
+            temp = "ReadInstr (ImmValue " +  addressA + ")";
             current.add(temp);
             temp = "Receive " + reg1;
             current.add(temp);
@@ -138,7 +138,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
             current.add(temp);
             temp = "Compute Mul " +reg0+" " + reg1+" " + reg0;
             current.add(temp);
-            temp = "Load (ImmValue " +  addressA + " ) " +reg1;
+            temp = "Load (ImmValue " +  addressA + ") " +reg1;
             current.add(temp);
             temp = "Compute Add "+ reg1 + " " + reg0 + " " + reg0;
             current.add(temp);
@@ -244,7 +244,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         int address = currScope.address(ctx.ID().getText());
         String instr;
         if (isShared) {
-            instr =  "ReadInstr (IndAddr "+ address +")";
+            instr =  "ReadInstr (DirAddr "+ address +")";
             current.add(instr);
             instr = "Receive regA";
         } else {

@@ -1,5 +1,4 @@
 class main {
-   lock();
-   unlock();
-
+   Shared Int x = 5;
+   printf(x);
 }

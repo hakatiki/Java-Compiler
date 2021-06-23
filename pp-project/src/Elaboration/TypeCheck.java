@@ -266,19 +266,7 @@ public class TypeCheck extends GrammarBaseListener {
         threadCount *= count;
     }
 
-    @Override public void exitThreadedBlock(GrammarParser.ThreadedBlockContext ctx) {
-        table.closeScope();
-        int count = Integer.parseInt(ctx.NUM().getText());
-        if ( threadCount > 8) {
-            int line = ctx.start.getLine();
-            int pos = ctx.start.getCharPositionInLine();
-            String error = " Error on line: " + line + " and the position: "+ pos+". Too many threads created!";
-            errorList.add( error );
-        }
-        threadCount /= count;
-    }
-
-
+    //@Override public void exitThreadedBlock(GrammarParser.ThreadedBlockContext ctx) { }
     //// LOCKS ////
     //@Override public void enterPutLock(GrammarParser.PutLockContext ctx) { }
 
