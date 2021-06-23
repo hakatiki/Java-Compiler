@@ -179,10 +179,11 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         Scope currScope = this.scope.get(ctx);
         boolean isShared = ctx.mem().getText().equals("Shared"); //checks whether variable is shared or not
         String ID = ctx.ID().toString();
-        String reg = regs.get(ctx.expr());
+
         List<String> current = new LinkedList<>();
         List<String> exprCode = visit(ctx.expr());
 
+        String reg = regs.get(ctx.expr());
 
         currScope.putShared(ID,isShared); //saves whether ID is shared or not
         current.addAll(exprCode);

@@ -31,7 +31,7 @@ prog = [
 	Load (ImmValue 0 ) regB,
 	Compute Add regB regA regA,
 	Load ( IndAddr regA ) regA,
-	Store null (DirAddr 8 ),
+	Store regA (DirAddr 8 ),
 	Jump (Rel 8 ),
 	Load (ImmValue 1 ) regA,
 	Load (ImmValue 4) regB,
@@ -39,7 +39,7 @@ prog = [
 	Load (ImmValue 0 ) regB,
 	Compute Add regB regA regA,
 	Load ( IndAddr regA ) regA,
-	Store null (DirAddr 8 ),
+	Store regA (DirAddr 8 ),
 	EndProg
 ]
 main = run [prog]
