@@ -18,6 +18,8 @@ import java.util.List;
 // TODO: Check whether getChild() function actually does what I think it does... (for add/compExpr)
 // HARDCODED 4 in visitGetIndex
 // HARDCODED 4 in visitArrContents
+// TODO FIX comparison
+// TODO add output
 
 public class Generator extends GrammarBaseVisitor<List<String>> {
 
@@ -295,7 +297,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         String reg1 = regs.get(ctx.expr(1));
 
         String op = ctx.getChild(1).getText();
-        String instr = op.equals(">")?"Gt":(op.equals("<")?"Lt":(op.equals("==")?"Equal":"NEq"));
+        String instr = op.equals(">")?"Lt":(op.equals("<")?"Gt":(op.equals("==")?"Equal":"NEq"));
 
         // Getting child correct?
         // Might still need fixing if -- memory allocation ting

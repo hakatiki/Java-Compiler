@@ -35,7 +35,7 @@ public class Assembler {
         String pre = "import Sprockell\n" +
                 "prog :: [Instruction]\n" +
                 "prog = [\n\t";
-        String post =  ",\n\tEndProg\n]\n"+
+        String post =  ",\n\tEndProg]\n"+
                 "main = run [prog]";
         String comb = pre + code + post;
         try {
