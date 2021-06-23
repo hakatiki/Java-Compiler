@@ -216,7 +216,12 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         current.addAll(exprCode);
 
         if (ctx.type().getText().equals("Int") || ctx.type().getText().equals("Bool")){
-            currScope.put(ID,isShared); //modified it to now add the correct offsets, depending on isShared
+            try {
+                currScope.put(ID,isShared); //modified it to now add the correct offsets, depending on isShared
+            } catch (MemoryOutOfBoundsException e) {
+                e.printStackTrace();
+            }
+
             String store = (isShared?"WriteInstr":"Store") + " " + reg +" (DirAddr "+ currScope.address(ID)+" )"; //modifies depending on isShared
             current.add(store);
         }
@@ -288,11 +293,22 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
 
 
         Scope s = scope.get(ctx);
-        s.put(varDec, isShared);
+        try {
+            s.put(varDec, isShared);
+        } catch (MemoryOutOfBoundsException e) {
+            e.printStackTrace();
+        }
+
+
         int baseAddress = s.address(varDec);
         for (int i =  0; i < ctx.expr().size();i++){
-            if (i != 0)
-                s.put(varDec + "[" + i + "]", isShared);
+            if (i != 0) {
+                try {
+                    s.put(varDec + "[" + i + "]", isShared);
+                } catch (MemoryOutOfBoundsException e) {
+                    e.printStackTrace();
+                }
+            }
             List<String> currExpr = visit(ctx.expr(i));
             // currExpr.remove(currExpr.size()-1);
             String reg0 = regs.get(ctx.expr(i));
@@ -308,7 +324,11 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
     }
     @Override public List<String>  visitBeginDec(GrammarParser.BeginDecContext ctx) {
         scope.put(ctx, new Scope());
-        scope.get(ctx).put(LOCK, true);
+        try {
+            scope.get(ctx).put(LOCK, true);
+        } catch (MemoryOutOfBoundsException e) {
+            e.printStackTrace();
+        }
         int address = scope.get(ctx).address(LOCK);
         String loadZero = "Load (ImmValue 0) regA";
         String storeZero = "WriteInstr regA (DirAddr "+ address+")";

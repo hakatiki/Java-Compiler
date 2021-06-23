@@ -2,6 +2,7 @@ package Generation;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 /** Class combining the information of a single scope level. */
 public class Scope {
@@ -9,7 +10,7 @@ public class Scope {
 	 * Used to calculate offsets of newly declared variables. */
 	private int localSize;
 	private int sharedSize;
-	private final int INT_SIZE = 4;
+	private final int INT_SIZE = 1;
 	/** Map from declared variables to their types. */
 	/** Map from declared variables to their offset within the allocation
 	 * record of this scope. */
@@ -40,15 +41,21 @@ public class Scope {
 	 * @return <code>true</code> if the identifier was added;
 	 * <code>false</code> if it was already declared.
 	 */
-	public boolean put(String id, boolean isShared) {
+	public boolean put(String id, boolean isShared) throws MemoryOutOfBoundsException {
 		boolean result = !this.offsets.containsKey(id);
 		if (result) {
 		    if (isShared) {
 		        this.offsets.put(id, this.sharedSize);
 		        this.sharedSize += INT_SIZE;
+		        if (this.sharedSize > 8) {
+		            throw new MemoryOutOfBoundsException("Shared memory size has exceeded limit 8!");
+                }
             } else {
                 this.offsets.put(id, this.localSize);
                 this.localSize += INT_SIZE;
+                if (this.sharedSize > 32) {
+                    throw new MemoryOutOfBoundsException("Local memory size has exceeded limit 32!");
+                }
             }
 		}
 		return result;
