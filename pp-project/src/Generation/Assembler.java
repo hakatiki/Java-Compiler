@@ -9,7 +9,9 @@ import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.junit.Test;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.List;
 
 public class Assembler {
@@ -22,29 +24,9 @@ public class Assembler {
         walker = new ParseTreeWalker();
         tool = new Generator();
     }
-    // "src/Sample/easy.txt"
     @Test
     public void Test(){
-        CompileFile("src/Sample/easy.txt", "src/Compiled/easy.hs");
-    }
-
-
-    public void CompileFile(String src, String dst) {
-        List<String>  prog = check(src);
-        String code = String.join(",\n\t", prog );
-        String pre = "import Sprockell\n" +
-                     "prog :: [Instruction]\n" +
-                     "prog = [\n\t";
-        String post =  ",\n\tEndProg\n]\n"+
-                     "main = run [prog]";
-        String comb = pre + code + post;
-        try {
-            PrintWriter out = new PrintWriter(dst);
-            out.println(comb);
-            out.close();
-        } catch (FileNotFoundException e){
-         // We are sad:((
-        }
+        List<String>  prog = check("src/Sample/easy.txt");
         for (int i = 0; i < prog.size();i++){
             System.out.println(prog.get(i));
         }
