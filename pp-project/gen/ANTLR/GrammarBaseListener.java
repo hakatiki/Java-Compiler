@@ -16,13 +16,13 @@ public class GrammarBaseListener implements GrammarListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterProgram(GrammarParser.ProgramContext ctx) { }
+	@Override public void enterBeginDec(GrammarParser.BeginDecContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitProgram(GrammarParser.ProgramContext ctx) { }
+	@Override public void exitBeginDec(GrammarParser.BeginDecContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -131,6 +131,18 @@ public class GrammarBaseListener implements GrammarListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitCopyOver(GrammarParser.CopyOverContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterOutput(GrammarParser.OutputContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitOutput(GrammarParser.OutputContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

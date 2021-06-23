@@ -17,6 +17,7 @@ public class TypeCheck extends GrammarBaseListener {
     private SymbolTableClass table = new SymbolTableClass();
     private ParseTreeProperty<Type> tree = new ParseTreeProperty<>();
     public List<String> errorList = new LinkedList<String>();
+    public int threadCount = 1;
 
     @Override public void enterClassDec(GrammarParser.ClassDecContext ctx) { }
     @Override public void exitClassDec(GrammarParser.ClassDecContext ctx) { }
@@ -230,6 +231,8 @@ public class TypeCheck extends GrammarBaseListener {
         else
             tree.put(ctx, table.getValue(ctx.ID().getText()));
     }
+
+//    @Override public void exitOutput(GrammarParser.OutputContext ctx) { }
     //@Override public void enterCopyOver(GrammarParser.CopyOverContext ctx) { }
     //@Override public void exitType(GrammarParser.TypeContext ctx) { }
     //@Override public void exitEmptyArr(GrammarParser.EmptyArrContext ctx) { }
@@ -249,9 +252,23 @@ public class TypeCheck extends GrammarBaseListener {
     //@Override public void exitProgram(GrammarParser.ProgramContext ctx) { }
 
     //// THREAD ////
-    //@Override public void enterThreadedBlock(GrammarParser.ThreadedBlockContext ctx) { }
+    @Override public void enterThreadedBlock(GrammarParser.ThreadedBlockContext ctx) {
+        table.openScope();
+        int count = Integer.parseInt(ctx.NUM().getText());
+        threadCount *= count;
+    }
 
-    //@Override public void exitThreadedBlock(GrammarParser.ThreadedBlockContext ctx) { }
+    @Override public void exitThreadedBlock(GrammarParser.ThreadedBlockContext ctx) {
+        table.closeScope();
+        int count = Integer.parseInt(ctx.NUM().getText());
+        if ( threadCount > 8) {
+            int line = ctx.start.getLine();
+            int pos = ctx.start.getCharPositionInLine();
+            String error = " Error on line: " + line + " and the position: "+ pos+". Too many threads created!";
+            errorList.add( error );
+        }
+        threadCount /= count;
+    }
 
 
     //// LOCKS ////

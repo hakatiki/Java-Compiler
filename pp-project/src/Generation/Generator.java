@@ -86,17 +86,40 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         List<String> exprCode = visit(ctx.expr());
         String reg0 = regs.get(ctx.expr());
         String reg1 = reg0.equals("regA")? "regB":"regA";
-        String loadFour = "Load (ImmValue 4) "+reg1+"";
-        String offsetComp = "Compute Mul " +reg0+" " + reg1+" " + reg0;
-        String addressComp1 = "Load (ImmValue " +  addressA + " ) " +reg1;
-        String addressComp2 = "Compute Add "+ reg1 + " " + reg0 + " " + reg0;
-        String loadInstr = "Load ( IndAddr " + reg0 +" ) " + reg0;
         current.addAll(exprCode);
-        current.add(loadFour);
-        current.add(offsetComp);
-        current.add(addressComp1);
-        current.add(addressComp2);
-        current.add(loadInstr);
+        String temp;
+        if (currScope.getShared(ctx.ID().getText())) {
+            temp = "ReadInstr (ImmValue 4)";
+            current.add(temp);
+            temp = "Receive " + reg1;
+            current.add(temp);
+            temp = "Compute Mul " +reg0+" " + reg1+" " + reg0;
+            current.add(temp);
+            temp = "ReadInstr (ImmValue " +  addressA + " )";
+            current.add(temp);
+            temp = "Receive " + reg1;
+            current.add(temp);
+            temp = "Compute Add "+ reg1 + " " + reg0 + " " + reg0;
+            current.add(temp);
+            temp = "ReadInstr (IndAddr " + reg0 + ")";
+            current.add(temp);
+            temp = "Receive " + reg0;
+            current.add(temp);
+        } else {
+            temp = "Load (ImmValue 4) "+reg1+"";
+            current.add(temp);
+            temp = "Compute Mul " +reg0+" " + reg1+" " + reg0;
+            current.add(temp);
+            temp = "Load (ImmValue " +  addressA + " ) " +reg1;
+            current.add(temp);
+            temp = "Compute Add "+ reg1 + " " + reg0 + " " + reg0;
+            current.add(temp);
+            temp = "Load ( IndAddr " + reg0 +" ) " + reg0;
+            current.add(temp);
+        }
+
+
+
         regs.put(ctx, reg0);
         return current;
     }
@@ -151,23 +174,28 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
     }
     @Override public List<String>  visitVarDec(GrammarParser.VarDecContext ctx) {
         continueScope(ctx);
-        varDec = ctx.ID().getText();
-        List<String> current = new LinkedList<>();
-        List<String> exprCode = visit(ctx.expr());
+
+        Scope currScope = this.scope.get(ctx);
+        boolean isShared = ctx.mem().getText().equals("Shared"); //checks whether variable is shared or not
         String ID = ctx.ID().toString();
         String reg = regs.get(ctx.expr());
+        List<String> current = new LinkedList<>();
+        List<String> exprCode = visit(ctx.expr());
+
+        varDec = ctx.ID().getText();
+        currScope.putShared(ID,isShared); //saves whether ID is shared or not
         current.addAll(exprCode);
 
         if (ctx.type().getText().equals("Int") || ctx.type().getText().equals("Bool")){
-            Scope currScope = scope.get(ctx);
-            currScope.put(ID);
-            String store = "Store "+reg+" (DirAddr "+ currScope.address(ID)+" )";
+            currScope.put(ID,isShared); //modified it to now add the correct offsets, depending on isShared
+            String store = (isShared?"WriteInstr":"Store") + " " + reg +" (DirAddr "+ currScope.address(ID)+" )"; //modifies depending on isShared
             current.add(store);
         }
         varDec = "";
         return current;
     }
-    @Override public List<String>  visitCopyOver(GrammarParser.CopyOverContext ctx) {
+
+    @Override public List<String> visitCopyOver(GrammarParser.CopyOverContext ctx) {
         continueScope(ctx);
         List<String> current = new LinkedList<>();
 
@@ -175,17 +203,26 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         String ID = ctx.ID().toString();
         String reg = regs.get(ctx.expr());
         Scope currScope = scope.get(ctx);
-        String store = "Store "+reg+" (DirAddr "+ currScope.address(ID)+" )";
+        String store = (currScope.getShared(ID)?"WriteInstr":"Store") + " " + reg + " (DirAddr "+ currScope.address(ID) + " )";
         current.addAll(exprCode);
         current.add(store);
         return current;
     }
-    @Override public List<String>  visitIdExpr(GrammarParser.IdExprContext ctx) {
+    @Override public List<String> visitIdExpr(GrammarParser.IdExprContext ctx) {
         continueScope(ctx);
         List<String> current = new LinkedList<>();
         Scope currScope = this.scope.get(ctx);
+        boolean isShared = currScope.getShared(ctx.ID().getText());
         int address = currScope.address(ctx.ID().getText());
-        String instr = "Load (DirAddr "+ address+ " ) regA";
+        String instr;
+        if (isShared) {
+            instr =  "ReadInstr (IndAddr "+ address +")";
+            current.add(instr);
+            instr = "Receive regA";
+        } else {
+            instr = "Load (DirAddr "+ address + " ) regA";
+        }
+
         setReg(ctx,"regA");
         current.add(instr);
         return current;
@@ -219,16 +256,19 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
     @Override public List<String>  visitArrContents(GrammarParser.ArrContentsContext ctx) {
         continueScope(ctx);
         List<String> current = new LinkedList<>();
+        boolean isShared = ctx.getParent().getParent().getChild(0).getText().equals("Shared");
+
+
         Scope s = scope.get(ctx);
-        s.put(varDec);
+        s.put(varDec, isShared);
         int baseAddress = s.address(varDec);
         for (int i =  0; i < ctx.expr().size();i++){
             if (i != 0)
-                s.put(varDec + "[" + i + "]");
+                s.put(varDec + "[" + i + "]", isShared);
             List<String> currExpr = visit(ctx.expr(i));
             // currExpr.remove(currExpr.size()-1);
             String reg0 = regs.get(ctx.expr(i));
-            String saveToMem = "Store "+reg0+ " (DirAddr " + (baseAddress + i * 4) + " )";
+            String saveToMem = (isShared?"WriteInstr":"Store") + " " + reg0 + " (DirAddr " + (baseAddress + i * 4) + " )";
 
             current.addAll(currExpr);
             current.add(saveToMem);
@@ -295,15 +335,15 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         List<String> current = new LinkedList<>();
         String reg = "regA";
         String str = ctx.getText();
+        String load;
         if (str.equals("True") || str.equals("False")){
             int val =  str.equals("True") ? 1 : 0;
-            String load = "Load (ImmValue "+ val + " ) " + reg;
-            current.add(load);
+            load = "Load (ImmValue "+ val + " ) " + reg;
         }
         else {
-            String load = "Load (ImmValue "+ str + " ) " + reg;
-            current.add(load);
+            load = "Load (ImmValue "+ str + " ) " + reg;
         }
+        current.add(load);
         regs.put(ctx,reg);
         return current;
     }

@@ -1,5 +1,5 @@
 class main {
-    @Threaded (5) {
+    @Threaded (8) {
 
     }
 
@@ -7,7 +7,7 @@ class main {
     @Threaded (2) {
         Local Int tid = Thread.id;
 
-        @Threaded(4) {
+        @Threaded(5) {
 
         }
     }
