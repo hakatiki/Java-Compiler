@@ -82,7 +82,8 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         continueScope(ctx);
         List<String> current =  new LinkedList<>();
         Scope currScope = scope.get(ctx);
-        int addressA = currScope.address(ctx.ID().getText());
+        String id = ctx.ID().getText();
+        int addressA = currScope.address(id);
         List<String> exprCode = visit(ctx.expr());
         String reg0 = regs.get(ctx.expr());
         String reg1 = reg0.equals("regA")? "regB":"regA";
@@ -174,7 +175,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
     }
     @Override public List<String>  visitVarDec(GrammarParser.VarDecContext ctx) {
         continueScope(ctx);
-
+        varDec = ctx.ID().getText();
         Scope currScope = this.scope.get(ctx);
         boolean isShared = ctx.mem().getText().equals("Shared"); //checks whether variable is shared or not
         String ID = ctx.ID().toString();
@@ -182,7 +183,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         List<String> current = new LinkedList<>();
         List<String> exprCode = visit(ctx.expr());
 
-        varDec = ctx.ID().getText();
+
         currScope.putShared(ID,isShared); //saves whether ID is shared or not
         current.addAll(exprCode);
 

@@ -7,7 +7,7 @@ import java.util.Map;
 public class Scope {
 	/** Current size of this scope (in bytes). 
 	 * Used to calculate offsets of newly declared variables. */
-	private int size;
+	private int localSize;
 	private int sharedSize;
 	private final int INT_SIZE = 4;
 	/** Map from declared variables to their types. */
@@ -20,14 +20,14 @@ public class Scope {
 	public Scope() {
 		this.offsets = new LinkedHashMap<>();
 		this.shared = new LinkedHashMap<>();
-		this.size = 0;
+		this.localSize = 0;
 		this.sharedSize = 0;
 	}
 	public Scope getCopy(){
 		Scope scope = new Scope();
 		scope.offsets.putAll(this.offsets);
 		scope.shared.putAll(this.shared);
-		scope.size = this.size;
+		scope.localSize = this.localSize;
 		scope.sharedSize = this.sharedSize;
 		return scope;
 	}
@@ -47,8 +47,8 @@ public class Scope {
 		        this.offsets.put(id, this.sharedSize);
 		        this.sharedSize += INT_SIZE;
             } else {
-                this.offsets.put(id, this.size);
-                this.size += INT_SIZE;
+                this.offsets.put(id, this.localSize);
+                this.localSize += INT_SIZE;
             }
 		}
 		return result;
