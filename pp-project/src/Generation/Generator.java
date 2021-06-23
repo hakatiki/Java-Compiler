@@ -46,7 +46,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
 
     @Override public List<String>  visitPutLock(GrammarParser.PutLockContext ctx) {
         continueScope(ctx);
-        int lockAddress =  scope.get(ctx).address("lock");
+        int lockAddress =  scope.get(ctx).address(LOCK);
 
         String test =  "TestAndSet (DirAddr "+lockAddress+")";
         String recieve = "Receive regD";
@@ -64,7 +64,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
 
     @Override public List<String>  visitPutUnlock(GrammarParser.PutUnlockContext ctx) {
         continueScope(ctx);
-        int lockAddress =  scope.get(ctx).address("lock");
+        int lockAddress =  scope.get(ctx).address(LOCK);
         String loadZero = "Load (ImmValue 0) regA";
         String storeZero = "WriteInstr regA (DirAddr "+ lockAddress+")";
         List<String> code = new LinkedList<>();
