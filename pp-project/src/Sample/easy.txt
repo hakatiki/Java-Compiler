@@ -1,5 +1,5 @@
 class main {
-   Local Int x = 15;
-   printf(x);
-   printf(15);
+   lock();
+   unlock();
+
 }

@@ -25,6 +25,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
     private ParseTreeProperty<String> regs  = new ParseTreeProperty<>();
     private ParseTreeProperty<Scope> scope = new ParseTreeProperty<>();
     private String varDec = "";
+    private final String LOCK = "lock";
 
 
     private void setReg(ParseTree node, String reg) {
@@ -43,9 +44,34 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
 
     @Override public List<String>  visitThreadedBlock(GrammarParser.ThreadedBlockContext ctx) { return visitChildren(ctx); }
 
-    @Override public List<String>  visitPutLock(GrammarParser.PutLockContext ctx) { return visitChildren(ctx); }
+    @Override public List<String>  visitPutLock(GrammarParser.PutLockContext ctx) {
+        continueScope(ctx);
+        int lockAddress =  scope.get(ctx).address("lock");
 
-    @Override public List<String>  visitPutUnlock(GrammarParser.PutUnlockContext ctx) { return visitChildren(ctx); }
+        String test =  "TestAndSet (DirAddr "+lockAddress+")";
+        String recieve = "Receive regD";
+        String loadOne = "Load (ImmValue 1) regC";
+        String comp = "Compute NEq regD regC regD";
+        String branch = "Branch regD (Rel -4)";
+        List<String> code = new LinkedList<>();
+        code.add(test);
+        code.add(recieve);
+        code.add(loadOne);
+        code.add(comp);
+        code.add(branch);
+
+        return code;}
+
+    @Override public List<String>  visitPutUnlock(GrammarParser.PutUnlockContext ctx) {
+        continueScope(ctx);
+        int lockAddress =  scope.get(ctx).address("lock");
+        String loadZero = "Load (ImmValue 0) regA";
+        String storeZero = "WriteInstr regA (DirAddr "+ lockAddress+")";
+        List<String> code = new LinkedList<>();
+        code.add(loadZero);
+        code.add(storeZero);
+
+        return code; }
 
     @Override public List<String>  visitNotExpr(GrammarParser.NotExprContext ctx) { return visitChildren(ctx); }
 
@@ -158,7 +184,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         int lengthExpr = exprCode.size();
         // TODO might need to fix plus 1 or plus 0
         String branch = "Branch "+reg+" (Rel "+ (lengthStat+2) +")";
-        String back = "Jump (Rel ( "+ -(lengthStat+lengthExpr+1) + "))";
+        String back = "Jump (Rel  "+ -(lengthStat+lengthExpr+1) + ")";
         current.addAll(exprCode);
         current.add(branch);
         current.addAll(statCode);
@@ -197,7 +223,6 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         varDec = "";
         return current;
     }
-
     @Override public List<String> visitCopyOver(GrammarParser.CopyOverContext ctx) {
         continueScope(ctx);
         List<String> current = new LinkedList<>();
@@ -278,13 +303,21 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         }
         return current; }
     @Override public List<String>  visitClassDec(GrammarParser.ClassDecContext ctx) {
-        scope.put(ctx, new Scope());
-        List <String> ret = visit(ctx.stat());
-        return ret;
+        continueScope(ctx);
+        return visit(ctx.stat());
     }
     @Override public List<String>  visitBeginDec(GrammarParser.BeginDecContext ctx) {
-        continueScope(ctx);
-        return visit(ctx.def());
+        scope.put(ctx, new Scope());
+        scope.get(ctx).put(LOCK, true);
+        int address = scope.get(ctx).address(LOCK);
+        String loadZero = "Load (ImmValue 0) regA";
+        String storeZero = "WriteInstr regA (DirAddr "+ address+")";
+        List<String> rest =  visit(ctx.def());
+        List<String> code = new LinkedList<>();
+        code.add(loadZero);
+        code.add(storeZero);
+        code.addAll(rest);
+        return code;
     }
     @Override public List<String>  visitCompExpr(GrammarParser.CompExprContext ctx) {
         continueScope(ctx);
@@ -371,7 +404,6 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         regs.put(ctx,reg0);
         return current;
     }
-
     @Override public List<String> visitOutput(GrammarParser.OutputContext ctx) {
         continueScope(ctx);
         List<String> current  = visit(ctx.expr());
