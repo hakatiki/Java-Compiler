@@ -25,7 +25,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
 
     private ParseTreeProperty<String> regs  = new ParseTreeProperty<>();
     private ParseTreeProperty<Scope> scope = new ParseTreeProperty<>();
-    private HashMap<Integer,Boolean> activeThreads = new HashMap<>();
+    public HashMap<Integer,Boolean> activeThreads = new HashMap<>();
     private int masterThread;
     private String varDec = "";
     private final String LOCK = "lock";
@@ -56,12 +56,15 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
             current.add(temp);
             temp = "WriteInstr regA (DirAddr " + (i) + ")";
             current.add(temp);
+
             if (i > 0) {
                 this.activeThreads.put(i, true);
                 currScope.putShared("Thread"+i,true);
+            } else {
+                currScope.putShared(LOCK,true);
             }
-
         }
+
         temp = "ReadInstr (IndAddr regSprID)";
         current.add(temp);
         temp = "Receive regA";
@@ -209,7 +212,14 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
 
     @Override public List<String>  visitNotExpr(GrammarParser.NotExprContext ctx) { return visitChildren(ctx); }
 
-    @Override public List<String>  visitGetThreadId(GrammarParser.GetThreadIdContext ctx) { return visitChildren(ctx); }
+    @Override public List<String>  visitGetThreadId(GrammarParser.GetThreadIdContext ctx) {
+        continueScope(ctx);
+        String temp = "Compute Add regSprID reg0 regA";
+        List<String> current = new LinkedList<>();
+        current.add(temp);
+        regs.put(ctx,"regA");
+        return current;
+    }
 
     @Override public List<String>  visitEmptyArr(GrammarParser.EmptyArrContext ctx) { return visitChildren(ctx); }
 

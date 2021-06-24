@@ -31,12 +31,17 @@ public class Assembler {
 
     public void CompileFile(String src, String dst) {
         List<String>  prog = check(src);
+
+        String additional = "";
+        for (int i = 0; i < tool.activeThreads.size(); i++) {
+            additional = additional + ",prog";
+        }
         String code = String.join(",\n    ", prog );
         String pre = "import Sprockell\n" +
                 "prog :: [Instruction]\n" +
                 "prog = [\n    ";
         String post =  ",\n    EndProg]\n"+
-                "main = run [prog]";
+                "main = run [prog" + additional + "]";
         String comb = pre + code + post;
         try {
             PrintWriter out = new PrintWriter(dst);

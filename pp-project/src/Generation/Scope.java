@@ -10,7 +10,7 @@ public class Scope {
 	 * Used to calculate offsets of newly declared variables. */
 	private int localSize;
 	private int sharedSize;
-	private final int INT_SIZE = 4;
+	private final int INT_SIZE = 1;
 	/** Map from declared variables to their types. */
 	/** Map from declared variables to their offset within the allocation
 	 * record of this scope. */

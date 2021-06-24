@@ -1,19 +1,28 @@
-@Threaded(3)
+@Threaded(2)
 class main {
-   Local Int x = 5;
-   printf(x);
 
-   @Threaded(1) {
-        printf(2);
+    Shared Bool flag1 = False;
+    Shared Bool flag2 = False;
+    Shared Int turn = 1;
 
-        @Threaded(2) {
-            printf(3);
+    @Threaded(2) {
+        Local Int tid = Thread.id;
+        Local Int otherTid = 1;
+
+        if (tid == 1) {
+            otherTid = 2;
+            flag1 = True;
+
+            while (flag2 == False && turn == otherTid) { }
+
+            flag1 = False;
+        } else {
+            flag2 = True;
+            turn = tid;
+
+            while (flag1 == False && turn == otherTid) { }
+
+            flag2 = False;
         }
-
-        printf(4);
-   }
-
-   @Threaded(2) {
-        printf(500);
-   }
+    }
 }
