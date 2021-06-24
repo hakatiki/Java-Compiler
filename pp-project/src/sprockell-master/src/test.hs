@@ -25,7 +25,7 @@ prog = [ --ThreadedDec
     Receive regA,                       -- 20
     Load (ImmValue 1) regC,
     Compute NEq regA regC regB,
-    Branch regB (Rel (-7)),
+    Branch regB (Rel (-5)),
     WriteInstr regPC (DirAddr 1),
     Compute Equal regSprID reg0 regB,
     Branch regB (Rel 6),
@@ -40,6 +40,7 @@ prog = [ --ThreadedDec
     ReadInstr (DirAddr 1),
     Receive regA,
     Compute NEq regA regC regB,
+
     Branch regB (Rel (-3)),
     Compute Add reg0 regPC regA,
     Compute Equal regSprID reg0 regB,      

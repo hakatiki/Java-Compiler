@@ -26,6 +26,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
     private ParseTreeProperty<String> regs  = new ParseTreeProperty<>();
     private ParseTreeProperty<Scope> scope = new ParseTreeProperty<>();
     private HashMap<Integer,Boolean> activeThreads = new HashMap<>();
+    private int masterThread;
     private String varDec = "";
     private final String LOCK = "lock";
 
@@ -48,6 +49,8 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         List<String> current = new LinkedList<>();
         int val = Integer.parseInt(ctx.thread().getChild(2).getText());
         String temp;
+        Scope currScope = scope.get(ctx);
+        masterThread = 0;
         for (int i = 0; i < (val+1); i++) { //every thread in the program gets a place in memory
             temp = "Load (ImmValue "+ (i) +") regA";
             current.add(temp);
@@ -55,7 +58,9 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
             current.add(temp);
             if (i > 0) {
                 this.activeThreads.put(i, true);
+                currScope.putShared("Thread"+i,true);
             }
+
         }
         temp = "ReadInstr (IndAddr regSprID)";
         current.add(temp);
@@ -74,20 +79,15 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         //put lock in offset ting?
         current.addAll(visit(ctx.stat()));
 
+
+        // Master thread checks whether threads are done
         for (int i = 1; i <= val; i++) { //every thread in the program gets a place in memory
-            temp = "ReadInstr (DirAddr " + i + ")";
-            current.add(temp);
-            temp = "Receive regA";
-            current.add(temp);
-            temp = "Load (ImmValue " + i +") regC";
-            current.add(temp);
-            temp = "Compute NEq regA regC regB";
-            current.add(temp);
+            joinThreads(current, i);
             temp = "Branch regB (Rel (-" + (4 + (5*(i-1))) + "))";
             current.add(temp);
         }
 
-
+        // EndProg
 
         temp = "Compute Add reg0 regPC regA";
         current.add(temp);
@@ -111,49 +111,71 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         List<String> current = new LinkedList<>();
         int neededThreads = Integer.parseInt(ctx.NUM().getText());
         int freeThread = 0;
+        List<Integer> usedThreads = new LinkedList<>();
+        String temp;
 
         for (int i = 1; i <= activeThreads.size(); i++) {
             if (neededThreads == 0) {
                 break;
             }
             if (activeThreads.get(i)) {
+
                 freeThread = i;
                 neededThreads--;
+                int oldMaster = this.masterThread;
+                this.masterThread = i;
                 activeThreads.remove(i);
                 activeThreads.put(i,false);
                 List<String> inside = visit(ctx.stat());
-                String temp = "ReadInstr (DirAddr "+ freeThread +")";
+                joinThreads(current, i);
+                temp = "Branch regB (Rel (-5))";
                 current.add(temp);
-                temp = "Receive regA";
+                temp = "WriteInstr regPC (DirAddr "+ i +")";
                 current.add(temp);
-                temp = "Load (ImmValue " + freeThread + ") regC";
+                temp = "Load (ImmValue " + oldMaster + ") regA";  ///get MASTER THREAD
                 current.add(temp);
-                temp = "Compute NEq regA regC regB";
-                current.add(temp);
-                temp = "Branch regB (Rel (-7))";
-                current.add(temp);
-                temp = "WriteInstr regPC (DirAddr "+ freeThread +")";
-                current.add(temp);
-                temp = "Compute Equal regSprID reg0 regB";
+
+                temp = "Compute Equal regSprID regA regB";
                 current.add(temp);
                 temp = "Branch regB (Rel " + (inside.size()+3) + ")"; //double check this one! // + ((neededThreads) * (inside.size() + 10)))
                 current.add(temp);
 
                 current.addAll(inside);
 
-                temp = "WriteInstr regSprID (DirAddr "+ freeThread +")";
+                temp = "WriteInstr regSprID (DirAddr "+ i +")";
                 current.add(temp);
                 temp = "Jump (Abs " + ((activeThreads.size()+1)*2) + ")";
                 current.add(temp);
                 activeThreads.remove(i);
                 activeThreads.put(i,true);
+                this.masterThread = oldMaster;
+                usedThreads.add(i);
             }
         }
         if (freeThread == 0) {
             throw new TooManyThreadsException("Threaded block contains more threads than created!");
         }
+        int it = 0;
+        for (int i : usedThreads) {
+            joinThreads(current, i);
+            temp = "Branch regB (Rel (-"+ (4 + (it*5)) +"))";
+            current.add(temp);
+            it++;
+        }
 
         return current;
+    }
+
+    private void joinThreads(List<String> current, int i) {
+        String temp;
+        temp = "ReadInstr (DirAddr "+ i + ")";
+        current.add(temp);
+        temp = "Receive regA";
+        current.add(temp);
+        temp = "Load (ImmValue " + i + ") regC";
+        current.add(temp);
+        temp = "Compute NEq regA regC regB";
+        current.add(temp);
     }
 
     @Override public List<String>  visitPutLock(GrammarParser.PutLockContext ctx) {

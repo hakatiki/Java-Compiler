@@ -1,8 +1,19 @@
-@Threaded(2)
+@Threaded(3)
 class main {
-   Shared Int x = 5;
+   Local Int x = 5;
+   printf(x);
+
+   @Threaded(1) {
+        printf(2);
+
+        @Threaded(2) {
+            printf(3);
+        }
+
+        printf(4);
+   }
 
    @Threaded(2) {
-        printf(x);
+        printf(500);
    }
 }
