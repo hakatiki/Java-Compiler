@@ -1,3 +1,4 @@
+@Threaded(0)
 class main {
     Local Int[] arr = [1,2,3,4,5];
     Local Int[] arr2 = [1,2,3,4,5];

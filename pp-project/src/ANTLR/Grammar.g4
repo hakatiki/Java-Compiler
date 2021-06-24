@@ -3,7 +3,10 @@ grammar Grammar;
 program : def EOF                               #beginDec
         ;                  // start symbol
 
-def     : CLASS 'main' stat                     #classDec
+def     : thread CLASS 'main' stat              #classDec
+        ;
+
+thread  : THREADED '(' NUM ')'                  #threadedDec
         ;
 
 stat    : '{' stat* '}'                         #blockStat

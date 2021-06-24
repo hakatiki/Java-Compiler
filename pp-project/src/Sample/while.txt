@@ -1,3 +1,4 @@
+@Threaded(0)
 class main {
     Local Int val = 0;
     Local Bool test = True;

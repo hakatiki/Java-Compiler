@@ -65,7 +65,7 @@ public class TestClass {
 
     // Test threaded block
     public void testThreaded(boolean print){
-        assertEquals(2,check("src/Sample/threaded.txt"));
+        assertEquals(1,check("src/Sample/threaded.txt"));
         if (print)
             for (int i = 0; i <tool.errorList.size();i++)
                 System.out.println(tool.errorList.get(i));

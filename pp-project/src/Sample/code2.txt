@@ -1,3 +1,4 @@
+@Threaded(0)
 class main {
     Shared Int x = 2;
     Local Bool val2 = True;

@@ -1,5 +1,6 @@
 // Generated from D:/Mine/University/Modules/Module 8 - Programming Paradigms/mod8-final-project/pp-project/src/ANTLR\Grammar.g4 by ANTLR 4.9.1
 package ANTLR;
+import Generation.TooManyThreadsException;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
 /**
@@ -24,6 +25,13 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitClassDec(GrammarParser.ClassDecContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code threadedDec}
+	 * labeled alternative in {@link GrammarParser#thread}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitThreadedDec(GrammarParser.ThreadedDecContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code blockStat}
 	 * labeled alternative in {@link GrammarParser#stat}.
@@ -58,7 +66,7 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitThreadedBlock(GrammarParser.ThreadedBlockContext ctx);
+	T visitThreadedBlock(GrammarParser.ThreadedBlockContext ctx) throws TooManyThreadsException;
 	/**
 	 * Visit a parse tree produced by the {@code putLock}
 	 * labeled alternative in {@link GrammarParser#stat}.

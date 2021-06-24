@@ -1,12 +1,8 @@
+@Threaded(2)
 class main {
-   Shared Int a = 5;
-   Shared Int b = 5;
-   Shared Int c = 5;
-   Shared Int d = 5;
-   Shared Int e = 5;
-   Shared Int f = 5;
-   Shared Int g = 5;
-   Shared Int h = 5;
    Shared Int x = 5;
-   printf(a);
+
+   @Threaded(2) {
+        printf(x);
+   }
 }

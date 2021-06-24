@@ -10,6 +10,7 @@ import org.antlr.v4.runtime.tree.ParseTreeProperty;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.junit.Test;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 // TODO :: visitWhileLoop lengthStat+1???????
@@ -24,6 +25,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
 
     private ParseTreeProperty<String> regs  = new ParseTreeProperty<>();
     private ParseTreeProperty<Scope> scope = new ParseTreeProperty<>();
+    private HashMap<Integer,Boolean> activeThreads = new HashMap<>();
     private String varDec = "";
     private final String LOCK = "lock";
 
@@ -41,8 +43,118 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+    @Override public List<String> visitClassDec(GrammarParser.ClassDecContext ctx) {
+        this.continueScope(ctx);
+        List<String> current = new LinkedList<>();
+        int val = Integer.parseInt(ctx.thread().getChild(2).getText());
+        String temp;
+        for (int i = 0; i < (val+1); i++) { //every thread in the program gets a place in memory
+            temp = "Load (ImmValue "+ (i) +") regA";
+            current.add(temp);
+            temp = "WriteInstr regA (DirAddr " + (i) + ")";
+            current.add(temp);
+            if (i > 0) {
+                this.activeThreads.put(i, true);
+            }
+        }
+        temp = "ReadInstr (IndAddr regSprID)";
+        current.add(temp);
+        temp = "Receive regA";
+        current.add(temp);
+        temp = "Compute Equal regSprID reg0 regB";
+        current.add(temp);
+        temp = "Branch regB (Rel 4)";
+        current.add(temp);
+        temp = "Compute NEq regA regSprID regB";
+        current.add(temp);
+        temp = "Branch regB (Ind regA)";
+        current.add(temp);
+        temp = "Jump (Rel (-6))";
+        current.add(temp);
+        //put lock in offset ting?
+        current.addAll(visit(ctx.stat()));
 
-    @Override public List<String>  visitThreadedBlock(GrammarParser.ThreadedBlockContext ctx) { return visitChildren(ctx); }
+        for (int i = 1; i <= val; i++) { //every thread in the program gets a place in memory
+            temp = "ReadInstr (DirAddr " + i + ")";
+            current.add(temp);
+            temp = "Receive regA";
+            current.add(temp);
+            temp = "Load (ImmValue " + i +") regC";
+            current.add(temp);
+            temp = "Compute NEq regA regC regB";
+            current.add(temp);
+            temp = "Branch regB (Rel (-" + (4 + (5*(i-1))) + "))";
+            current.add(temp);
+        }
+
+
+
+        temp = "Compute Add reg0 regPC regA";
+        current.add(temp);
+        temp = "Compute Equal regSprID reg0 regB";
+        current.add(temp);
+        temp = "Branch regB (Rel 2)";
+        current.add(temp);
+        temp = "EndProg";
+        current.add(temp);
+
+        for (int i = 1; i < (val+1); i++) { //every thread in the program gets a place in memory
+            temp = "WriteInstr regA (DirAddr " + (i) + ")";
+            current.add(temp);
+        }
+
+        return current;
+    }
+
+    @Override public List<String> visitThreadedBlock(GrammarParser.ThreadedBlockContext ctx) throws TooManyThreadsException {
+        continueScope(ctx);
+        List<String> current = new LinkedList<>();
+        int neededThreads = Integer.parseInt(ctx.NUM().getText());
+        int freeThread = 0;
+
+        for (int i = 1; i <= activeThreads.size(); i++) {
+            if (neededThreads == 0) {
+                break;
+            }
+            if (activeThreads.get(i)) {
+                freeThread = i;
+                neededThreads--;
+                activeThreads.remove(i);
+                activeThreads.put(i,false);
+                List<String> inside = visit(ctx.stat());
+                String temp = "ReadInstr (DirAddr "+ freeThread +")";
+                current.add(temp);
+                temp = "Receive regA";
+                current.add(temp);
+                temp = "Load (ImmValue " + freeThread + ") regC";
+                current.add(temp);
+                temp = "Compute NEq regA regC regB";
+                current.add(temp);
+                temp = "Branch regB (Rel (-7))";
+                current.add(temp);
+                temp = "WriteInstr regPC (DirAddr "+ freeThread +")";
+                current.add(temp);
+                temp = "Compute Equal regSprID reg0 regB";
+                current.add(temp);
+                temp = "Branch regB (Rel " + (inside.size()+3) + ")"; //double check this one! // + ((neededThreads) * (inside.size() + 10)))
+                current.add(temp);
+
+                current.addAll(inside);
+
+                temp = "WriteInstr regSprID (DirAddr "+ freeThread +")";
+                current.add(temp);
+                temp = "Jump (Abs " + ((activeThreads.size()+1)*2) + ")";
+                current.add(temp);
+                activeThreads.remove(i);
+                activeThreads.put(i,true);
+            }
+        }
+        if (freeThread == 0) {
+            throw new TooManyThreadsException("Threaded block contains more threads than created!");
+        }
+
+        return current;
+    }
 
     @Override public List<String>  visitPutLock(GrammarParser.PutLockContext ctx) {
         continueScope(ctx);
@@ -66,7 +178,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         continueScope(ctx);
         int lockAddress =  scope.get(ctx).address(LOCK);
         String loadZero = "Load (ImmValue 0) regA";
-        String storeZero = "WriteInstr regA (DirAddr "+ lockAddress+")";
+        String storeZero = "WriteInstr regA (DirAddr "+ lockAddress + ")";
         List<String> code = new LinkedList<>();
         code.add(loadZero);
         code.add(storeZero);
@@ -318,10 +430,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
             current.add(saveToMem);
         }
         return current; }
-    @Override public List<String>  visitClassDec(GrammarParser.ClassDecContext ctx) {
-        continueScope(ctx);
-        return visit(ctx.stat());
-    }
+
     @Override public List<String>  visitBeginDec(GrammarParser.BeginDecContext ctx) {
         scope.put(ctx, new Scope());
         try {
@@ -329,15 +438,8 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         } catch (MemoryOutOfBoundsException e) {
             e.printStackTrace();
         }
-        int address = scope.get(ctx).address(LOCK);
-        String loadZero = "Load (ImmValue 0) regA";
-        String storeZero = "WriteInstr regA (DirAddr "+ address+")";
-        List<String> rest =  visit(ctx.def());
-        List<String> code = new LinkedList<>();
-        code.add(loadZero);
-        code.add(storeZero);
-        code.addAll(rest);
-        return code;
+        List<String> all =  visit(ctx.def());
+        return all;
     }
     @Override public List<String>  visitCompExpr(GrammarParser.CompExprContext ctx) {
         continueScope(ctx);

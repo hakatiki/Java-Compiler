@@ -1,5 +1,6 @@
+@Threaded(7)
 class main {
-    @Threaded (8) {
+    @Threaded (7) {
 
     }
 

@@ -1,3 +1,4 @@
+@Threaded(0)
 class main {
     Shared Int x = 5;
     lock();

@@ -32,6 +32,18 @@ public interface GrammarListener extends ParseTreeListener {
 	 */
 	void exitClassDec(GrammarParser.ClassDecContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code threadedDec}
+	 * labeled alternative in {@link GrammarParser#thread}.
+	 * @param ctx the parse tree
+	 */
+	void enterThreadedDec(GrammarParser.ThreadedDecContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code threadedDec}
+	 * labeled alternative in {@link GrammarParser#thread}.
+	 * @param ctx the parse tree
+	 */
+	void exitThreadedDec(GrammarParser.ThreadedDecContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code blockStat}
 	 * labeled alternative in {@link GrammarParser#stat}.
 	 * @param ctx the parse tree

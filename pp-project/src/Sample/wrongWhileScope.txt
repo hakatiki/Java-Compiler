@@ -1,3 +1,4 @@
+@Threaded(0)
 class main {
     Local Int x = 1;
     Local Int i = 0;
