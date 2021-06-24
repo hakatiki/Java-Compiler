@@ -164,7 +164,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         String recieve = "Receive regD";
         String loadOne = "Load (ImmValue 1) regC";
         String comp = "Compute NEq regD regC regD";
-        String branch = "Branch regD (Rel -4)";
+        String branch = "Branch regD (Rel (-4))";
         List<String> code = new LinkedList<>();
         code.add(test);
         code.add(recieve);
@@ -228,32 +228,17 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         String reg1 = reg0.equals("regA")? "regB":"regA";
         current.addAll(exprCode);
         String temp;
+
+        temp = "Load (ImmValue " +  addressA + ") " +reg1;
+        current.add(temp);
+        temp = "Compute Add "+ reg1 + " " + reg0 + " " + reg0;
+        current.add(temp);
         if (currScope.getShared(ctx.ID().getText())) {
-            temp = "ReadInstr (ImmValue 4)";
-            current.add(temp);
-            temp = "Receive " + reg1;
-            current.add(temp);
-            temp = "Compute Mul " +reg0+" " + reg1+" " + reg0;
-            current.add(temp);
-            temp = "ReadInstr (ImmValue " +  addressA + ")";
-            current.add(temp);
-            temp = "Receive " + reg1;
-            current.add(temp);
-            temp = "Compute Add "+ reg1 + " " + reg0 + " " + reg0;
-            current.add(temp);
             temp = "ReadInstr (IndAddr " + reg0 + ")";
             current.add(temp);
             temp = "Receive " + reg0;
             current.add(temp);
         } else {
-            temp = "Load (ImmValue 4) "+reg1+"";
-            current.add(temp);
-            temp = "Compute Mul " +reg0+" " + reg1+" " + reg0;
-            current.add(temp);
-            temp = "Load (ImmValue " +  addressA + ") " +reg1;
-            current.add(temp);
-            temp = "Compute Add "+ reg1 + " " + reg0 + " " + reg0;
-            current.add(temp);
             temp = "Load ( IndAddr " + reg0 +" ) " + reg0;
             current.add(temp);
         }
@@ -296,7 +281,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         int lengthExpr = exprCode.size();
         // TODO might need to fix plus 1 or plus 0
         String branch = "Branch "+reg+" (Rel "+ (lengthStat+2) +")";
-        String back = "Jump (Rel  "+ -(lengthStat+lengthExpr+1) + ")";
+        String back = "Jump (Rel  ("+ -(lengthStat+lengthExpr+1) + "))";
         current.addAll(exprCode);
         current.add(branch);
         current.addAll(statCode);
@@ -340,7 +325,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         varDec = "";
         return current;
     }
-    @Override public List<String> visitCopyOver(GrammarParser.CopyOverContext ctx) {
+    @Override public List<String>  visitCopyOver(GrammarParser.CopyOverContext ctx) {
         continueScope(ctx);
         List<String> current = new LinkedList<>();
 
@@ -353,7 +338,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         current.add(store);
         return current;
     }
-    @Override public List<String> visitIdExpr(GrammarParser.IdExprContext ctx) {
+    @Override public List<String>  visitIdExpr(GrammarParser.IdExprContext ctx) {
         continueScope(ctx);
         List<String> current = new LinkedList<>();
         Scope currScope = this.scope.get(ctx);
@@ -424,7 +409,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
             List<String> currExpr = visit(ctx.expr(i));
             // currExpr.remove(currExpr.size()-1);
             String reg0 = regs.get(ctx.expr(i));
-            String saveToMem = (isShared?"WriteInstr":"Store") + " " + reg0 + " (DirAddr " + (baseAddress + i * 4) + " )";
+            String saveToMem = (isShared?"WriteInstr":"Store") + " " + reg0 + " (DirAddr " + (baseAddress + i) + " )";
 
             current.addAll(currExpr);
             current.add(saveToMem);
@@ -505,7 +490,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         regs.put(ctx,reg);
         return current;
     }
-    @Override public List<String> visitAndExpr(GrammarParser.AndExprContext ctx) {
+    @Override public List<String>  visitAndExpr(GrammarParser.AndExprContext ctx) {
         continueScope(ctx);
         List<String> current = new LinkedList<>();
         List<String> lhs  = visit(ctx.expr(0));
@@ -526,7 +511,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         regs.put(ctx,reg0);
         return current;
     }
-    @Override public List<String> visitOutput(GrammarParser.OutputContext ctx) {
+    @Override public List<String>  visitOutput(GrammarParser.OutputContext ctx) {
         continueScope(ctx);
         List<String> current  = visit(ctx.expr());
         String myPrint = "WriteInstr regA numberIO";
