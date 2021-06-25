@@ -319,7 +319,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         String not = "Load (ImmValue 0) regE";
         String eq = "Compute Equal regE " + reg + " " + reg;
         String branch = "Branch "+reg+" (Rel "+ (lengthStat+2) +")";
-        String back = "Jump (Rel  ("+ -(lengthStat+lengthExpr+1) + "))";
+        String back = "Jump (Rel  ("+ -(lengthStat+lengthExpr+1+2) + "))";
         current.addAll(exprCode);
         current.add(not);
         current.add(eq);
@@ -476,7 +476,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         String reg1 = regs.get(ctx.expr(1));
 
         String op = ctx.getChild(1).getText();
-        String instr = op.equals(">")?"Lt":(op.equals("<")?"Gt":(op.equals("==")?"Equal":"NEq"));
+        String instr = op.equals(">")?"Gt":(op.equals("<")?"Lt":(op.equals("==")?"Equal":"NEq"));
 
         // Getting child correct?
         // Might still need fixing if -- memory allocation ting
