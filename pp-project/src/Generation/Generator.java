@@ -294,9 +294,13 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
             lengthElse = elseCode.size();
         }
         // TODO might need to fix plus 1 or plus 0
+        String not = "Load (ImmValue 0) regE";
+        String eq = "Compute Equal regE " + reg + " " + reg;
         String branch = "Branch "+reg+" (Rel "+ (lengthIf+2) +")";
         String endIfJump = "Jump (Rel "+ (lengthElse+1) +" )";
         current.addAll(exprCode);
+        current.add(not);
+        current.add(eq);
         current.add(branch);
         current.addAll(ifCode);
         current.add(endIfJump);
@@ -312,9 +316,13 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         int lengthStat = statCode.size();
         int lengthExpr = exprCode.size();
         // TODO might need to fix plus 1 or plus 0
+        String not = "Load (ImmValue 0) regE";
+        String eq = "Compute Equal regE " + reg + " " + reg;
         String branch = "Branch "+reg+" (Rel "+ (lengthStat+2) +")";
         String back = "Jump (Rel  ("+ -(lengthStat+lengthExpr+1) + "))";
         current.addAll(exprCode);
+        current.add(not);
+        current.add(eq);
         current.add(branch);
         current.addAll(statCode);
         current.add(back);
