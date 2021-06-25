@@ -15,7 +15,7 @@ import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 
-public class TestClass {
+public class TypeCheckTest {
     private ParseTreeWalker walker = new ParseTreeWalker();
     private TypeCheck tool = new TypeCheck();
 
