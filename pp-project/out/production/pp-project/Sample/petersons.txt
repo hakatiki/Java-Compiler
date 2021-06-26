@@ -15,12 +15,16 @@ class main {
 
             while (flag2 == False && turn == otherTid) { }
 
+
+
             flag1 = False;
         } else {
             flag2 = True;
             turn = tid;
 
             while (flag1 == False && turn == otherTid) { }
+
+
 
             flag2 = False;
         }

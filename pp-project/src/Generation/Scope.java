@@ -78,4 +78,6 @@ public class Scope {
 	public Integer address(String id) {
 		return this.offsets.get(id);
 	}
+
+	public Map<String,Integer> getOffsets() { return offsets; }
 }

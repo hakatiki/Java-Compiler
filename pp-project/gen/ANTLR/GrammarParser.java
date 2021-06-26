@@ -189,8 +189,14 @@ public class GrammarParser extends Parser {
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof GrammarVisitor ) return ((GrammarVisitor<? extends T>)visitor).visitClassDec(this);
-			else return visitor.visitChildren(this);
+            if ( visitor instanceof GrammarVisitor ) {
+                try {
+                    return ((GrammarVisitor<? extends T>) visitor).visitClassDec(this);
+                } catch (MemoryOutOfBoundsException e) {
+                    e.printStackTrace();
+                }
+            } else return visitor.visitChildren(this);
+            return null;
 		}
 	}
 

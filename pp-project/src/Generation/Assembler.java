@@ -25,7 +25,7 @@ public class Assembler {
     // "src/Sample/easy.txt"
     @Test
     public void Test(){
-        CompileFile("src/Sample/balint.txt", "src/Compiled/balint.hs");
+        CompileFile("src/Sample/easy.txt", "src/Compiled/easy.hs");
     }
 
 

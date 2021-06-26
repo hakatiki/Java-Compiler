@@ -60,8 +60,20 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
             if (i > 0) {
                 this.activeThreads.put(i, true);
                 currScope.putShared("Thread"+i,true);
+                try{
+                    currScope.put("Thread"+i,true);
+                } catch (MemoryOutOfBoundsException e) {
+                    e.printStackTrace();
+                }
+
             } else {
                 currScope.putShared(LOCK,true);
+                try {
+                    currScope.put(LOCK,true);
+                } catch (MemoryOutOfBoundsException e) {
+                    e.printStackTrace();
+                }
+
             }
         }
 

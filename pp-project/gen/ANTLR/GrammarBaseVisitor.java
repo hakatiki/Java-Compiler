@@ -1,5 +1,6 @@
 // Generated from D:/Mine/University/Modules/Module 8 - Programming Paradigms/mod8-final-project/pp-project/src/ANTLR\Grammar.g4 by ANTLR 4.9.1
 package ANTLR;
+import Generation.MemoryOutOfBoundsException;
 import Generation.TooManyThreadsException;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 
@@ -25,7 +26,7 @@ public class GrammarBaseVisitor<T> extends AbstractParseTreeVisitor<T> implement
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitClassDec(GrammarParser.ClassDecContext ctx) { return visitChildren(ctx); }
+	@Override public T visitClassDec(GrammarParser.ClassDecContext ctx) throws MemoryOutOfBoundsException { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *

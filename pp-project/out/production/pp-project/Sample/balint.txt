@@ -1,0 +1,9 @@
+@Threaded(0)
+class main {
+    Local Int x =  0;
+    while (x < 5){
+        printf(69);
+        x = x + 1;
+    }
+
+}
