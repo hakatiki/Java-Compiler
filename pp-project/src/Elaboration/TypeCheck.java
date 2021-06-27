@@ -260,11 +260,7 @@ public class TypeCheck extends GrammarBaseListener {
     //@Override public void exitProgram(GrammarParser.ProgramContext ctx) { }
 
     //// THREAD ////
-    @Override public void enterThreadedBlock(GrammarParser.ThreadedBlockContext ctx) {
-        table.openScope();
-        int count = Integer.parseInt(ctx.NUM().getText());
-        threadCount *= count;
-    }
+    // @Override public void enterThreadedBlock(GrammarParser.ThreadedBlockContext ctx) { }
 
     //@Override public void exitThreadedBlock(GrammarParser.ThreadedBlockContext ctx) { }
     //// LOCKS ////

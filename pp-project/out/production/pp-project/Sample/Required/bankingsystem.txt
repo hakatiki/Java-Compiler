@@ -1,0 +1,35 @@
+@Threaded(6)
+class main {
+    Shared Int bank = 0;
+
+    @Threaded(6) {
+        Local Int tid = Thread.id;
+        Local Bool done = False;
+        if (tid > 3) {
+            while (!done) {
+                lock();
+                Local Int temp = bank - 27;
+                if (temp > 0) {
+                    bank = bank - 27;
+                    printf(bank);
+                    unlock();
+                    done = True;
+                }
+            }
+
+        } else {
+            while (!done) {
+                lock();
+                Local Int temp = bank + 32;
+                if (temp > 0) {
+                    bank = bank + 32;
+                    printf(bank);
+                    unlock();
+                    done = True;
+                }
+            }
+        }
+    }
+
+    printf(bank);
+}

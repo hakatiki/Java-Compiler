@@ -1,0 +1,33 @@
+@Threaded(0)
+class main {
+    Local Int[] arr  = [0,1,5,6,20,112,112,345];
+    Local Int[] arr2 = [0,2,1,4,56,78,90];
+    Local Int i = 0;
+    Local Int temp = 0;
+    Local Bool arrSorted = True;
+    Local Bool arr2Sorted = True;
+
+    while(i < 8) {
+        if (temp > arr[i]) {
+            arrSorted = False;
+        }
+        temp = arr[i];
+        i = i + 1;
+    }
+
+    i = 0;
+    temp = 0;
+
+    while(i < 7) {
+        if (temp > arr2[i]) {
+            arr2Sorted = False;
+        }
+        temp = arr2[i];
+        i = i + 1;
+    }
+
+    if (arrSorted) { printf(1); } else { printf(0); }
+
+    if (arr2Sorted) { printf(1); } else { printf(0); }
+
+}

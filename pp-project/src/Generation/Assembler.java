@@ -25,12 +25,25 @@ public class Assembler {
     // "src/Sample/easy.txt"
     @Test
     public void Test(){
-        CompileFile("src/Sample/easy.txt", "src/Compiled/easy.hs");
+        // Required files
+        CompileFile("src/Sample/Required/bankingsystem.txt", "src/sprockell-master/src/Required/bankingsystem.hs");
+        CompileFile("src/Sample/Required/petersons.txt", "src/sprockell-master/src/Required/petersons.hs");
+
+        // Additional tests
+        CompileFile("src/Sample/Tests/negation.txt", "src/sprockell-master/src/Tests/negation.hs");
+        CompileFile("src/Sample/Tests/arrays.txt", "src/sprockell-master/src/Tests/arrays.hs");
+        CompileFile("src/Sample/Tests/if.txt", "src/sprockell-master/src/Tests/if.hs");
+        CompileFile("src/Sample/Tests/ifScope.txt", "src/sprockell-master/src/Tests/ifScope.hs");
+        CompileFile("src/Sample/Tests/locks.txt", "src/sprockell-master/src/Tests/locks.hs");
+        CompileFile("src/Sample/Tests/checkSorted.txt", "src/sprockell-master/src/Tests/checkSorted.hs");
+        CompileFile("src/Sample/Tests/threaded.txt", "src/sprockell-master/src/Tests/threaded.hs");
+        CompileFile("src/Sample/Tests/while.txt", "src/sprockell-master/src/Tests/while.hs");
+        CompileFile("src/Sample/Tests/whileScope.txt", "src/sprockell-master/src/Tests/whileScope.hs");
     }
 
 
     public void CompileFile(String src, String dst) {
-        List<String>  prog = check(src);
+        List<String> prog = check(src);
 
         String additional = "";
         for (int i = 0; i < tool.activeThreads.size(); i++) {
@@ -53,6 +66,7 @@ public class Assembler {
         for (int i = 0; i < prog.size();i++){
             System.out.println(prog.get(i));
         }
+        reset();
     }
     private List<String> check(String file){
         String str = "";

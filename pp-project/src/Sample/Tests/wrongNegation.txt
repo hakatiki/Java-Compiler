@@ -1,0 +1,5 @@
+@Threaded(0)
+class main {
+    Local Int x = 5;
+    Local Int y = !x;
+}

@@ -1,0 +1,30 @@
+@Threaded(0)
+class main {
+    Local Bool var = True;
+    Local Int x = 5;
+    Local Int y = 0;
+
+    if (var) {
+        x = 0;
+    } else {
+        x = 2;
+    }
+
+    printf(x);
+
+    if (!var) {
+        y = 15;
+    } else {
+        y = 2;
+    }
+
+    printf(y);
+
+    if (x == y) {
+        x = 100;
+        y = 100;
+    }
+
+    printf(x);
+    printf(y);
+}

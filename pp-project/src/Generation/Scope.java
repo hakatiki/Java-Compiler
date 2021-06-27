@@ -80,4 +80,6 @@ public class Scope {
 	}
 
 	public Map<String,Integer> getOffsets() { return offsets; }
+
+    public Map<String,Boolean> getAllShared() { return shared;}
 }

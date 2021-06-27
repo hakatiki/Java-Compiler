@@ -1,0 +1,14 @@
+@Threaded(6)
+class main {
+    @Threaded (6) {
+        printf(Thread.id);
+    }
+
+
+    @Threaded (2) {
+        printf(Thread.id);
+        @Threaded(3) {
+            printf(Thread.id);
+        }
+    }
+}

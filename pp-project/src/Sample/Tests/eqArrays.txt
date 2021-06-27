@@ -1,0 +1,25 @@
+@Threaded(0)
+class main {
+    Local Int[] arr = [1,2,3,4,5];
+    Local Int[] arr2 = [1,2,3,4,5];
+    Local Int[] arr3 = [0,2,3,4,5];
+    Local Int[] arr4 = [0,2];
+
+    if (arr == arr2) {
+        printf(1);
+    }
+
+    Local Bool test = (arr2 == arr3);
+
+    Local Bool test2 = (arr4 == arr2);
+
+    if (test){
+        printf(2);
+    }
+
+    if (test2) {
+        printf(3)
+    } else {
+        printf(4);
+    }
+}

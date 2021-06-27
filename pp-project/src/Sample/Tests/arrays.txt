@@ -1,0 +1,9 @@
+@Threaded(0)
+class main {
+    Local Int[] arr = [1,2,3,4,5];
+    Local Bool[] b = [True,False,True,False];
+
+    if (b[0]) {
+        printf(999);
+    }
+}

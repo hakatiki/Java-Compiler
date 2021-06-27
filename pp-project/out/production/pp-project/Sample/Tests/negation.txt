@@ -1,0 +1,7 @@
+@Threaded(0)
+class main {
+    Local Bool mine = False;
+    if (!mine) {
+        printf(200);
+    }
+}
