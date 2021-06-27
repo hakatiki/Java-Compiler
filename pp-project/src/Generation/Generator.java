@@ -547,7 +547,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         String load;
         if (str.equals("True") || str.equals("False")){
             int val =  str.equals("True") ? 1 : 0;
-            load = "Load (ImmValue "+ val + " ) " + reg;
+            load = "Load (ImmValue "+ val + ") " + reg;
         }
         else {
             load = "Load (ImmValue "+ str + ") " + reg;
