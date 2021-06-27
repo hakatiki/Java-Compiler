@@ -1,0 +1,68 @@
+@Threaded(0)
+class main {
+	Int val = 2;
+	Lock lock = new Lock;
+
+	Bool val2 = True;
+
+	if (val2) {
+		val2 = False;
+	}
+
+	val2 = True;
+
+	while (val < 4) {
+		val++;
+	}
+
+	val = 0;
+	Bool works = False;
+
+	@Threaded (5) {
+		lock.lock();
+		val++;
+		lock.unlock();
+
+		@Threaded (3) {
+			lock.lock();
+			val++;
+			lock.unlock();
+		}
+	}
+
+	if (val == 20) {
+		works = True;
+	} else {
+		val = -99999;
+	}
+
+
+	Bool[] flag = [False,False];
+	Int turn = 0;
+
+	@Threaded (2) {
+		flag[Thread.id] = True;
+		Int other = 0;
+
+		if (Thread.id == 0) {
+			other = 1;
+		}
+
+		while (flag[other] == True && turn == other) {
+		}
+
+
+		flag[Thread.id] = False;
+	}
+
+
+	Lock bankLock = new Lock;
+
+	Int mybank = 100;
+
+	@Threaded (5) {
+		bankLock.lock();
+		bankLock.unlock();
+	}
+
+}
