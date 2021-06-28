@@ -39,6 +39,8 @@ public class Assembler {
         CompileFile("src/Sample/Tests/threaded.txt", "src/sprockell-master/src/Tests/threaded.hs");
         CompileFile("src/Sample/Tests/while.txt", "src/sprockell-master/src/Tests/while.hs");
         CompileFile("src/Sample/Tests/whileScope.txt", "src/sprockell-master/src/Tests/whileScope.hs");
+        CompileFile("src/Sample/Tests/mult.txt", "src/sprockell-master/src/Tests/mult.hs");
+        CompileFile("src/Sample/Tests/and.txt", "src/sprockell-master/src/Tests/and.hs");
     }
 
 

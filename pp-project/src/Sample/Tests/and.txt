@@ -1,0 +1,17 @@
+@Threaded(0)
+class main {
+    Local Bool x = True;
+    Local Bool y = False;
+    Local Bool z = True;
+
+    if (x && y) {
+        printf(0);
+    }
+    if (x && z) {
+        printf(1);
+    }
+
+    if (x || y) {
+        printf(2);
+    }
+}

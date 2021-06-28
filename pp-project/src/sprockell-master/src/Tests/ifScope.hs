@@ -12,7 +12,7 @@ prog = [
     Jump (Rel (-6)),
     Load (ImmValue 5) regA,
     Store regA (DirAddr 0),
-    Load (ImmValue 1 ) regA,
+    Load (ImmValue 1) regA,
     Store regA (DirAddr 1),
     Load (DirAddr 1) regA,
     Load (ImmValue 0) regE,

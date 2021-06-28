@@ -1,6 +1,5 @@
 // Generated from D:/Mine/University/Modules/Module 8 - Programming Paradigms/mod8-final-project/pp-project/src/ANTLR\Grammar.g4 by ANTLR 4.9.1
 package ANTLR;
-import Generation.MemoryOutOfBoundsException;
 import Generation.TooManyThreadsException;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
@@ -25,7 +24,7 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitClassDec(GrammarParser.ClassDecContext ctx) throws MemoryOutOfBoundsException;
+	T visitClassDec(GrammarParser.ClassDecContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code threadedDec}
 	 * labeled alternative in {@link GrammarParser#thread}.
@@ -152,6 +151,13 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitOrExpr(GrammarParser.OrExprContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code multExpr}
+	 * labeled alternative in {@link GrammarParser#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMultExpr(GrammarParser.MultExprContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code constExpr}
 	 * labeled alternative in {@link GrammarParser#expr}.

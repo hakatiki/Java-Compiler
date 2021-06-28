@@ -449,6 +449,33 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         regs.put(ctx,reg0);
         return current;
     }
+
+    @Override public List<String> visitMultExpr(GrammarParser.MultExprContext ctx) {
+        continueScope(ctx);
+
+        List<String> current = new LinkedList<>();
+        List<String> lhs  = visit(ctx.expr(0));
+        String reg0 = regs.get(ctx.expr(0));
+        List<String> rhs  = visit(ctx.expr(1));
+        String reg1 = regs.get(ctx.expr(1));
+
+        String op = ctx.getChild(1).getText();
+
+        // Getting child correct?
+        // Might still need fixing if -- memory allocation ting
+        String save = "Push "+ reg0;
+        String reg2 = reg1.equals(reg0)?(reg0.equals("regA")?"regB":"regA"):reg0;
+        String get = "Pop "+ reg2;
+        String addInstr = "Compute Mul " + reg2 + " " + reg1 + " " + reg0;
+        current.addAll(lhs);
+        current.add(save);
+        current.addAll(rhs);
+        current.add(get);
+        current.add(addInstr);
+        regs.put(ctx,reg0);
+        return current;
+    }
+
     @Override public List<String>  visitArrContents(GrammarParser.ArrContentsContext ctx) {
         continueScope(ctx);
         List<String> current = new LinkedList<>();

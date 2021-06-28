@@ -22,6 +22,7 @@ stat    : '{' stat* '}'                         #blockStat
 
 expr:   '!' expr                                #notExpr
         | expr (PLUS | MINUS) expr              #addExpr
+        | expr MULT expr                        #multExpr
         | expr '&&' expr                        #andExpr
         | expr '||'  expr                       #orExpr
         | expr (GT | LT | EQ | NEQ) expr        #compExpr
@@ -58,6 +59,7 @@ THREADED: '@Threaded';
 LOCK: 'Lock';
 PLUS: '+';
 MINUS: '-';
+MULT: '*';
 GT: '>';
 LT: '<';
 EQ: '==';

@@ -104,6 +104,21 @@ public class TypeCheck extends GrammarBaseListener {
 
         tree.put(ctx, Type.Int);
     }
+
+    @Override public void exitMultExpr(GrammarParser.MultExprContext ctx) {
+        Type first = tree.get(ctx.expr(0));
+        Type second = tree.get(ctx.expr(1));
+        int line = ctx.start.getLine();
+        int pos = ctx.start.getCharPositionInLine();
+        if (! (first == Type.Int && second == Type.Int)){
+            String error =  "Error on line: " + line + " : "+ pos+". Type error while adding two expressions!";
+            errorList.add( error );
+        }
+        // TODO: Add more stuff here
+
+        tree.put(ctx, Type.Int);
+    }
+
     @Override public void exitOrExpr(GrammarParser.OrExprContext ctx) {
         Type first = tree.get(ctx.expr(0));
         Type second = tree.get(ctx.expr(1));

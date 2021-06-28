@@ -10,7 +10,7 @@ prog = [
     Compute NEq regA regSprID regB,
     Branch regB (Ind regA),
     Jump (Rel (-6)),
-    Load (ImmValue 0 ) regA,
+    Load (ImmValue 0) regA,
     Store regA (DirAddr 0),
     Load (DirAddr 0) regA,
     Compute Equal regA reg0 regA,

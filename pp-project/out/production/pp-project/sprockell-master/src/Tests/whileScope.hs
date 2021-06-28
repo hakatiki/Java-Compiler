@@ -14,7 +14,7 @@ prog = [
     Store regA (DirAddr 0),
     Load (ImmValue 0) regA,
     Store regA (DirAddr 1),
-    Load (ImmValue 1 ) regA,
+    Load (ImmValue 1) regA,
     Store regA (DirAddr 2),
     Load (DirAddr 1) regA,
     Push regA,
