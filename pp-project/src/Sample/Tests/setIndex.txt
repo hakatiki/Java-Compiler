@@ -1,0 +1,7 @@
+@Threaded(0)
+class main {
+    Local Int[] arr = [1,23,45,676];
+    printf(arr[2]);
+    arr[2] = 200;
+    printf(arr[2]);
+}

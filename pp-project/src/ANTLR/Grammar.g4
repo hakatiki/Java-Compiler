@@ -1,7 +1,7 @@
 grammar Grammar;
 
 program : def EOF                               #beginDec
-        ;                  // start symbol
+        ;
 
 def     : thread CLASS 'main' stat              #classDec
         ;
@@ -11,12 +11,13 @@ thread  : THREADED '(' NUM ')'                  #threadedDec
 
 stat    : '{' stat* '}'                         #blockStat
         | mem type ID '=' expr ';'              #varDec
-        | IF '(' expr ')' stat (ELSE stat)?     #ifStatement   //expr must be oof type Bool
-        | WHILE '(' expr ')' stat               #whileLoop     //expr must be oof type Bool
-        | THREADED '(' NUM ')' stat             #threadedBlock //Threaded
+        | IF '(' expr ')' stat (ELSE stat)?     #ifStatement
+        | WHILE '(' expr ')' stat               #whileLoop
+        | THREADED '(' NUM ')' stat             #threadedBlock
         | 'lock' '(' ')' ';'                    #putLock
         | 'unlock' '(' ')' ';'                  #putUnlock
         | ID '=' expr ';'                       #copyOver
+        | ID '[' expr ']' '=' expr ';'          #setIndex
         | OUT '(' expr ')' ';'                  #output
         ;
 
@@ -30,7 +31,7 @@ expr:   '!' expr                                #notExpr
         | (NUM | TRUE | FALSE)                  #constExpr
         | '[' arr ']'                           #arrayExpr
         | 'Thread.id'                           #getThreadId
-        | ID '[' expr ']'                       #getIndex    //expr must be of type int
+        | ID '[' expr ']'                       #getIndex
         | ID                                    #idExpr
         ;
 

@@ -194,6 +194,16 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         current.add(temp);
     }
 
+    @Override public List<String> visitNotExpr(GrammarParser.NotExprContext ctx) {
+        continueScope(ctx);
+        List<String> current = visit(ctx.expr());
+        String reg = regs.get(ctx.expr());
+        String temp = "Compute Equal " + reg + " reg0 regA";
+        regs.put(ctx,"regA");
+        current.add(temp);
+        return current;
+    }
+
     @Override public List<String>  visitPutLock(GrammarParser.PutLockContext ctx) {
         continueScope(ctx);
         int lockAddress =  scope.get(ctx).address(LOCK);
@@ -285,7 +295,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
             temp = "Receive " + reg0;
             current.add(temp);
         } else {
-            temp = "Load ( IndAddr " + reg0 +" ) " + reg0;
+            temp = "Load ( IndAddr " + reg0 +") " + reg0;
             current.add(temp);
         }
 
@@ -307,13 +317,10 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
             elseCode = visit(ctx.stat(1));
             lengthElse = elseCode.size();
         }
-        // TODO might need to fix plus 1 or plus 0
-        String not = "Load (ImmValue 0) regE";
-        String eq = "Compute Equal regE " + reg + " " + reg;
+        String eq = "Compute Equal "+ reg + " reg0 " + reg;
         String branch = "Branch "+reg+" (Rel "+ (lengthIf+2) +")";
-        String endIfJump = "Jump (Rel "+ (lengthElse+1) +" )";
+        String endIfJump = "Jump (Rel "+ (lengthElse+1) +")";
         current.addAll(exprCode);
-        current.add(not);
         current.add(eq);
         current.add(branch);
         current.addAll(ifCode);
@@ -322,15 +329,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         return current;
     }
 
-    @Override public List<String> visitNotExpr(GrammarParser.NotExprContext ctx) {
-        continueScope(ctx);
-        List<String> current = visit(ctx.expr());
-        String reg = regs.get(ctx.expr());
-        String temp = "Compute Equal " + reg + " reg0 regA";
-        regs.put(ctx,"regA");
-        current.add(temp);
-        return current;
-    }
+
 
     @Override public List<String>  visitWhileLoop(GrammarParser.WhileLoopContext ctx) {
         continueScope(ctx);
@@ -340,13 +339,10 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         List <String> statCode = visit(ctx.stat());
         int lengthStat = statCode.size();
         int lengthExpr = exprCode.size();
-        // TODO might need to fix plus 1 or plus 0
-        String not = "Load (ImmValue 0) regE";
-        String eq = "Compute Equal regE " + reg + " " + reg;
+        String eq = "Compute Equal "+ reg + " reg0 " + reg;
         String branch = "Branch "+reg+" (Rel "+ (lengthStat+2) +")";
         String back = "Jump (Rel  ("+ -(lengthStat+lengthExpr+1+2) + "))";
         current.addAll(exprCode);
-        current.add(not);
         current.add(eq);
         current.add(branch);
         current.addAll(statCode);
@@ -516,8 +512,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         } catch (MemoryOutOfBoundsException e) {
             e.printStackTrace();
         }
-        List<String> all =  visit(ctx.def());
-        return all;
+        return visit(ctx.def());
     }
     @Override public List<String>  visitCompExpr(GrammarParser.CompExprContext ctx) {
         continueScope(ctx);
@@ -609,6 +604,23 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         List<String> current  = visit(ctx.expr());
         String myPrint = "WriteInstr regA numberIO";
         current.add(myPrint);
+        return current;
+    }
+
+    @Override public List<String> visitSetIndex(GrammarParser.SetIndexContext ctx) {
+        continueScope(ctx);;
+        Scope currScope = scope.get(ctx);
+        String ID = ctx.ID().getText();
+        int address = currScope.address(ID);
+
+        List<String> current = visit(ctx.expr(0));
+        String temp = "Load (ImmValue " + address + ") " + "regE";
+        current.add(temp);
+        temp = "Compute Add regA regE regE";
+        current.add(temp);
+        current.addAll(visit(ctx.expr(1)));
+        temp = (currScope.getShared(ID)?"WriteInstr":"Store") + " regA (IndAddr regE)";
+        current.add(temp);
         return current;
     }
 

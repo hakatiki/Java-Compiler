@@ -24,17 +24,18 @@ public class TypeCheckTest {
         testIf(false);
         testWrongIf(false);
         testWhile(false);
-        testThreaded(true); //Doesn't get Thread.id correctly as type Int
+        testThreaded(false); //Doesn't get Thread.id correctly as type Int
         testLocks(false);
-        testArrays(false); //Doesn't correctly define array's + doesn't get index correctly
-        //testEqArrays(false); //same as above
+        testArrays(false);
+        testEqArrays(false);
         testIfScope(false);
         testWrongIfScope(false);
         testWhileScope(false);
         testWrongWhileScope(false);
         testWrongType(false);
         testNegation(false);
-        testWrongNegation(true); //doesn't really correctly say
+        testWrongNegation(false); //doesn't really correctly say
+        testSetIndex(true);
     }
 
 
@@ -67,7 +68,7 @@ public class TypeCheckTest {
 
     // Test threaded block
     public void testThreaded(boolean print){
-        assertEquals(1,check("src/Sample/Tests/threaded.txt"));
+        assertEquals(0,check("src/Sample/Tests/threaded.txt"));
         if (print)
             for (int i = 0; i <tool.errorList.size();i++)
                 System.out.println(tool.errorList.get(i));
@@ -95,7 +96,7 @@ public class TypeCheckTest {
 
     // Test checking equality of arrays
     public void testEqArrays(boolean print){
-        assertEquals(17,check("src/Sample/Tests/eqArrays.txt"));
+        assertEquals(0,check("src/Sample/Tests/eqArrays.txt"));
         if (print)
             for (int i = 0; i <tool.errorList.size();i++)
                 System.out.println(tool.errorList.get(i));
@@ -152,6 +153,14 @@ public class TypeCheckTest {
 
     public void testWrongNegation(boolean print) {
         assertEquals(2, check("src/Sample/Tests/wrongNegation.txt"));
+        if (print)
+            for (int i = 0; i < tool.errorList.size(); i++)
+                System.out.println(tool.errorList.get(i));
+        reset();
+    }
+
+    public void testSetIndex(boolean print) {
+        assertEquals(0, check("src/Sample/Tests/setIndex.txt"));
         if (print)
             for (int i = 0; i < tool.errorList.size(); i++)
                 System.out.println(tool.errorList.get(i));

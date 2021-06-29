@@ -247,6 +247,49 @@ public class TypeCheck extends GrammarBaseListener {
             tree.put(ctx, table.getValue(ctx.ID().getText()));
     }
 
+    @Override public void exitSetIndex(GrammarParser.SetIndexContext ctx) {
+        Type ind = tree.get(ctx.expr(0));
+        Type type = tree.get(ctx.expr(1));
+        String temp = type.toString() + "Array";
+        boolean clean = true;
+        if (table.getValue(ctx.ID().getText()) == Type.NotInScope) {
+            int line = ctx.start.getLine();
+            int pos = ctx.start.getCharPositionInLine();
+            String error =  "Error on line: " + line + " : "+ pos+ ". Variable [" +
+                    ctx.ID().getText() + "] out of scope!";
+            errorList.add(error);
+            tree.put(ctx, Type.Empty);
+            clean = false;
+        }
+        if (!table.getValue(ctx.ID().getText()).toString().equals(temp)) {
+            int line = ctx.start.getLine();
+            int pos = ctx.start.getCharPositionInLine();
+            String error =  "Error on line: " + line + " : "+ pos+ ". Variable [" +
+                    ctx.ID().getText() + "] has a different type!";
+            errorList.add(error);
+            if (clean) {
+                tree.put(ctx, Type.Empty);
+                clean = false;
+            }
+
+        }
+        if (ind != Type.Int) {
+            int line = ctx.start.getLine();
+            int pos = ctx.start.getCharPositionInLine();
+            String error =  "Error on line: " + line + " : "+ pos+ ". [" +
+                    ctx.expr(0).getText() + "] is not of type Int!";
+            errorList.add(error);
+            if (clean) {
+                tree.put(ctx, Type.Empty);
+                clean = false;
+            }
+
+        }
+        if (clean) {
+            tree.put(ctx, table.getValue(ctx.ID().getText()));
+        }
+    }
+
     @Override public void exitOutput(GrammarParser.OutputContext ctx) {
         Type type = tree.get(ctx.expr());
         if (type != Type.Int) {
@@ -256,6 +299,8 @@ public class TypeCheck extends GrammarBaseListener {
             errorList.add(error);
         }
     }
+
+    @Override public void exitGetThreadId(GrammarParser.GetThreadIdContext ctx) { tree.put(ctx, Type.Int); }
     //@Override public void enterCopyOver(GrammarParser.CopyOverContext ctx) { }
     //@Override public void exitType(GrammarParser.TypeContext ctx) { }
     //@Override public void exitEmptyArr(GrammarParser.EmptyArrContext ctx) { }

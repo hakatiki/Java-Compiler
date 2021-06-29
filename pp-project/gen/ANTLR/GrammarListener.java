@@ -140,6 +140,18 @@ public interface GrammarListener extends ParseTreeListener {
 	 */
 	void exitCopyOver(GrammarParser.CopyOverContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code setIndex}
+	 * labeled alternative in {@link GrammarParser#stat}.
+	 * @param ctx the parse tree
+	 */
+	void enterSetIndex(GrammarParser.SetIndexContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code setIndex}
+	 * labeled alternative in {@link GrammarParser#stat}.
+	 * @param ctx the parse tree
+	 */
+	void exitSetIndex(GrammarParser.SetIndexContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code output}
 	 * labeled alternative in {@link GrammarParser#stat}.
 	 * @param ctx the parse tree

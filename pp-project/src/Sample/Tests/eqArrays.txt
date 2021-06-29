@@ -18,7 +18,7 @@ class main {
     }
 
     if (test2) {
-        printf(3)
+        printf(3);
     } else {
         printf(4);
     }

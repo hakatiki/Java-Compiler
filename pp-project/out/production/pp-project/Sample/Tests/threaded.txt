@@ -1,14 +1,17 @@
 @Threaded(6)
 class main {
     @Threaded (6) {
-        printf(Thread.id);
+        Local Int tid = Thread.id;
+        printf(tid);
     }
 
 
     @Threaded (2) {
-        printf(Thread.id);
+        Local Int tid = Thread.id;
+        printf(tid);
         @Threaded(3) {
-            printf(Thread.id);
+            Local Int tid = Thread.id;
+            printf(tid);
         }
     }
 }

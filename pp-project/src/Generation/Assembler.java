@@ -41,6 +41,8 @@ public class Assembler {
         CompileFile("src/Sample/Tests/whileScope.txt", "src/sprockell-master/src/Tests/whileScope.hs");
         CompileFile("src/Sample/Tests/mult.txt", "src/sprockell-master/src/Tests/mult.hs");
         CompileFile("src/Sample/Tests/and.txt", "src/sprockell-master/src/Tests/and.hs");
+        CompileFile("src/Sample/Tests/eqArrays.txt", "src/sprockell-master/src/Tests/eqArrays.hs");
+        CompileFile("src/Sample/Tests/setIndex.txt", "src/sprockell-master/src/Tests/setIndex.hs");
     }
 
 

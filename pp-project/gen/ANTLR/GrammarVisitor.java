@@ -89,6 +89,13 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitCopyOver(GrammarParser.CopyOverContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code setIndex}
+	 * labeled alternative in {@link GrammarParser#stat}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSetIndex(GrammarParser.SetIndexContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code output}
 	 * labeled alternative in {@link GrammarParser#stat}.
 	 * @param ctx the parse tree
