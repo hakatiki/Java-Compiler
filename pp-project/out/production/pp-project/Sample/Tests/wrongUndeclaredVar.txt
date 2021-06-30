@@ -1,0 +1,4 @@
+@Threaded(0)
+class main {
+    x = 15;
+}

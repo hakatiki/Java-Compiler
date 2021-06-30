@@ -12,9 +12,9 @@ class main {
                 if (temp > 0) {
                     bank = bank - 27;
                     printf(bank);
-                    unlock();
                     done = True;
                 }
+                unlock();
             }
 
         } else {
@@ -24,9 +24,9 @@ class main {
                 if (temp > 0) {
                     bank = bank + 32;
                     printf(bank);
-                    unlock();
                     done = True;
                 }
+                unlock();
             }
         }
     }

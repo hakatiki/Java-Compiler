@@ -6,7 +6,6 @@ import ANTLR.GrammarParser;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.io.BufferedReader;
@@ -19,28 +18,40 @@ public class TypeCheckTest {
     private ParseTreeWalker walker = new ParseTreeWalker();
     private TypeCheck tool = new TypeCheck();
 
+    /*
+        The tests take a boolean, which decides whether it should return the error messages
+        ~ the integer is the expected amount of errors
+     */
     @Test
-    public void tests(){
-        testIf(false);
-        testWrongIf(false);
-        testWhile(false);
-        testThreaded(false); //Doesn't get Thread.id correctly as type Int
-        testLocks(false);
-        testArrays(false);
-        testEqArrays(false);
-        testIfScope(false);
-        testWrongIfScope(false);
-        testWhileScope(false);
-        testWrongWhileScope(false);
-        testWrongType(false);
-        testNegation(false);
-        testWrongNegation(false); //doesn't really correctly say
-        testSetIndex(true);
+    public void goodCode(){
+        testIf(false, 0);
+        testWhile(false, 0);
+        testThreaded(false, 0);
+        testLocks(false, 0);
+        testArrays(false, 0);
+        testEqArrays(false, 0);
+        testIfScope(false, 0);
+        testNegation(false, 0);
+        testSetIndex(false, 0);
+        testWhileScope(false,0);
+    }
+
+    @Test
+    public void wrongCode() {
+        testWrongIf(true, 1);
+        testWrongIfScope(true,1);
+        testWrongWhileScope(true,1);
+        testWrongType(true,1);
+        testWrongNegation(true,2);
+        testWrongUndeclaredVar(true,1);
     }
 
 
+    //  =========================== Correct Code Tests ===========================
+
+
     // Tests if-statement
-    public void testIf(boolean print) {
+    public void testIf(boolean print, int x) {
         assertEquals(0,check("src/Sample/Tests/if.txt"));
         if (print)
             for (int i = 0; i <tool.errorList.size();i++)
@@ -48,46 +59,32 @@ public class TypeCheckTest {
         reset();
     }
 
-    // Test whether if-statement reacts on wrong type in condition
-    public void testWrongIf(boolean print) {
-        assertEquals(1, check("src/Sample/Tests/wrongIf.txt"));
-        if (print)
-            for (int i = 0; i < tool.errorList.size(); i++)
-                System.out.println(tool.errorList.get(i));
-        reset();
-    }
-
-    // Test while-loop
-    public void testWhile(boolean print){
-        assertEquals(0,check("src/Sample/Tests/while.txt"));
+    public void testWhile(boolean print, int x){
+        assertEquals(x,check("src/Sample/Tests/while.txt"));
         if (print)
             for (int i = 0; i <tool.errorList.size();i++)
                 System.out.println(tool.errorList.get(i));
         reset();
     }
 
-    // Test threaded block
-    public void testThreaded(boolean print){
-        assertEquals(0,check("src/Sample/Tests/threaded.txt"));
+    public void testThreaded(boolean print, int x){
+        assertEquals(x,check("src/Sample/Tests/threaded.txt"));
         if (print)
             for (int i = 0; i <tool.errorList.size();i++)
                 System.out.println(tool.errorList.get(i));
         reset();
     }
 
-    // Test lock structure
-    public void testLocks(boolean print){
-        assertEquals(0,check("src/Sample/Tests/locks.txt"));
+    public void testLocks(boolean print, int x){
+        assertEquals(x,check("src/Sample/Tests/locks.txt"));
         if (print)
             for (int i = 0; i <tool.errorList.size();i++)
                 System.out.println(tool.errorList.get(i));
         reset();
     }
 
-
-    // Test creation of arrays
-    public void testArrays(boolean print){
-        assertEquals(0,check("src/Sample/Tests/arrays.txt"));
+    public void testArrays(boolean print, int x){
+        assertEquals(x,check("src/Sample/Tests/arrays.txt"));
         if (print)
             for (int i = 0; i <tool.errorList.size();i++)
                 System.out.println(tool.errorList.get(i));
@@ -95,77 +92,109 @@ public class TypeCheckTest {
     }
 
     // Test checking equality of arrays
-    public void testEqArrays(boolean print){
-        assertEquals(0,check("src/Sample/Tests/eqArrays.txt"));
+    public void testEqArrays(boolean print, int x){
+        assertEquals(x,check("src/Sample/Tests/eqArrays.txt"));
         if (print)
             for (int i = 0; i <tool.errorList.size();i++)
                 System.out.println(tool.errorList.get(i));
         reset();
     }
 
-    public void testIfScope(boolean print){
-        assertEquals(0,check("src/Sample/Tests/ifScope.txt"));
+    public void testIfScope(boolean print, int x){
+        assertEquals(x,check("src/Sample/Tests/ifScope.txt"));
         if (print)
             for (int i = 0; i <tool.errorList.size();i++)
                 System.out.println(tool.errorList.get(i));
         reset();
     }
 
-    public void testWrongIfScope(boolean print){
-        assertEquals(1,check("src/Sample/Tests/wrongIfScope.txt"));
-        if (print)
-            for (int i = 0; i <tool.errorList.size();i++)
-                System.out.println(tool.errorList.get(i));
-        reset();
-    }
-
-    public void testWhileScope(boolean print){
-        assertEquals(0,check("src/Sample/Tests/whileScope.txt"));
-        if (print)
-            for (int i = 0; i <tool.errorList.size();i++)
-                System.out.println(tool.errorList.get(i));
-        reset();
-    }
-
-    public void testWrongWhileScope(boolean print){
-        assertEquals(1,check("src/Sample/Tests/wrongWhileScope.txt"));
-        if (print)
-            for (int i = 0; i <tool.errorList.size();i++)
-                System.out.println(tool.errorList.get(i));
-        reset();
-    }
-
-    public void testWrongType(boolean print){
-        assertEquals(1,check("src/Sample/Tests/wrongType.txt"));
-        if (print)
-            for (int i = 0; i <tool.errorList.size();i++)
-                System.out.println(tool.errorList.get(i));
-        reset();
-    }
-
-    public void testNegation(boolean print) {
-        assertEquals(0, check("src/Sample/Tests/negation.txt"));
+    public void testSetIndex(boolean print, int x) {
+        assertEquals(x, check("src/Sample/Tests/setIndex.txt"));
         if (print)
             for (int i = 0; i < tool.errorList.size(); i++)
                 System.out.println(tool.errorList.get(i));
         reset();
     }
 
-    public void testWrongNegation(boolean print) {
-        assertEquals(2, check("src/Sample/Tests/wrongNegation.txt"));
+    public void testWhileScope(boolean print, int x){
+        assertEquals(x,check("src/Sample/Tests/whileScope.txt"));
+        if (print)
+            for (int i = 0; i <tool.errorList.size();i++)
+                System.out.println(tool.errorList.get(i));
+        reset();
+    }
+
+    public void testNegation(boolean print, int x) {
+        assertEquals(x, check("src/Sample/Tests/negation.txt"));
         if (print)
             for (int i = 0; i < tool.errorList.size(); i++)
                 System.out.println(tool.errorList.get(i));
         reset();
     }
 
-    public void testSetIndex(boolean print) {
-        assertEquals(0, check("src/Sample/Tests/setIndex.txt"));
+
+
+
+    // =========================== Wrong Code Tests ===========================
+
+    // wrong type in condition
+    public void testWrongIf(boolean print, int x) {
+        assertEquals(x, check("src/Sample/Tests/wrongIf.txt"));
         if (print)
             for (int i = 0; i < tool.errorList.size(); i++)
                 System.out.println(tool.errorList.get(i));
         reset();
     }
+
+    // var in if-statement declared, but called outside
+    public void testWrongIfScope(boolean print, int x){
+        assertEquals(x,check("src/Sample/Tests/wrongIfScope.txt"));
+        if (print)
+            for (int i = 0; i <tool.errorList.size();i++)
+                System.out.println(tool.errorList.get(i));
+        reset();
+    }
+
+    // var in while-statement declared, but called outside
+    public void testWrongWhileScope(boolean print, int x){
+        assertEquals(x,check("src/Sample/Tests/wrongWhileScope.txt"));
+        if (print)
+            for (int i = 0; i <tool.errorList.size();i++)
+                System.out.println(tool.errorList.get(i));
+        reset();
+    }
+
+    // attempt to put wrong-type value in variable
+    public void testWrongType(boolean print, int x){
+        assertEquals(x,check("src/Sample/Tests/wrongType.txt"));
+        if (print)
+            for (int i = 0; i <tool.errorList.size();i++)
+                System.out.println(tool.errorList.get(i));
+        reset();
+    }
+
+    // try negation of Integer
+    public void testWrongNegation(boolean print, int x) {
+        assertEquals(x, check("src/Sample/Tests/wrongNegation.txt"));
+        if (print)
+            for (int i = 0; i < tool.errorList.size(); i++)
+                System.out.println(tool.errorList.get(i));
+        reset();
+    }
+
+    public void testWrongUndeclaredVar(boolean print, int x) {
+        assertEquals(x, check("src/Sample/Tests/wrongUndeclaredVar.txt"));
+        if (print)
+            for (int i = 0; i < tool.errorList.size(); i++)
+                System.out.println(tool.errorList.get(i));
+        reset();
+    }
+
+
+
+
+
+    // =================================== Rest ===================================
 
 
 

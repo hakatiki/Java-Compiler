@@ -1,0 +1,4 @@
+@Threaded(0) {
+    Local Int x = 5;
+    if (x == 5) printf(x);
+}

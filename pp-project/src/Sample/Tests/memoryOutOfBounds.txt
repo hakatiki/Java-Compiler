@@ -1,0 +1,11 @@
+@Threaded(0)
+class main {
+
+    Shared Int x = 5;
+    Shared Bool[] arr = [True,False,False,False,True,False];
+    Shared Bool done = False;
+
+    Shared Int add = 12;
+
+
+}

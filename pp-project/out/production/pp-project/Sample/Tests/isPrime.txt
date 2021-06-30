@@ -1,0 +1,17 @@
+@Threaded(0)
+class main {
+    Local Int x = 29;
+    Local Int i = 1;
+    Local Bool isPrime = True;
+    while (i < x) {
+        Local Int j = i;
+        while (j < x) {
+            if ((i * j) == x) {
+                isPrime = False;
+            }
+            j = j + 1;
+        }
+        i = i + 1;
+    }
+    if (isPrime) { printf(1); } else { printf(0); }
+}

@@ -103,6 +103,13 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitOutput(GrammarParser.OutputContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code threadedBlockStat}
+	 * labeled alternative in {@link GrammarParser#tstat}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitThreadedBlockStat(GrammarParser.ThreadedBlockStatContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code parExpr}
 	 * labeled alternative in {@link GrammarParser#expr}.
 	 * @param ctx the parse tree

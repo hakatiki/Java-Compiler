@@ -1,0 +1,11 @@
+@Threaded(0)
+class main {
+
+
+
+    Local Int[] arr = [12,24,24];
+    arr[2] = 36;
+
+
+
+}

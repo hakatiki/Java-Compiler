@@ -1,0 +1,33 @@
+@Threaded(4)
+class main {
+    Shared Int[] arr = [12,53,17];
+
+    @Threaded(2) {
+
+        if (Thread.id == 1) {
+            lock();
+            printf(arr[0]);
+            unlock();
+        } else {
+            lock();
+            arr[1] = 50;
+            arr[2] = 100;
+            unlock();
+        }
+
+        @Threaded(2) {
+            lock();
+            while ((Thread.id * arr[0]) < arr[1] ) {
+                arr[1] = arr[1] - 10;
+                printf(arr[1]);
+            }
+            unlock();
+        }
+    }
+
+    Local Int it = 0;
+    while (it < 3) {
+        printf(arr[it]);
+        it = it + 1;
+    }
+}

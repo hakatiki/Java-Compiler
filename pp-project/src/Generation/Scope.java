@@ -4,27 +4,29 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-/** Class combining the information of a single scope level. */
+// ----- Class representing Scope -----
 public class Scope {
-	/** Current size of this scope (in bytes). 
-	 * Used to calculate offsets of newly declared variables. */
-	private int localSize;
+
+
+    // ======== Variables ========
+	private int localSize;                  //localSize and sharedSize -> Vars store "how full" the memory blocks are
 	private int sharedSize;
 	private final int INT_SIZE = 1;
-	/** Map from declared variables to their types. */
-	/** Map from declared variables to their offset within the allocation
-	 * record of this scope. */
-	private Map<String, Integer> offsets;
-	private Map<String, Boolean> shared;
+	private Map<String, Integer> offsets;   //saves offsets in memory of a variable ID
+	private Map<String, Boolean> shared;    //saves whether variable in ID is in shared memory or not
 
-	/** Constructs a fresh, initially empty scope. */
-	public Scope() {
-		this.offsets = new LinkedHashMap<>();
-		this.shared = new LinkedHashMap<>();
-		this.localSize = 0;
-		this.sharedSize = 0;
-	}
-	public Scope getCopy(){
+
+	// ======== Constructor ========
+    public Scope() {
+        this.offsets = new LinkedHashMap<>();
+        this.shared = new LinkedHashMap<>();
+        this.localSize = 0;
+        this.sharedSize = 0;
+    }
+
+
+    // ======== Methods =======
+	public Scope getCopy(){ //creates copy so new variables don't get put into parent scope
 		Scope scope = new Scope();
 		scope.offsets.putAll(this.offsets);
 		scope.shared.putAll(this.shared);
@@ -33,53 +35,30 @@ public class Scope {
 		return scope;
 	}
 
-
-	/** Tests if a given identifier is declared in this scope. */
-
-	/** Declares an identifier with a given type, if the identifier
-	 * is not yet in this scope.
-	 * @return <code>true</code> if the identifier was added;
-	 * <code>false</code> if it was already declared.
-	 */
-	public boolean put(String id, boolean isShared) throws MemoryOutOfBoundsException {
-		boolean result = !this.offsets.containsKey(id);
-		if (result) {
-		    if (isShared) {
-		        this.offsets.put(id, this.sharedSize);
-		        this.sharedSize += INT_SIZE;
-		        if (this.sharedSize > 8) {
-		            throw new MemoryOutOfBoundsException("Shared memory size has exceeded limit 8!");
-                }
-            } else {
-                this.offsets.put(id, this.localSize);
-                this.localSize += INT_SIZE;
-                if (this.sharedSize > 32) {
-                    throw new MemoryOutOfBoundsException("Local memory size has exceeded limit 32!");
-                }
+	public void put(String id, boolean isShared) throws MemoryOutOfBoundsException { //saves variable offset into HashMap
+        if (isShared) {
+            this.offsets.put(id, this.sharedSize);
+            this.sharedSize += INT_SIZE;
+            if (this.sharedSize > 8) {
+                throw new MemoryOutOfBoundsException("Shared memory size has exceeded limit 8!");
             }
-		}
-		return result;
+        } else {
+            this.offsets.put(id, this.localSize);
+            this.localSize += INT_SIZE;
+            if (this.localSize > 32) {
+                throw new MemoryOutOfBoundsException("Local memory size has exceeded limit 32!");
+            }
+        }
 	}
 
-	public void putShared(String id, boolean isShared) {
-        this.shared.remove(id);
+	public void putShared(String id, boolean isShared) { //saves variable sharedState into HashMap
 	    this.shared.put(id,isShared);
     }
 
-    public boolean getShared(String id) { return this.shared.get(id); }
+    public Integer address(String id) { return this.offsets.get(id); } //returns offset of ID in HashMap
 
-	/** Returns the type of a given (presumably declared) identifier.
-	 */
+    public boolean getShared(String id) { return this.shared.get(id); } //returns sharedState of ID in HashMap
 
-	/** Returns the offset of a given (presumably declared) identifier. 
-	  * with respect to the beginning of this scope's activation record.
-	  * Offsets are assigned in order of declaration. 
-	  */
-	public Integer address(String id) {
-		return this.offsets.get(id);
-	}
+	public Map<String,Integer> getOffsets() { return offsets; } //returns HashMap containing offsets
 
-	public Map<String,Integer> getOffsets() { return offsets; }
-
-    public Map<String,Boolean> getAllShared() { return shared;}
 }

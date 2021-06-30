@@ -1,0 +1,26 @@
+@Threaded(0)
+class main {
+    Local Int[] arr = [1,5,3,2,6,87,4,2,4,6,7,23,56,654,2,34];
+    Local Bool sorted = False;
+    Local Int i = 0;
+    while (!sorted) {
+        i = 0;
+        sorted = True;
+        while(i < 15) {
+            if (arr[i] > arr[i + 1]) {
+                Local Int temp = arr[i];
+                arr[i] = arr[i+1];
+                arr[i+1] = temp;
+                sorted = False;
+            }
+            i = i + 1;
+        }
+    }
+
+    i = 0;
+    while(i < 16) {
+        printf(arr[i]);
+        i = i + 1;
+    }
+
+}

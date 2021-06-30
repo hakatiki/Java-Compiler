@@ -2,25 +2,13 @@ package Generation;
 
 import ANTLR.GrammarBaseVisitor;
 import ANTLR.GrammarParser;
-import Elaboration.Type;
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
-import org.antlr.v4.runtime.tree.TerminalNode;
-import org.junit.Test;
-
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
-// TODO :: visitWhileLoop lengthStat+1???????
-// TODO Check if continue scope is everywhere!
-// TODO Dont forget to add registers to regs ParseTreeProperty
-// HARDCODED 4 in visitGetIndex
-// HARDCODED 4 in visitArrContents
-// TODO FIX comparison
-// TODO add output
+
+
 
 public class Generator extends GrammarBaseVisitor<List<String>> {
 
@@ -42,7 +30,8 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         this.scope.put(node, this.scope.get(node.getParent()));
     }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//==========================================================================================================================================
 
 
     @Override public List<String> visitClassDec(GrammarParser.ClassDecContext ctx) {
@@ -57,9 +46,8 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
             current.add(temp);
             temp = "WriteInstr regA (DirAddr " + (i) + ")";
             current.add(temp);
-
             if (i > 0) {
-                this.activeThreads.put(i, true);
+                this.activeThreads.put(i, false);
                 currScope.putShared("Thread"+i,true);
                 try{
                     currScope.put("Thread"+i,true);
@@ -67,17 +55,10 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
                     e.printStackTrace();
                 }
 
-            } else {
-                currScope.putShared(LOCK,true);
-                try {
-                    currScope.put(LOCK,true);
-                } catch (MemoryOutOfBoundsException e) {
-                    e.printStackTrace();
-                }
-
             }
         }
 
+        // --- Loop for non-master threads ---
         temp = "ReadInstr (IndAddr regSprID)";
         current.add(temp);
         temp = "Receive regA";
@@ -92,19 +73,9 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         current.add(temp);
         temp = "Jump (Rel (-6))";
         current.add(temp);
-        //put lock in offset ting?
         current.addAll(visit(ctx.stat()));
 
-
-        // Master thread checks whether threads are done
-        for (int i = 1; i <= val; i++) { //every thread in the program gets a place in memory
-            joinThreads(current, i);
-            temp = "Branch regB (Rel (-" + (4 + (5*(i-1))) + "))";
-            current.add(temp);
-        }
-
-        // EndProg
-
+        // --- EndProg ---
         temp = "Compute Add reg0 regPC regA";
         current.add(temp);
         temp = "Compute Equal regSprID reg0 regB";
@@ -118,7 +89,6 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
             temp = "WriteInstr regA (DirAddr " + (i) + ")";
             current.add(temp);
         }
-
         return current;
     }
 
@@ -126,51 +96,54 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         continueScope(ctx);
         List<String> current = new LinkedList<>();
         int neededThreads = Integer.parseInt(ctx.NUM().getText());
-        int freeThread = 0;
         List<Integer> usedThreads = new LinkedList<>();
         String temp;
 
-        for (int i = 1; i <= activeThreads.size(); i++) {
+        for (int i = 1; i <= activeThreads.size(); i++) { //checks what Threads are free to use for the Threaded block
             if (neededThreads == 0) {
                 break;
             }
-            if (activeThreads.get(i)) {
-
-                freeThread = i;
-                neededThreads--;
-                int oldMaster = this.masterThread;
-                this.masterThread = i;
-                activeThreads.remove(i);
-                activeThreads.put(i,false);
-                List<String> inside = visit(ctx.stat());
-                joinThreads(current, i);
-                temp = "Branch regB (Rel (-5))";
-                current.add(temp);
-                temp = "WriteInstr regPC (DirAddr "+ i +")";
-                current.add(temp);
-                temp = "Load (ImmValue " + oldMaster + ") regA";  ///get MASTER THREAD
-                current.add(temp);
-
-                temp = "Compute Equal regSprID regA regB";
-                current.add(temp);
-                temp = "Branch regB (Rel " + (inside.size()+3) + ")"; //double check this one! // + ((neededThreads) * (inside.size() + 10)))
-                current.add(temp);
-
-                current.addAll(inside);
-
-                temp = "WriteInstr regSprID (DirAddr "+ i +")";
-                current.add(temp);
-                temp = "Jump (Abs " + ((activeThreads.size()+1)*2) + ")";
-                current.add(temp);
-                activeThreads.remove(i);
+            if (!activeThreads.get(i)) {
                 activeThreads.put(i,true);
-                this.masterThread = oldMaster;
+                neededThreads--;
                 usedThreads.add(i);
             }
         }
-        if (freeThread == 0) {
+
+        for (int i : usedThreads) { //write block of code for every newly spawned thread
+
+            int oldMaster = this.masterThread;
+            this.masterThread = i;
+
+            List<String> inside = visit(ctx.tstat());
+            joinThreads(current, i);
+            temp = "Branch regB (Rel (-4))";
+            current.add(temp);
+            temp = "WriteInstr regPC (DirAddr "+ i +")";
+            current.add(temp);
+            temp = "Load (ImmValue " + oldMaster + ") regA";  //get MASTER THREAD
+            current.add(temp);
+
+            temp = "Compute Equal regSprID regA regB";
+            current.add(temp);
+            temp = "Branch regB (Rel " + (inside.size()+3) + ")";
+            current.add(temp);
+
+            current.addAll(inside);
+
+            temp = "WriteInstr regSprID (DirAddr "+ i +")";
+            current.add(temp);
+            temp = "Jump (Abs " + ((activeThreads.size()+1)*2) + ")";
+            current.add(temp);
+            this.masterThread = oldMaster;
+            activeThreads.put(i,false);
+        }
+
+        if (neededThreads > 0) {
             throw new TooManyThreadsException("Threaded block contains more threads than created!");
         }
+
+        // --- Master thread waits on Children to return ---
         int it = 0;
         for (int i : usedThreads) {
             joinThreads(current, i);
@@ -182,7 +155,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         return current;
     }
 
-    private void joinThreads(List<String> current, int i) {
+    private void joinThreads(List<String> current, int i) { //used by Threaded block -> helps with Master/Child return
         String temp;
         temp = "ReadInstr (DirAddr "+ i + ")";
         current.add(temp);
@@ -206,9 +179,8 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
 
     @Override public List<String>  visitPutLock(GrammarParser.PutLockContext ctx) {
         continueScope(ctx);
-        int lockAddress =  scope.get(ctx).address(LOCK);
 
-        String test =  "TestAndSet (DirAddr "+lockAddress+")";
+        String test = "TestAndSet (DirAddr 0)";
         String recieve = "Receive regD";
         String loadOne = "Load (ImmValue 1) regC";
         String comp = "Compute NEq regD regC regD";
@@ -220,7 +192,8 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         code.add(comp);
         code.add(branch);
 
-        return code;}
+        return code;
+    }
 
     @Override public List<String>  visitPutUnlock(GrammarParser.PutUnlockContext ctx) {
         continueScope(ctx);
@@ -231,9 +204,8 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         code.add(loadZero);
         code.add(storeZero);
 
-        return code; }
-
-
+        return code;
+    }
 
     @Override public List<String>  visitGetThreadId(GrammarParser.GetThreadIdContext ctx) {
         continueScope(ctx);
@@ -244,27 +216,12 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         return current;
     }
 
-    @Override public List<String>  visitEmptyArr(GrammarParser.EmptyArrContext ctx) { return visitChildren(ctx); }
-
-    @Override public List<String>  visitIntArray(GrammarParser.IntArrayContext ctx) { return visitChildren(ctx); }
-
-    @Override public List<String>  visitBoolArray(GrammarParser.BoolArrayContext ctx) { return visitChildren(ctx); }
-
-    @Override public List<String>  visitInt(GrammarParser.IntContext ctx) { return visitChildren(ctx); }
-
-    @Override public List<String>  visitBool(GrammarParser.BoolContext ctx) { return visitChildren(ctx); }
-
-    @Override public List<String>  visitIsLocal(GrammarParser.IsLocalContext ctx) { return visitChildren(ctx); }
-
-    @Override public List<String>  visitIsShared(GrammarParser.IsSharedContext ctx) { return visitChildren(ctx); }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
     @Override public List<String>  visitArrayExpr(GrammarParser.ArrayExprContext ctx) {
         continueScope(ctx);
         regs.put(ctx, regs.get(ctx.arr()));
         return visit(ctx.arr());
     }
+
     @Override public List<String>  visitParExpr(GrammarParser.ParExprContext ctx) {
         continueScope(ctx);
         List<String> exprCode = visit(ctx.expr());
@@ -272,6 +229,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         regs.put(ctx, reg);
         return exprCode;
     }
+
     @Override public List<String>  visitGetIndex(GrammarParser.GetIndexContext ctx) {
         continueScope(ctx);
         List<String> current =  new LinkedList<>();
@@ -298,14 +256,13 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
             temp = "Load ( IndAddr " + reg0 +") " + reg0;
             current.add(temp);
         }
-
-
-
         regs.put(ctx, reg0);
         return current;
     }
+
     @Override public List<String>  visitIfStatement(GrammarParser.IfStatementContext ctx) {
         continueScope(ctx);
+
         List<String> current = new LinkedList<>();
         List<String> exprCode = visit(ctx.expr());      // Code for expr must be executed 1st
         String reg = getReg(ctx.expr());                   // Register to be compared.
@@ -329,8 +286,6 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         return current;
     }
 
-
-
     @Override public List<String>  visitWhileLoop(GrammarParser.WhileLoopContext ctx) {
         continueScope(ctx);
         List<String> current = new LinkedList<>();
@@ -341,7 +296,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         int lengthExpr = exprCode.size();
         String eq = "Compute Equal "+ reg + " reg0 " + reg;
         String branch = "Branch "+reg+" (Rel "+ (lengthStat+2) +")";
-        String back = "Jump (Rel  ("+ -(lengthStat+lengthExpr+1+2) + "))";
+        String back = "Jump (Rel  ("+ -(lengthStat+lengthExpr+2) + "))";
         current.addAll(exprCode);
         current.add(eq);
         current.add(branch);
@@ -349,6 +304,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         current.add(back);
         return current;
     }
+
     @Override public List<String>  visitBlockStat(GrammarParser.BlockStatContext ctx) {
         Scope oldScope = scope.get(ctx.parent);
         Scope newScope = oldScope.getCopy();
@@ -358,13 +314,21 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
             current.addAll(visit(ctx.stat(i)));
         return current;
     }
+
+    @Override public List<String>  visitThreadedBlockStat(GrammarParser.ThreadedBlockStatContext ctx) {
+        continueScope(ctx);
+        List<String> current = new LinkedList<>();
+        for (int i = 0; i < ctx.stat().size();i++)
+            current.addAll(visit(ctx.stat(i)));
+        return current;
+    }
+
     @Override public List<String>  visitVarDec(GrammarParser.VarDecContext ctx) {
         continueScope(ctx);
         varDec = ctx.ID().getText();
         Scope currScope = this.scope.get(ctx);
         boolean isShared = ctx.mem().getText().equals("Shared"); //checks whether variable is shared or not
         String ID = ctx.ID().toString();
-
         List<String> current = new LinkedList<>();
         List<String> exprCode = visit(ctx.expr());
 
@@ -374,7 +338,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
 
         if (ctx.type().getText().equals("Int") || ctx.type().getText().equals("Bool")){
             try {
-                currScope.put(ID,isShared); //modified it to now add the correct offsets, depending on isShared
+                currScope.put(ID,isShared); //adds the correct offsets, depending on whether variable is shared or not
             } catch (MemoryOutOfBoundsException e) {
                 e.printStackTrace();
             }
@@ -385,6 +349,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         varDec = "";
         return current;
     }
+
     @Override public List<String>  visitCopyOver(GrammarParser.CopyOverContext ctx) {
         continueScope(ctx);
         List<String> current = new LinkedList<>();
@@ -398,6 +363,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         current.add(store);
         return current;
     }
+
     @Override public List<String> visitIdExpr(GrammarParser.IdExprContext ctx) {
         continueScope(ctx);
         List<String> current = new LinkedList<>();
@@ -419,6 +385,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         current.add(instr);
         return current;
     }
+
     @Override public List<String>  visitAddExpr(GrammarParser.AddExprContext ctx) {
         continueScope(ctx);
 
@@ -431,8 +398,6 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         String op = ctx.getChild(1).getText();
         String instr = op.equals("+")?"Add":"Sub";
 
-        // Getting child correct?
-        // Might still need fixing if -- memory allocation ting
         String save = "Push "+ reg0;
         String reg2 = reg1.equals(reg0)?(reg0.equals("regA")?"regB":"regA"):reg0;
         String get = "Pop "+ reg2;
@@ -455,10 +420,6 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         List<String> rhs  = visit(ctx.expr(1));
         String reg1 = regs.get(ctx.expr(1));
 
-        String op = ctx.getChild(1).getText();
-
-        // Getting child correct?
-        // Might still need fixing if -- memory allocation ting
         String save = "Push "+ reg0;
         String reg2 = reg1.equals(reg0)?(reg0.equals("regA")?"regB":"regA"):reg0;
         String get = "Pop "+ reg2;
@@ -477,14 +438,12 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         List<String> current = new LinkedList<>();
         boolean isShared = ctx.getParent().getParent().getChild(0).getText().equals("Shared");
 
-
         Scope s = scope.get(ctx);
         try {
             s.put(varDec, isShared);
         } catch (MemoryOutOfBoundsException e) {
             e.printStackTrace();
         }
-
 
         int baseAddress = s.address(varDec);
         for (int i =  0; i < ctx.expr().size();i++){
@@ -503,7 +462,8 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
             current.addAll(currExpr);
             current.add(saveToMem);
         }
-        return current; }
+        return current;
+    }
 
     @Override public List<String>  visitBeginDec(GrammarParser.BeginDecContext ctx) {
         scope.put(ctx, new Scope());
@@ -514,6 +474,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         }
         return visit(ctx.def());
     }
+
     @Override public List<String>  visitCompExpr(GrammarParser.CompExprContext ctx) {
         continueScope(ctx);
 
@@ -526,8 +487,6 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         String op = ctx.getChild(1).getText();
         String instr = op.equals(">")?"Gt":(op.equals("<")?"Lt":(op.equals("==")?"Equal":"NEq"));
 
-        // Getting child correct?
-        // Might still need fixing if -- memory allocation ting
         String save = "Push "+ reg0;
         String reg2 = reg1.equals(reg0)?(reg0.equals("regA")?"regB":"regA"):reg0;
         String get = "Pop "+ reg2;
@@ -540,6 +499,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         regs.put(ctx,reg0);
         return current;
     }
+
     @Override public List<String>  visitOrExpr(GrammarParser.OrExprContext ctx) {
         continueScope(ctx);
         List<String> current = new LinkedList<>();
@@ -548,7 +508,6 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         List<String> rhs  = visit(ctx.expr(1));
         String reg1 = regs.get(ctx.expr(1));
 
-        // Might still need fixing if -- memory allocation ting
         String save = "Push "+ reg0;
         String reg2 = reg1.equals(reg0)?(reg0.equals("regA")?"regB":"regA"):reg0;
         String get = "Pop "+ reg2;
@@ -561,6 +520,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         regs.put(ctx,reg0);
         return current;
     }
+
     @Override public List<String>  visitConstExpr(GrammarParser.ConstExprContext ctx) {
         continueScope(ctx);
         List<String> current = new LinkedList<>();
@@ -578,6 +538,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         regs.put(ctx,reg);
         return current;
     }
+
     @Override public List<String>  visitAndExpr(GrammarParser.AndExprContext ctx) {
         continueScope(ctx);
         List<String> current = new LinkedList<>();
@@ -586,7 +547,6 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         List<String> rhs  = visit(ctx.expr(1));
         String reg1 = regs.get(ctx.expr(1));
 
-        // Might still need fixing if -- memory allocation ting
         String save = "Push " + reg0;
         String reg2 = reg1.equals(reg0) ? (reg0.equals("regA") ? "regB" : "regA") : reg0;
         String get = "Pop " + reg2;
@@ -599,6 +559,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         regs.put(ctx,reg0);
         return current;
     }
+
     @Override public List<String>  visitOutput(GrammarParser.OutputContext ctx) {
         continueScope(ctx);
         List<String> current  = visit(ctx.expr());
@@ -608,7 +569,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
     }
 
     @Override public List<String> visitSetIndex(GrammarParser.SetIndexContext ctx) {
-        continueScope(ctx);;
+        continueScope(ctx);
         Scope currScope = scope.get(ctx);
         String ID = ctx.ID().getText();
         int address = currScope.address(ID);
@@ -623,5 +584,22 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         current.add(temp);
         return current;
     }
+
+    //==========================================================================================================================================================
+
+
+    @Override public List<String>  visitEmptyArr(GrammarParser.EmptyArrContext ctx) { return visitChildren(ctx); }
+
+    @Override public List<String>  visitIntArray(GrammarParser.IntArrayContext ctx) { return visitChildren(ctx); }
+
+    @Override public List<String>  visitBoolArray(GrammarParser.BoolArrayContext ctx) { return visitChildren(ctx); }
+
+    @Override public List<String>  visitInt(GrammarParser.IntContext ctx) { return visitChildren(ctx); }
+
+    @Override public List<String>  visitBool(GrammarParser.BoolContext ctx) { return visitChildren(ctx); }
+
+    @Override public List<String>  visitIsLocal(GrammarParser.IsLocalContext ctx) { return visitChildren(ctx); }
+
+    @Override public List<String>  visitIsShared(GrammarParser.IsSharedContext ctx) { return visitChildren(ctx); }
 
 }

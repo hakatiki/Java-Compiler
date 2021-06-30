@@ -1,0 +1,8 @@
+@Threaded(4)
+class main {
+
+    @Threaded(4) {
+        Local Int x = 12;
+        printf(x);
+    }
+}

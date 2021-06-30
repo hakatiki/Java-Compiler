@@ -164,6 +164,18 @@ public interface GrammarListener extends ParseTreeListener {
 	 */
 	void exitOutput(GrammarParser.OutputContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code threadedBlockStat}
+	 * labeled alternative in {@link GrammarParser#tstat}.
+	 * @param ctx the parse tree
+	 */
+	void enterThreadedBlockStat(GrammarParser.ThreadedBlockStatContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code threadedBlockStat}
+	 * labeled alternative in {@link GrammarParser#tstat}.
+	 * @param ctx the parse tree
+	 */
+	void exitThreadedBlockStat(GrammarParser.ThreadedBlockStatContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code parExpr}
 	 * labeled alternative in {@link GrammarParser#expr}.
 	 * @param ctx the parse tree

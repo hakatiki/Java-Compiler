@@ -10,5 +10,11 @@ class main {
 
     printf(x);
 
+    if (pass) {
+        x = 12;
+    }
+
+    printf(x);
+
     x = 6;
 }

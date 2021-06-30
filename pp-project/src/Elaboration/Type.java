@@ -6,6 +6,5 @@ public enum Type {
 	IntArray,
 	BoolArray,
 	NotInScope,
-	Lock,
 	Empty;
 }

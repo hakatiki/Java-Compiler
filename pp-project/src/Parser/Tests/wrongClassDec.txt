@@ -1,0 +1,4 @@
+@Threaded(0);
+class car {
+    Local Int maxSpeed = 190;
+}

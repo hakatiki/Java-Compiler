@@ -1,0 +1,10 @@
+@Threaded(4)
+class main {
+
+    Shared Int x = 5;
+
+    @Threaded(5) {
+        printf(x);
+    }
+
+}

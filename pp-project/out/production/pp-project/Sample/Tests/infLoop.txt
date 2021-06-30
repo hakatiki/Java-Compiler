@@ -1,0 +1,6 @@
+@Threaded(0)
+class main {
+    while (True) {
+
+    }
+}

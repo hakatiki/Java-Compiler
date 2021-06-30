@@ -2,11 +2,12 @@
 class main {
     Shared Int x = 5;
     @Threaded(2) {
+        lock();
         while (x < 36) {
-            lock();
-            x = x + 4;
-            unlock();
+            x = x + 9;
         }
+        unlock();
+        printf(x);
     }
 
     printf(x);

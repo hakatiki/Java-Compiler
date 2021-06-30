@@ -1,29 +1,23 @@
 @Threaded(2)
 class main {
 
-    Shared Bool flag1 = False;
-    Shared Bool flag2 = False;
+    Shared Bool[] flag = [False,False];
     Shared Int turn = 1;
     Shared Int bank = 100;
 
-
-
     @Threaded(2) {
-        Local Int tid = Thread.id;
-        Local Int otherTid = 1;
-        if (tid == 1) {
-            otherTid = 2;
-            flag1 = True;
-            while (flag2 == False && turn == otherTid) { }
-            bank = bank + 20;
-            flag1 = False;
-        } else {
-            flag2 = True;
-            turn = tid;
-            while (flag1 == False && turn == otherTid) { }
-            bank = bank - 45;
-            flag2 = False;
+        Local Int tid = Thread.id - 1;
+        Local Int otherTid = 0;
+        if (tid == 0) {
+            otherTid = 1;
         }
+        flag[tid] = True;
+        while (flag[otherTid] == False && turn == otherTid) { }
+        bank = bank + 27;
+        printf(bank);
+        bank = bank - 45;
+        printf(bank);
+        flag[tid] = False;
     }
 
     printf(bank);

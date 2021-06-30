@@ -6,16 +6,15 @@ import java.util.*;
 
 public class SymbolTableClass{
     private java.util.Stack<Map<String,Type>> setStack = new java.util.Stack<>();
-    private List<Pair<String,Type>> list = new LinkedList<Pair<String, Type>>();
-    public void openScope() {
-        setStack.push( new HashMap<String, Type>() );
-    }
+    private List<Pair<String,Type>> list = new LinkedList <>();
+
+    public void openScope() { setStack.push( new HashMap<>() ); }
 
     public void closeScope() {
         int remove = setStack.peek().size();
         int begin = list.size()-1;
         int end = list.size()-remove -1;
-        for (int i = begin; i >end; i--)
+        for (int i = begin; i > end; i--)
             list.remove(i);
         setStack.pop();
     }

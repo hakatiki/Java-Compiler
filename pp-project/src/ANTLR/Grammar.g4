@@ -13,12 +13,15 @@ stat    : '{' stat* '}'                         #blockStat
         | mem type ID '=' expr ';'              #varDec
         | IF '(' expr ')' stat (ELSE stat)?     #ifStatement
         | WHILE '(' expr ')' stat               #whileLoop
-        | THREADED '(' NUM ')' stat             #threadedBlock
+        | THREADED '(' NUM ')' tstat            #threadedBlock
         | 'lock' '(' ')' ';'                    #putLock
         | 'unlock' '(' ')' ';'                  #putUnlock
         | ID '=' expr ';'                       #copyOver
         | ID '[' expr ']' '=' expr ';'          #setIndex
         | OUT '(' expr ')' ';'                  #output
+        ;
+
+tstat   : '{' stat* '}'                         #threadedBlockStat
         ;
 
 expr:   '!' expr                                #notExpr

@@ -2,29 +2,24 @@ package Generation;
 
 import ANTLR.GrammarLexer;
 import ANTLR.GrammarParser;
-import Elaboration.TypeCheck;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.junit.Test;
-
 import java.io.*;
 import java.util.List;
 
+// ----- Assembler -> to compile language to SprIl code ------
 public class Assembler {
     private ParseTreeWalker walker = new ParseTreeWalker();
     private Generator tool = new Generator();
 
+// ===================== Tests ======================
 
 
-    private void reset(){
-        walker = new ParseTreeWalker();
-        tool = new Generator();
-    }
-    // "src/Sample/easy.txt"
+    // --- Simple compile -> works ---
     @Test
-    public void Test(){
+    public void compile(){
         // Required files
         CompileFile("src/Sample/Required/bankingsystem.txt", "src/sprockell-master/src/Required/bankingsystem.hs");
         CompileFile("src/Sample/Required/petersons.txt", "src/sprockell-master/src/Required/petersons.hs");
@@ -43,8 +38,34 @@ public class Assembler {
         CompileFile("src/Sample/Tests/and.txt", "src/sprockell-master/src/Tests/and.hs");
         CompileFile("src/Sample/Tests/eqArrays.txt", "src/sprockell-master/src/Tests/eqArrays.hs");
         CompileFile("src/Sample/Tests/setIndex.txt", "src/sprockell-master/src/Tests/setIndex.hs");
+        CompileFile("src/Sample/Tests/sortArr.txt", "src/sprockell-master/src/Tests/sortArr.hs");
+        CompileFile("src/Sample/Tests/infLoop.txt", "src/sprockell-master/src/Tests/infLoop.hs");
+        CompileFile("src/Sample/Tests/isPrime.txt", "src/sprockell-master/src/Tests/isPrime.hs");
+
+        // Appendix C
+        CompileFile("src/Sample/CompleteProgram/complete.txt", "src/sprockell-master/src/CompleteProgram/complete.hs");
     }
 
+    // --- MemoryOutOfBoundsException test -> should write error in terminal ---
+    @Test
+    public void memoryOutOfBounds() {
+        CompileFile("src/Sample/Tests/memoryOutOfBounds.txt", "src/sprockell-master/src/Tests/memoryOutOfBounds.hs");
+    }
+
+    // --- TooManyThreadsException test -> should write error in terminal ---
+    @Test
+    public void tooManyThreads() {
+        CompileFile("src/Sample/Tests/tooManyThreads.txt", "src/sprockell-master/src/Tests/tooManyThreads.hs");
+    }
+
+
+
+    // =================================================================================================================================================
+
+    private void reset(){
+        walker = new ParseTreeWalker();
+        tool = new Generator();
+    }
 
     public void CompileFile(String src, String dst) {
         List<String> prog = check(src);
@@ -64,7 +85,7 @@ public class Assembler {
             PrintWriter out = new PrintWriter(dst);
             out.println(comb);
             out.close();
-        } catch (FileNotFoundException e){
+        } catch (FileNotFoundException e) {
             // We are sad:((
         }
         for (int i = 0; i < prog.size();i++){
@@ -72,6 +93,7 @@ public class Assembler {
         }
         reset();
     }
+
     private List<String> check(String file){
         String str = "";
         try{
@@ -83,7 +105,8 @@ public class Assembler {
         ParseTree tree = parse(str);
         return tool.visit(tree);
     }
-    private  ParseTree parse(String text) {
+
+    private ParseTree parse(String text) {
         CharStream chars = CharStreams.fromString(text);
         Lexer lexer = new GrammarLexer(chars);
         TokenStream tokens = new CommonTokenStream(lexer);
@@ -91,9 +114,7 @@ public class Assembler {
         return parser.program();
     }
 
-
-
-    private  String readFile(String path) throws IOException {
+    private String readFile(String path) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(path));
         StringBuilder stringBuilder = new StringBuilder();
         String line = null;
@@ -108,5 +129,4 @@ public class Assembler {
         String content = stringBuilder.toString();
         return content;
     }
-
 }
