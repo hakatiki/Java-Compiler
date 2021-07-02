@@ -36,7 +36,7 @@ public class ParserTest {
 
     // ===================================================================================================================================
 
-    private ParseTree parse(String text) {
+    private ParseTree parse(String text) { // parse the contents
         CharStream chars = CharStreams.fromString(text);
         Lexer lexer = new GrammarLexer(chars);
         TokenStream tokens = new CommonTokenStream(lexer);
@@ -44,7 +44,7 @@ public class ParserTest {
         return parser.program();
     }
 
-    private boolean checkParse(String file) {
+    private boolean checkParse(String file) { //Walk tree to see if parsing can be done correctly, always returns true
         String str = "";
         try{
             str = readFile(file);
@@ -58,7 +58,7 @@ public class ParserTest {
         return true;
     }
 
-    private String readFile(String path) throws IOException {
+    private String readFile(String path) throws IOException { //read file using FilePath
         BufferedReader reader = new BufferedReader(new FileReader(path));
         StringBuilder stringBuilder = new StringBuilder();
         String line = "";

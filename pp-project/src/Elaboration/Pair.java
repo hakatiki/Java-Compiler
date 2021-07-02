@@ -10,6 +10,10 @@ public class Pair<A, B> {
         this.second = second;
     }
 
+    /**
+     *
+     * @return
+     */
     public int hashCode() {
         int hashFirst = first != null ? first.hashCode() : 0;
         int hashSecond = second != null ? second.hashCode() : 0;
@@ -17,6 +21,11 @@ public class Pair<A, B> {
         return (hashFirst + hashSecond) * hashSecond + hashFirst;
     }
 
+    /**
+     *
+     * @param other
+     * @return
+     */
     public boolean equals(Object other) {
         if (other instanceof Pair) {
             Pair otherPair = (Pair) other;
@@ -32,8 +41,7 @@ public class Pair<A, B> {
         return false;
     }
 
-    public String toString()
-    {
+    public String toString() { //speaks for itself lol
         return "(" + first + ", " + second + ")";
     }
 

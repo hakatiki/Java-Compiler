@@ -38,12 +38,12 @@ public class TypeCheckTest {
 
     @Test
     public void wrongCode() {
-        testWrongIf(true, 1);
-        testWrongIfScope(true,1);
-        testWrongWhileScope(true,1);
-        testWrongType(true,1);
-        testWrongNegation(true,2);
-        testWrongUndeclaredVar(true,1);
+        testWrongIf(true, 1);               // wrong type in condition
+        testWrongIfScope(true,1);           // var in if-statement declared, but called outside
+        testWrongWhileScope(true,1);        // var in while-statement declared, but called outside
+        testWrongType(true,1);              // attempt to put wrong-type value in variable
+        testWrongNegation(true,2);          // try negation of Integer
+        testWrongUndeclaredVar(true,1);     // try put value in uninitialised variable
     }
 
 
@@ -182,6 +182,7 @@ public class TypeCheckTest {
         reset();
     }
 
+    // try put value in uninitialised variable
     public void testWrongUndeclaredVar(boolean print, int x) {
         assertEquals(x, check("src/Sample/Tests/wrongUndeclaredVar.txt"));
         if (print)
@@ -198,11 +199,17 @@ public class TypeCheckTest {
 
 
 
-    private void reset(){
+    private void reset(){ //resets walker and tool
         walker = new ParseTreeWalker();
         tool = new TypeCheck();
     }
-    private int  check(String file){
+
+    /**
+     *
+     * @param file: FilePath of file that needs to be checked
+     * @return integer == size of errorList
+     */
+    private int check(String file){ //run Walker using TypeCheck -> return errorList.size()
         String str = "";
         try{
             str = readFile(file);
@@ -214,7 +221,8 @@ public class TypeCheckTest {
         this.walker.walk(this.tool, tree);
         return tool.errorList.size();
     }
-    private  ParseTree parse(String text) {
+
+    private  ParseTree parse(String text) { //parse the content
         CharStream chars = CharStreams.fromString(text);
         Lexer lexer = new GrammarLexer(chars);
         TokenStream tokens = new CommonTokenStream(lexer);
@@ -222,9 +230,7 @@ public class TypeCheckTest {
         return parser.program();
     }
 
-
-
-    private  String readFile(String path) throws IOException {
+    private  String readFile(String path) throws IOException { //read file using FilePath
         BufferedReader reader = new BufferedReader(new FileReader(path));
         StringBuilder stringBuilder = new StringBuilder();
         String line = null;

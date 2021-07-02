@@ -35,6 +35,12 @@ public class Scope {
 		return scope;
 	}
 
+    /**
+     *
+     * @param id: String -> ID node in ParseTree
+     * @param isShared: Boolean -> true if var is in Shared memory, otherwise = false
+     * @throws MemoryOutOfBoundsException
+     */
 	public void put(String id, boolean isShared) throws MemoryOutOfBoundsException { //saves variable offset into HashMap
         if (isShared) {
             this.offsets.put(id, this.sharedSize);
@@ -60,5 +66,7 @@ public class Scope {
     public boolean getShared(String id) { return this.shared.get(id); } //returns sharedState of ID in HashMap
 
 	public Map<String,Integer> getOffsets() { return offsets; } //returns HashMap containing offsets
+
+    public void clearLocal() { this.localSize = 0; }
 
 }

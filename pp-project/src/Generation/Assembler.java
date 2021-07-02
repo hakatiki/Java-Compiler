@@ -20,7 +20,7 @@ public class Assembler {
     // --- Simple compile -> works ---
     @Test
     public void compile(){
-        // Required files
+        // Required files [Banking System] and [Peterson's Algorithm]
         CompileFile("src/Sample/Required/bankingsystem.txt", "src/sprockell-master/src/Required/bankingsystem.hs");
         CompileFile("src/Sample/Required/petersons.txt", "src/sprockell-master/src/Required/petersons.hs");
 
@@ -67,7 +67,7 @@ public class Assembler {
         tool = new Generator();
     }
 
-    public void CompileFile(String src, String dst) {
+    public void CompileFile(String src, String dst) { //Take file, format it to ready-to-run Haskell file -> write it to Destination
         List<String> prog = check(src);
 
         String additional = "";
@@ -80,7 +80,7 @@ public class Assembler {
                 "prog = [\n    ";
         String post =  ",\n    EndProg]\n"+
                 "main = run [prog" + additional + "]";
-        String comb = pre + code + post;
+        String comb = pre + code + post; //put all together
         try {
             PrintWriter out = new PrintWriter(dst);
             out.println(comb);
@@ -94,7 +94,7 @@ public class Assembler {
         reset();
     }
 
-    private List<String> check(String file){
+    private List<String> check(String file){ //converts file into list of generated code lines
         String str = "";
         try{
             str = readFile(file);
@@ -106,7 +106,7 @@ public class Assembler {
         return tool.visit(tree);
     }
 
-    private ParseTree parse(String text) {
+    private ParseTree parse(String text) { //parse the content
         CharStream chars = CharStreams.fromString(text);
         Lexer lexer = new GrammarLexer(chars);
         TokenStream tokens = new CommonTokenStream(lexer);
@@ -114,7 +114,7 @@ public class Assembler {
         return parser.program();
     }
 
-    private String readFile(String path) throws IOException {
+    private String readFile(String path) throws IOException { //read file using FilePath
         BufferedReader reader = new BufferedReader(new FileReader(path));
         StringBuilder stringBuilder = new StringBuilder();
         String line = null;

@@ -33,29 +33,36 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
 
 //==========================================================================================================================================
 
+    @Override public List<String>  visitBeginDec(GrammarParser.BeginDecContext ctx) {
+        scope.put(ctx, new Scope()); //define first scope
+        return visit(ctx.def());
+    }
 
     @Override public List<String> visitClassDec(GrammarParser.ClassDecContext ctx) {
-        this.continueScope(ctx);
+        this.continueScope(ctx); //take parent scope
         List<String> current = new LinkedList<>();
         int val = Integer.parseInt(ctx.thread().getChild(2).getText());
-        String temp;
+        String temp; //string to use for adding lines to current
         Scope currScope = scope.get(ctx);
         masterThread = 0;
-        for (int i = 0; i < (val+1); i++) { //every thread in the program gets a place in memory
+        for (int i = 0; i < (val+1); i++) { //every thread in the program gets a place in memory | LOCK gets first spot, that's why for-loop starts at 0.
             temp = "Load (ImmValue "+ (i) +") regA";
             current.add(temp);
             temp = "WriteInstr regA (DirAddr " + (i) + ")";
             current.add(temp);
-            if (i > 0) {
-                this.activeThreads.put(i, false);
-                currScope.putShared("Thread"+i,true);
-                try{
-                    currScope.put("Thread"+i,true);
-                } catch (MemoryOutOfBoundsException e) {
-                    e.printStackTrace();
-                }
 
+            try{
+                if (i > 0) {
+                    this.activeThreads.put(i, false);
+                    currScope.putShared("Thread"+i,true); //reserve spot for every thread in Scope
+                    currScope.put("Thread"+i,true);
+                } else {
+                    scope.get(ctx).put(LOCK, true); //put lock into Scope
+                }
+            } catch (MemoryOutOfBoundsException e) { //catch exception
+                e.printStackTrace();
             }
+
         }
 
         // --- Loop for non-master threads ---
@@ -85,7 +92,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         temp = "EndProg";
         current.add(temp);
 
-        for (int i = 1; i < (val+1); i++) { //every thread in the program gets a place in memory
+        for (int i = 1; i < (val+1); i++) { //every thread is told where to go to end their program
             temp = "WriteInstr regA (DirAddr " + (i) + ")";
             current.add(temp);
         }
@@ -100,20 +107,20 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         String temp;
 
         for (int i = 1; i <= activeThreads.size(); i++) { //checks what Threads are free to use for the Threaded block
-            if (neededThreads == 0) {
+            if (neededThreads == 0) { //no needed threads left -> stop looking
                 break;
             }
-            if (!activeThreads.get(i)) {
-                activeThreads.put(i,true);
-                neededThreads--;
-                usedThreads.add(i);
+            if (!activeThreads.get(i)) { //if thread isn't active already
+                activeThreads.put(i,true); // make it active
+                usedThreads.add(i); // save that we are using this one
+                neededThreads--; // and look for other free threads
             }
         }
 
         for (int i : usedThreads) { //write block of code for every newly spawned thread
 
-            int oldMaster = this.masterThread;
-            this.masterThread = i;
+            int oldMaster = this.masterThread; //check who the old master is of the thread
+            this.masterThread = i; //newly spawned thread is master of nested block
 
             List<String> inside = visit(ctx.tstat());
             joinThreads(current, i);
@@ -135,11 +142,11 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
             current.add(temp);
             temp = "Jump (Abs " + ((activeThreads.size()+1)*2) + ")";
             current.add(temp);
-            this.masterThread = oldMaster;
-            activeThreads.put(i,false);
+            this.masterThread = oldMaster; // put old master back as master role
+            activeThreads.put(i,false); // declare thread as free-to-use for other threads
         }
 
-        if (neededThreads > 0) {
+        if (neededThreads > 0) { //if there are no threads that can be used/ have reserved spots
             throw new TooManyThreadsException("Threaded block contains more threads than created!");
         }
 
@@ -151,11 +158,10 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
             current.add(temp);
             it++;
         }
-
         return current;
     }
 
-    private void joinThreads(List<String> current, int i) { //used by Threaded block -> helps with Master/Child return
+    private void joinThreads(List<String> current, int i) { //used by Threaded block -> helps with children return to master return
         String temp;
         temp = "ReadInstr (DirAddr "+ i + ")";
         current.add(temp);
@@ -286,7 +292,7 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         return current;
     }
 
-    @Override public List<String>  visitWhileLoop(GrammarParser.WhileLoopContext ctx) {
+    @Override public List<String> visitWhileLoop(GrammarParser.WhileLoopContext ctx) {
         continueScope(ctx);
         List<String> current = new LinkedList<>();
         List<String> exprCode = visit(ctx.expr());      // Code for expr must be executed 1st
@@ -305,8 +311,8 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         return current;
     }
 
-    @Override public List<String>  visitBlockStat(GrammarParser.BlockStatContext ctx) {
-        Scope oldScope = scope.get(ctx.parent);
+    @Override public List<String> visitBlockStat(GrammarParser.BlockStatContext ctx) {
+        Scope oldScope = scope.get(ctx.parent); //define new scope for while and if
         Scope newScope = oldScope.getCopy();
         scope.put(ctx, newScope);
         List<String> current = new LinkedList<>();
@@ -315,8 +321,11 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
         return current;
     }
 
-    @Override public List<String>  visitThreadedBlockStat(GrammarParser.ThreadedBlockStatContext ctx) {
-        continueScope(ctx);
+    @Override public List<String> visitThreadedBlockStat(GrammarParser.ThreadedBlockStatContext ctx) {
+        Scope oldScope = scope.get(ctx.parent); //define new scope, but clear localSize since every Thread has it's own local memory
+        Scope newScope = oldScope.getCopy();
+        newScope.clearLocal();
+        scope.put(ctx, newScope);
         List<String> current = new LinkedList<>();
         for (int i = 0; i < ctx.stat().size();i++)
             current.addAll(visit(ctx.stat(i)));
@@ -463,16 +472,6 @@ public class Generator extends GrammarBaseVisitor<List<String>> {
             current.add(saveToMem);
         }
         return current;
-    }
-
-    @Override public List<String>  visitBeginDec(GrammarParser.BeginDecContext ctx) {
-        scope.put(ctx, new Scope());
-        try {
-            scope.get(ctx).put(LOCK, true);
-        } catch (MemoryOutOfBoundsException e) {
-            e.printStackTrace();
-        }
-        return visit(ctx.def());
     }
 
     @Override public List<String>  visitCompExpr(GrammarParser.CompExprContext ctx) {
