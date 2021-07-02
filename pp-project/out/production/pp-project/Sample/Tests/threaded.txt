@@ -7,7 +7,8 @@ class main {
 
     @Threaded (2) {
         printf(0);
-
+        Local Int x = 5;
+        printf(x);
         @Threaded(2) {
             printf(Thread.id);
         }
